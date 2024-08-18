@@ -1,9 +1,40 @@
 ---
 title: "About"
+about:
+  template: solana
+  image-shape: rectangle
+  image-width: 8em
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/zjho008
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/ho-zi-jun-profile/
+    - icon: envelope-fill
+      text: Email
+      href: mailto:zijun.ho.2023@mitb.smu.edu.sg
+    - icon: diagram-3-fill
+      text: Tableau
+      href: https://public.tableau.com/app/profile/zi.jun.ho/vizzes
 ---
 
-About this site
+::: {#hero-heading}
+Hi I'm Zi Jun, a dedicated professional pursuing a Master's of IT in Business (Analytics Track) at Singapore Management University. With a bachelor's in Business and a passion for data analytics, I am currently focusing on utilising Python and R programming to uncover insights and solve complex problems. Additionally, I am also picking up technical skills such as SQL to complement areas of data management. This is my personal course webpage for Geospatial Analytics and Application module.
 
-```{r}
-1 + 1
-```
+You may reach me via email or we can connect with each other via LinkedIn!
+
+## Education
+
+Singapore Management University Masters of IT in Business (Analytics) \| January 2024 - April 2025
+
+Singapore University of Social Sciences Bachelor of Science (BSc) in Business \| July 2023
+
+## Experience
+
+EM Engineering (Subsidiary of EM Services) \| Executive (Operations) \| September 2022 - February 2024
+
+Align Technology \| Consumer Experience Consultant \| May 2021 - July 2022
+:::
+
+***Thank you for dropping by!***

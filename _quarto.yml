@@ -24,15 +24,20 @@ website:
         - text: "Take-home Exercise 3"
           href: "Take-home_Ex/Take-home_Ex03/Take-home_Ex03.html"
     right: 
-      - href: index.qmd
-        text: Home
-      - about.qmd
+      - text: Home
+        href: index.qmd
 
 format:
   html:
     theme: cosmo
     css: styles.css
     toc: true
+    fontsize: 1.0em
+    toc-title: Table of Contents
+    toc-depth: 4
+    grid: 
+      sidebar-width: 200px
+      body-width: 850px
+      margin-width: 300px
 
 editor: source
-

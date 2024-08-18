@@ -2,15 +2,29 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "ISSS626-GAA",
+    "title": "ISSS626-Geospatial Analytics and Applications Homepage",
     "section": "",
-    "text": "Welcome to my ISSS626 Geospatial Analytics and Applications webpage. In this website, you will find my coursework prepared for this course.\nThis is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "Hello there I am Zi Jun. Welcome to my ISSS626 Geospatial Analytics and Applications webpage. In this website, you will find my coursework prepared for this course.\nHere is the link for my Visual Analytics and Application course\nA Feature of My Latest Works:"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "Hi I’m Zi Jun, a dedicated professional pursuing a Master’s of IT in Business (Analytics Track) at Singapore Management University. With a bachelor’s in Business and a passion for data analytics, I am currently focusing on utilising Python and R programming to uncover insights and solve complex problems. Additionally, I am also picking up technical skills such as SQL to complement areas of data management. This is my personal course webpage for Geospatial Analytics and Application module.\nYou may reach me via email or we can connect with each other via LinkedIn!\n\n\nSingapore Management University Masters of IT in Business (Analytics) | January 2024 - April 2025\nSingapore University of Social Sciences Bachelor of Science (BSc) in Business | July 2023\n\n\n\nEM Engineering (Subsidiary of EM Services) | Executive (Operations) | September 2022 - February 2024\nAlign Technology | Consumer Experience Consultant | May 2021 - July 2022\nThank you for dropping by!"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About",
+    "section": "",
+    "text": "Singapore Management University Masters of IT in Business (Analytics) | January 2024 - April 2025\nSingapore University of Social Sciences Bachelor of Science (BSc) in Business | July 2023"
+  },
+  {
+    "objectID": "about.html#experience",
+    "href": "about.html#experience",
+    "title": "About",
+    "section": "",
+    "text": "EM Engineering (Subsidiary of EM Services) | Executive (Operations) | September 2022 - February 2024\nAlign Technology | Consumer Experience Consultant | May 2021 - July 2022"
   }
 ]
