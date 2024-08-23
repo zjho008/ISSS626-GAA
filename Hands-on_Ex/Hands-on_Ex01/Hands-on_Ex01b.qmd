@@ -343,6 +343,7 @@ Before getting started, it is always a good practice to get some descriptive sta
 ```{r}
 summary(mpsz_pop2020$DEPENDENCY)
 ```
+
 With reference to the results above, break point can be set at 0.60, 0.70, 0.80, and 0.90. In addition, we also need to include a minimum and maximum, which we set at 0 and 100. Our *breaks* vector is thus c(0, 0.60, 0.70, 0.80, 0.90, 1.00)
 
 Now, the choropleth map will be plotted by using the code chunk below:
@@ -375,6 +376,7 @@ Notice that the choropleth map below is shaded in green.
 
 ::: panel-tabset
 ## palette = "Greens"
+
 ```{r}
 tm_shape(mpsz_pop2020) +
   tm_fill("DEPENDENCY",
@@ -383,7 +385,8 @@ tm_shape(mpsz_pop2020) +
           palette = "Greens") +
   tm_borders(alpha = 0.5)
 ```
-## palette = "Greens"
+
+## palette = "-Greens"
 
 To reverse the colour shading, add a “-” prefix.
 
@@ -395,6 +398,7 @@ tm_shape(mpsz_pop2020) +
           palette = "-Greens") +
   tm_borders(alpha = 0.5)
 ```
+
 Notice that the colour scheme has been reversed.
 :::
 
@@ -465,6 +469,7 @@ tm_shape(mpsz_pop2020) +
   tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS",
              position = c("left", "bottom"))
 ```
+
 To reset the default style, refer to the code chunk below.
 
 ```{r}
@@ -541,6 +546,7 @@ agedmap <- tm_shape(mpsz_pop2020) +
 
 tmap_arrange(youngmap, agedmap, asp = 1, ncol = 2)
 ```
+
 ```{r}
 economyactivemap <- tm_shape(mpsz_pop2020) +
   tm_polygons("ECONOMY ACTIVE",
