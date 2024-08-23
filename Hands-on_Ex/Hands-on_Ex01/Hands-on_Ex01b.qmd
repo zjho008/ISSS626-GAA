@@ -2,6 +2,7 @@
 title: "Hands-on Exercise 1b: Thematic Mapping and GeoVisualisation with R"
 date: "Aug 23, 2024"
 date-modified: "last-modified"
+author: Ho Zi Jun
 format: html
 number-sections: true
 number-offset: 1

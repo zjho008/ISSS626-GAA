@@ -2,6 +2,7 @@
 title: "Hands-on Exercise 1a: Geospatial Data Wrangling with R"
 date: "Aug 20, 2024"
 date-modified: "last-modified"
+author: Ho Zi Jun
 format: html
 number-sections: true
 number-offset: 0
