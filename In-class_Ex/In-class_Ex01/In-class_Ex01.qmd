@@ -1,0 +1,169 @@
+---
+title: "In-class Exercise 1"
+author: Ho Zi Jun
+date: "Aug 26, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 0
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: visual
+---
+
+# Geospatial Data Wrangling with R
+
+## Getting Started
+
+THe following 4 R packages will be used for this in-class exercise:
+
+-   **sf** for importing, managing, and processing geospatial data,
+-   **tidyverse** for performing data science tasks such as importing, wrangling and visualising data,
+-   **tmap** to plot functional and truthful choropleth maps, and
+-   **ggstatsplot** for creating graphics with details from statistical tests.
+
+*Tidyverse* consists of a family of R packages. In this hands-on exercise, the following packages will be used:
+
+-   **readr** for importing csv data,
+-   **readxl** for importing Excel worksheet,
+-   **tidyr** for manipulating data,
+-   **dplyr** for transforming data, and
+-   **ggplot2** for visualising data
+
+::: callout-note
+Thie code chunk below uses `p_load()` of pacman package to check if `sf` and `tidyverse` packages are installed in the computer. If they are, then they will be launched into R.
+:::
+
+## The code
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, ggstatsplot)
+```
+
+## The Data
+
+### Master Plan 2014 Subzone Boundary Web
+
+the `st_read()` function of **sf** package is used to import MP14_SUBZONE_WEB_PL shapefile into R as a polygon feature data frame.
+
+```{r}
+mpsz14_shp = st_read(dsn = "data/", 
+  layer = "MP14_SUBZONE_WEB_PL")
+```
+
+Using the `class()` function, the code chunk below tells us that it is a simple feature data frame.
+
+```{r}
+class(mpsz14_shp)
+```
+
+This code chunk imports the kml file
+
+```{r}
+# mpsz14_kml <- st_read("data/MasterPlan2014SubzoneBoundaryWebKML.kml")
+```
+
+::: callout-warning
+After running the code, an error message is shown stating that the file cannot be opened. This is likely due to an issue with file structure resulting in file being unable to be opened.
+:::
+
+## Working with Master Plan 2014 Subzone Boundary Web file - Attempt
+
+`st_write()`
+
+```{r}
+st_write(mpsz14_shp,
+         "data/MP14_SUBZONE_WEB_PL.kml",
+          delete_dsn = TRUE)
+```
+
+::: callout-note
+With the code chunk above the file in kml format is created. The `delete_dsn` argument is to overwrite the old file and replace with the new file with same file name.
+:::
+
+## Working with Master Plan 2019 Subzone Boundary Data
+
+```{r}
+mpsz19_kml <- st_read("data/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
+```
+
+![](data/kml.png)
+
+Upon some initial observation - kml version is not very tidy
+
+## Handling Coordinate Systems
+
+### Transforming coordinate system
+
+For this section an updated version of the data published in 2019 will be used.
+
+```{r}
+mpsz19_shp = st_read(dsn = "data/", 
+                     layer = "MPSZ-2019") %>%
+  st_transform(crs = 3414)
+```
+
+### Rationale
+
+The Master Plan 2019 Subzone Boundary Data was in the Geographical Coordinate System - WGS84.
+
+A viable option to check the geometry if its is in: 0 - 180 / 0 - 360 likely in WGS coordinate system.
+
+For the code chunk above, pipe is utilised since we are using sf.
+
+After transformation (re-projection) observed from geometry that now it is in metres
+
+![](data/transform.png)
+
+## In-class sharing
+
+Comparing excel(due to heading & blank spaces & asteris) vs csv file (better for analysis). CSV seems to be the more viable option for analysis as it has no un-necessary structure.
+
+## Working with population data
+
+> **The Task**: To visit and extract the latest Singapore Residents by Planning Area / Subzone, Age, Group, Sex and Type of Dwelling from Singstat.
+
+```{r}
+popdata <- read_csv("data/respopagesextod2023.csv")
+```
+
+Wrangling of data to be done in order to derive the groups: YOUNG, ACTIVE, ECONOMY ACTIVE
+
+```{r}
+popdata2023 <- popdata %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = AG,
+              values_from = POP)
+```
+
+Code was split to observe the steps - one at a time. Will aggregate does not differentiate male/female.
+
+pivot wider portion - will compute and bring multiple columns based on age.
+
+```{r}
+colnames(popdata2023)
+```
+## Data Processing
+
+```{r}
+popdata2023 <- popdata2023 %>%
+  mutate(YOUNG = rowSums(.[, 3:6]) + rowSums(.[, 14])) %>%  # Aged 0-24, 10-24 + Aged 5-9
+  mutate(`ECONOMY ACTIVE` = rowSums(.[, 7:13]) + rowSums(.[, 15])) %>%  # Aged 25-59 + Aged 60-64
+  mutate(AGED = rowSums(.[, 16:21])) %>%  # Aged 65 and above
+  mutate(TOTAL = rowSums(.[, 3:21])) %>%  # Total population
+  mutate(DEPENDENCY = (YOUNG + AGED) / `ECONOMY ACTIVE`) %>%  # Dependency ratio
+  select(PA, SZ, YOUNG, `ECONOMY ACTIVE`, AGED, TOTAL, DEPENDENCY)
+```
+
++rowSums should not be 12 (as attempted in Hands-On Exercise) but its 14. 
+
+We use `glimpse()` function take a look at the updated popdata2023 data-frame.
+
+```{r}
+glimpse(popdata2023)
+```
+
