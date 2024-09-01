@@ -147,6 +147,7 @@ pivot wider portion - will compute and bring multiple columns based on age.
 ```{r}
 colnames(popdata2023)
 ```
+
 ## Data Processing
 
 ```{r}
@@ -159,11 +160,10 @@ popdata2023 <- popdata2023 %>%
   select(PA, SZ, YOUNG, `ECONOMY ACTIVE`, AGED, TOTAL, DEPENDENCY)
 ```
 
-+rowSums should not be 12 (as attempted in Hands-On Exercise) but its 14. 
++rowSums should not be 12 (as attempted in Hands-On Exercise) but its 14.
 
 We use `glimpse()` function take a look at the updated popdata2023 data-frame.
 
 ```{r}
 glimpse(popdata2023)
 ```
-
