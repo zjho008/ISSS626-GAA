@@ -107,7 +107,7 @@ st_crs(childcare_sf)
 mpsz_sf <- st_set_crs(mpsz_sf, 3414)
 ```
 
-Checking the CSR again by using the code chunk below.
+Checking the CRS again by using the code chunk below.
 
 ```{r}
 st_crs(mpsz_sf)
@@ -147,7 +147,7 @@ Although simple feature data frame is gaining popularity again - sp’s *Spatial
 
 ### Converting sf data frames to sp’s *Spatial* class
 
-The code chunk below uses [*as_Spatial()*]() of **sf** package to convert the three geospatial data from simple feature data frame to sp's Spatial class.
+The code chunk below uses [*as_Spatial()*]() of **sf** package to convert the three geospatial data from simple feature data frame to sp's Spatial class.
 
 ```{r}
 childcare <- as_Spatial(childcare_sf)
@@ -210,7 +210,6 @@ Now, to plot ***childcare_ppp*** and examine the difference.
 ```{r}
 plot(childcare_ppp)
 ```
-
 We take a quick look at the summary statistics of the newly created ppp object by using the code chunk below.
 
 ```{r}
@@ -271,7 +270,7 @@ childcare_ppp_jit <- rjitter(childcare_ppp,
 any(duplicated(childcare_ppp_jit))
 ```
 
-Code chunk result from above shows no duplciated points.
+Code chunk result from above shows no duplicated points.
 
 ### Creating *owin* object
 
@@ -283,13 +282,13 @@ The code chunk below is used to covert *sg* SpatialPolygon object into owin obje
 sg_owin <- as.owin(sg_sf)
 ```
 
-The ouput object can be displayed by using the *plot()* function
+The output object can be displayed by using the *plot()* function
 
 ```{r}
 plot(sg_owin)
 ```
 
-and using the *summary()* function of Base R.
+Code chunk below is using the *summary()* function of Base R.
 
 ```{r}
 summary(sg_owin)
@@ -324,7 +323,7 @@ In this section, it will be on learning how to perform first-order Spatial Point
 
 ### Kernel Density Estimation
 
-In this section, it encompasses learnign how to compute the kernel density estimation (KDE) of childcare services in Singapore.
+In this section, it encompasses learning how to compute the kernel density estimation (KDE) of childcare services in Singapore.
 
 #### Computing kernel density estimation using automatic bandwidth selection method
 
