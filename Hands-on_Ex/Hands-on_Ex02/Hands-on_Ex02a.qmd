@@ -1,5 +1,5 @@
 ---
-title: "Hands-on_Exercise 2a: 1st Order Spatial Point Patterns Analysis Methods"
+title: "Hands-on Exercise 2a: 1st Order Spatial Point Patterns Analysis Methods"
 author: "Ho Zi Jun"
 date: "Aug 28, 2024"
 date-modified: "last-modified"
@@ -106,6 +106,8 @@ st_crs(childcare_sf)
 ```{r}
 mpsz_sf <- st_set_crs(mpsz_sf, 3414)
 ```
+
+Checking the CSR again by using the code chunk below.
 
 ```{r}
 st_crs(mpsz_sf)
