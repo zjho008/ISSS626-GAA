@@ -1,0 +1,44 @@
+---
+title: "Take-home Exercise 1: Geospatial Analytics for Public Good"
+author: "Ho Zi Jun"
+date: "Sep 8, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 0
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: source
+---
+
+# Overview: Case study on factors affecting road traffic accidents in the Bangkok Metropolitan Region (BMR)
+
+According to the [*World Health Organization (WHO)*](https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries), road traffic accidents claim the lives of around 1.19 million people annually and leave 20 to 50 million others with non-fatal injuries. Vulnerable road users, such as pedestrians, cyclists, and motorcyclists, account for more than half of these fatalities.
+
+Road traffic injuries are the leading cause of death for individuals aged 5 to 29. Additionally, two-thirds of road traffic fatalities occur among people of working age (18–59 years). Despite having only about 60% of the world's vehicles, low- and middle-income countries account for 92% of road traffic fatalities.
+
+Beyond the human toll, road accidents impose a significant economic burden on victims and their families due to medical costs and the loss of productivity from those who are killed or disabled. On a national level, these injuries cost countries around 3% of their gross domestic product (GDP).
+
+Thailand has the most dangerous roads in Southeast Asia and ranks among the worst globally, with approximately 20,000 deaths from road accidents each year, averaging 56 deaths per day [(WHO)](https://www.who.int/thailand/news/feature-stories/detail/turning-tragedy-into-action--advocacy-and-survival-on-thailand-s-roads) and a million injuries each year, incurring an economic loss of 500,000 million baht.
+
+Between 2014 and 2021, Thailand saw a rise in accident frequency, with 19% occurring on the national highways, which serve as the main public roads connecting regions, provinces, and key locations. Nationally, there is a 66% chance of encountering accident-prone areas, also known as *'black spots.'* These are distributed as follows: 66% on straight road sections, 13% on curves, 6% at median points of cross intersections, 5% at T- or Y-intersections, 3% at cross intersections, and 2% on both bridges and steep slopes.
+
+## Datasets
+
+## Data Wrangling
+
+## Data Analysis
+
+### Spatio-temporal dynamics
+
+### Spatial analysis
+
+## Analysis Results
+
+### Results of Spatial Analysis of Accidents on the Thailand’s Road Network
+
+### Results of Identifying Accident Black Spots on Thailand's National Highways
+
+## Evaluation

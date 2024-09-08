@@ -262,7 +262,7 @@ The code chunk below implements the jittering approach.
 ```{r}
 childcare_ppp_jit <- rjitter(childcare_ppp,
                              retry = TRUE,
-                             nsim = 1,
+                             nsim = 1, # increase simulations
                              drop = TRUE)
 ```
 
