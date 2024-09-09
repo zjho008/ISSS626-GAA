@@ -50,7 +50,7 @@ pacman::p_load(spNetwork, sf, tmap, tidyverse)
 
 ## Data Import and Preparation
 
-The code chunk below uses `st_read()` of **sf** package to important Punggol_St and Punggol_CC geospatial data sets into RStudio as sf data frames.
+The code chunk below uses `st_read()` of **sf** package to import Punggol_St and Punggol_CC geospatial data sets into RStudio as sf data frames.
 
 ```{r}
 network <- st_read(dsn = "data/geospatial",

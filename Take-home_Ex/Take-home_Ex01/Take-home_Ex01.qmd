@@ -8,7 +8,7 @@ number-offset: 0
 execute:
   eval: true
   echo: true
-  message: false
+  warning: false
   freeze: true
 editor: source
 ---
@@ -25,7 +25,108 @@ Thailand has the most dangerous roads in Southeast Asia and ranks among the wors
 
 Between 2014 and 2021, Thailand saw a rise in accident frequency, with 19% occurring on the national highways, which serve as the main public roads connecting regions, provinces, and key locations. Nationally, there is a 66% chance of encountering accident-prone areas, also known as *'black spots.'* These are distributed as follows: 66% on straight road sections, 13% on curves, 6% at median points of cross intersections, 5% at T- or Y-intersections, 3% at cross intersections, and 2% on both bridges and steep slopes.
 
+## Objectives
+
+The primary causes of road traffic accidents can be attributed to behavioural factors, such as: driver behaviour, performance, and environmental factors, like weather conditions and road design. While past studies using Spatial Point Patterns Analysis (SPPA) have explored these factors, they often overlook the impact of *temporal* factors, such as season or time of day.
+
+The task is to identify factors influencing road traffic accidents in the Bangkok Metropolitan Region (BMR) using both spatial and spatio-temporal point patterns analysis. The objectives include visualizing spatio-temporal accident dynamics and conducting detailed spatial and temporal analyses using Network Spatial Point Patterns Analysis methods.
+
 ## Datasets
+
+Three basic data sets must be used for this exercise, they are:
+
+-   [Thailand Road Accident \[2019-2022\]](https://www.kaggle.com/datasets/thaweewatboy/thailand-road-accident-2019-2022) on Kaggle
+
+    -   This dataset provides comprehensive statistics on recorded road accidents in Thailand, spanning from approximately 2019 to 2022. The data was sourced from raw information provided by the [Office of the Permanent Secretary, Ministry of Transport](https://www.mots.go.th/news/category/411). The dataset encompasses various aspects of road accidents and aims to shed light on the trends and patterns within this critical area of concern, analysis of this data could be crucial in guiding road safety policies and measures
+
+-   [Thailand Roads (OpenStreetMap Export)](https://data.humdata.org/dataset/hotosm_tha_roads) on HDX.
+
+-   [Thailand - Subnational Administrative Boundaries](https://data.humdata.org/dataset/cod-ab-tha?) on HDX.
+
+## Setting Up
+
+### Setting up the R environment
+
+
+In this exercise, seven R packages will be used, they are:
+
+| Packages                                                                                                     | Description                                                                                                                                            |
+|:------------------------------|:----------------------------------------|
+| [*sf*](https://r-spatial.github.io/sf/)                                                                            | A relatively new R package specially designed to import, manage and process vector-based geospatial data in R                                                                                                                 |
+| [*spatstat*](https://spatstat.org/)                                  | Which has a wide range of useful functions for point pattern analysis. In this hands-on exercise, it will be used to perform 1st- and 2nd-order spatial point patterns analysis and derive kernel density estimation (KDE) layer.                                                                                                                      |
+| [*raster*](https://cran.r-project.org/web/packages/raster/)                                        | Which reads, writes, manipulates, analyses and model of gridded spatial data (i.e. raster). In this exercise, it will be used to convert image output generate by spatstat into raster format           |
+| [*tmap*](https://cran.r-project.org/web/packages/tmap/index.html) | which provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API.                                                             |
+| [*tidyverse*](https://www.tidyverse.org/)                                                                    | a family of modern R packages specially designed to support data science, analysis and communication task including creating static statistical graphs |
+| [*spNetwork*](https://cran.r-project.org/web/packages/spNetwork/index.html)                                                              | Which provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances                                                                                        |
+| [*clock*](https://www.tidyverse.org/blog/2021/03/clock-0-1-0/)                                               | package providing a comprehensive set of tools for working with date-times                                                                             |
+| [*lubridate*](https://cran.r-project.org/web/packages/graphlayouts/vignettes/graphlayouts.html)           | package implements some graph layout algorithms that are not available in `igraph` or other packages                                                   |
+
+: R Packages {.striped .hover tbl-colwidths="\[25,75\]"}
+
+The code chunk below is used to setup the R environment
+
+```{r}
+pacman::p_load(sf, spatstat, raster, tmap,
+               tidyverse, spNetwork, clock)
+```
+
+
+### Preparing the datasets
+
+#### Importing the Aspatial data
+
+
+```{r}
+acc <- read_csv("data/rawdata/thai_road_accident_2019_2022.csv") %>%
+  mutate(Month_num = month(incident_datetime)) %>%
+  mutate(Month_fac = month(incident_datetime,
+                       label = TRUE,
+                       abbr = TRUE)) %>%
+  mutate(dayofweek = day(incident_datetime)) %>%
+  st_as_sf(coords = c("longitude", "altitude"),
+           crs = 4326) %>%
+  st_transform(crs = 32647)
+```
+
+
+
+```{r}
+rdacc_sf <- read_csv("data/rawdata/thai_road_accident_2019_2022.csv") %>%
+  filter(!is.na(longitude) & longitude != "", 
+         !is.na(latitude) & latitude != "") %>%
+  st_as_sf(coords = c(
+    "longitude", "latitude"),
+    crs = 4326) %>%
+  st_transform(crs = 32647)
+```
+
+#### Importing Geospatial data
+
+::: panel-tabset
+## Thailand Roads (OpenStreetMap Export)
+```{r}
+road_sf <- st_read(dsn = "data/rawdata", 
+                   layer = "hotosm_tha_roads_lines_shp")
+```
+
+## Thailand - Subnational Administrative Boundaries
+
+```{r}
+thadm <- st_read(dsn = "data/rawdata", 
+                 layer = "tha_admbnda_adm1_rtsd_20220121")
+```
+
+:::
+
+## In- class
+
+
+
+
+
+
+## In class
+
 
 ## Data Wrangling
 

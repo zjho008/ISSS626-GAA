@@ -1,0 +1,266 @@
+---
+title: "In-class Exercise 3"
+author: Ho Zi Jun
+date: "Sep 9, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 2
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: visual
+---
+
+# Network Constrained Spatial Point Patterns Analysis
+
+## Loading R packages
+
+```{r}
+pacman::p_load(sf, spNetwork, tmap, tidyverse)
+```
+
+## Data Import and Preparation
+
+The code chunk below uses `st_read()` of **sf** package to import Punggol_St and Punggol_CC geospatial data sets into RStudio as sf data frames.
+
+#Punggol_St is in ESRI Shapefile format
+
+```{r}
+network <- st_read(dsn = "data/geospatial",
+                   layer = "Punggol_St")
+```
+
+Data has to be in linestring and not multiple linestring. Use st to convert it from multi line to single line.
+
+```{r}
+childcare <- st_read(dsn = "data/geospatial",
+                     layer = "Punggol_CC") %>%
+  st_zm(drop = TRUE,
+        what = "ZM") # to remove z value
+```
+We can examine the structure of the output simple data features data tables in R studio.
+
+
+childcare File is in kml format hence the dimension shown is XYZ (additional dimension). It is important to note the dimension. Upon further inspection under geometry the childcare data has point Z.
+
+> Note: for take home exercise under entire data file, 1 folder as rawdata, with another separate folder as data for analysis.
+
+
+## Visualising the Geospatial Data
+
+Before we jump into the analysis, it is a good practice to visualise the geospatial data. There are at least two ways to visualise the geospatial data. One way is by using *plot()* of Base R as shown in the code chunk below.
+
+```{r}
+plot(st_geometry(network)) # plotting the road network first, especially when in sf layer
+plot(childcare, add = T, col = 'red', pch = 19) # followed by the childcare # since mapped with colours when plotted multiple colours do not appear
+
+# add = T -> T = TRUE the point is plotted twice.
+```
+
+Code chunk result when removing the st_geometry: 
+
+```{r}
+plot(network)
+plot(childcare, add = T, col = 'red', pch = 19)
+```
+::: callout-note
+network has 3 columns:
+Link ID
+St_name
+Geometry 
+
+Removing st_geometry will result in individual columns which are pulled out and plotted individually.
+:::
+
+
+To visualise the data with high cartographic quality and in an interactive manner. The mapping function of **tmap** package can be used as shown in the code chunk below.
+
+```{r}
+tmap_mode('plot')
+
+tm_shape(childcare) + # specifying the layer that is being used
+  tm_dots(col = "red") +
+  tm_shape(network) + # to use the extent of the map layer
+  tm_lines()
+tmap_mode('plot')
+```
+
+ways to add markers;
+
+https://r-tmap.github.io/tmap/reference/index.html
+
+**Specify the shape object:**
+tm_symbols() tm_squares() tm_bubbles() tm_dots() - to keep the size constant when performing zoom functions tm_markers()
+
+Making the plot an interactive layer
+
+```{r}
+tmap_mode('view') #just by switching to 'view' to achieve the interactivity
+
+tm_shape(childcare) + # specifying the layer that is being used
+  tm_dots(col = "red") +
+  tm_shape(network) + # to use the extent of the map layer
+  tm_lines()
+tmap_mode('plot') # to ensure after the session is ended it will end in the plot mode to reduce resource consumption
+```
+
+::: callout-note
+Childcare & network can be switched on and off accordingly. 
+
+3 different data consumptions:
+2 layers of ESRI map data (WorldGray Canvas & OpenStreetMap)
+Topographic layer
+:::
+
+mpabox ~ leaflet 
+
+While using tmap methods requires a longer code chunk the benefit it brings are the flexibility and customisation that can be done.
+
+### Preparing the lixels objects
+
+Before computing NKDE, the Spatial Lines object needs to be cut into lixels with a specified minimal distance. This task can be performed by using [lixelize_lines()](https://jeremygelb.github.io/spNetwork/reference/lixelize_lines.html) of **spNetwork** as shown in the code chunk below.
+
+```{r}
+lixels <- lixelize_lines(network,
+                         700,  
+                         mindist = 350)
+```
+
+given that it is a road network and in the context of the childcare - so using the
+reasonable walking distance based on weather and perceived hindrance is about **700 metres** based on a study for perceivable walking distance.
+
+mindist is set as half for the minimum walking distance.
+
+2642 segments in the line network. to split into line segment each should be 700 and in the centre the minimum distance should be 350m.
+
+After running the code chunk the segments, the remaining is slightly greater than 350.
+
+if increase to 500 the segment is 2645
+
+if reduce to 150m the segment is still the same 2645.
+
+For take home ex 3, the BMR has to be plotted - a rough gauge of the general distance so we should not use a distance smaller than the point. Calculating the nearest neighbour to find out the nearest neighbour - 
+
+based on distances starting on the lowest 25 percentile of accidents along the road segment. Want to acheive a segment that can pick up some accident occurences.
+
+### Generating line centre points
+
+Next, *lines_center()* of **spNetwork** will be used to generate a SpatialPointsDataFrame (i.e. samples) with line centre points as shown in the code chunk below.
+
+```{r}
+samples <- lines_center(lixels) # sf format
+```
+
+## Visualising the lixel segment
+
+```{r}
+tmap_mode('view')
+
+tm_shape(lixels) +
+  tm_lines() +
+  tm_shape(samples) +
+  tm_dots(size = 0.01)
+tmap_mode('plot')
+```
+
+### Performing NKDE
+
+We are ready to compute the NKDE by using the code chunk below:
+
+```{r}
+densities <- nkde(network,
+                  events = childcare,
+                  w = rep(1, nrow(childcare)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300,
+                  div = "bw",
+                  method = "simple",
+                  digits = 1,
+                  tol = 1,
+                  grid_shape = c(1,1),
+                  max_depth = 8,
+                  agg = 5,
+                  sparse = TRUE,
+                  verbose = FALSE)
+```
+
+ # avoid gaussian if intensity changes to negative
+ # 3 methods: simple, continous, discontinous
+
+
+the computed density values (i.e. densities) into *samples* and *lixels* objects as *density* field.
+
+```{r}
+samples$density <- densities
+lixels$density <- densities
+```
+
+To append the intensity values into the simple tibular frame or lixel data frame simialr to a left join.
+
+Avoid sorting to avoid changing the sequence. 
+
+values attached to the line and point.
+
+Since the svy21 projection system is in metres, the computed density values are very small i.e. 0.0000005. The code chunk below is used to rescale the density values from number of events per metre to **number of events per kilometre**.
+
+```{r}
+# rescaling
+
+samples$density <- samples$density*1000
+lixels$density <- lixels$density*1000
+```
+
+The code below uses appropriate functions of tmap package to prepare interactive and high cartographic quality map visualisation.
+
+```{r}
+tmap_mode(mode = c("view"))
+tm_shape(lixels) +
+  tm_lines(col = "density") +
+  tm_shape(childcare) +
+  tm_dots()
+tmap_mode("plot")
+```
+
+```{r}
+kfun_childcare <- kfunctions(network,
+                             childcare,
+                             start = 0,
+                             end = 1000,
+                             step = 50,
+                             width = 50,
+                             nsim = 99, # simulations are starting from zero
+                             resolution = 50,
+                             verbose = FALSE,
+                             conf_int = 0.05)
+```
+
+
+The output of *kfunctions()* is a list with the following values:
+
+-   *plotkA*, a ggplot2 object representing the values of the k-function
+-   *plotgA*, a ggplot2 object representing the values of the g-function
+-   *valuesA*, a DataFrame with the values used to build the plots
+
+Visualising the ggplot2 object of k-function by using the code chunk below.
+
+::: panel-tabset
+## K-Function
+```{r}
+kfun_childcare$plotk # whether to plot G / K function
+```
+2 possible patterns observed
+
+regular pattern below the envelope - showing signs of regularity - childcare centres near to each other e.g. at 200m apart which is showing the signs of regularity
+
+and complete spatial randomness at the upper portion.
+
+
+## G-Function
+```{r}
+kfun_childcare$plotg # whether to plot G / K function
+```
+
+both functions are returned
