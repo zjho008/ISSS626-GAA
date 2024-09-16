@@ -4,7 +4,7 @@ about:
   template: jolla
   image-width: 30em
   image-shape: rectangle
-  image: 'images/map.gif'
+  image: 'images/GAA_AI_GEN.jpg'
   links:
     - icon: github
       text: Github

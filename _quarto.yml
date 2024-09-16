@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "ISSS626-GAA"
+  title: "ISSS626-GAA (Geospatial Analytics and Applications)"
   navbar:
     left:
     - text: "Hands-on Exercise"
@@ -17,6 +17,8 @@ website:
           href: "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02b.html"
         - text: "Hands-on Exercise 3: Network Constrained Spatial Point Patterns Analysis"
           href: "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html"
+        - text: "Hands-on Exercise 4: Spatial Weights and Applications"
+          href: "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html"
     - text: "In-class Exercise"
       menu:
         - text: "In-class Exercise 1"
@@ -25,6 +27,8 @@ website:
           href: "In-class_Ex/In-class_Ex02/In-class_Ex02.html"
         - text: "In-class Exercise 3"
           href: "In-class_Ex/In-class_Ex03/In-class_Ex03.html"
+        - text: "In-class Exercise 4"
+          href: "In-class_Ex/In-class_Ex04/In-class_Ex04.html"
     - text: "Take-home Exercise"
       menu:
         - text: "Take-home Exercise 1"

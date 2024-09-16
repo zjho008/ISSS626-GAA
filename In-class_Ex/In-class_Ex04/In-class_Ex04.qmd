@@ -1,0 +1,257 @@
+---
+title: "In-class Exercise 4"
+author: Ho Zi Jun
+date: "Sep 16, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 3
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: visual
+---
+
+# Spatial Weights and Applications
+
+## Loading R packages
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse, knitr, GWmodel, ggstatsplot)
+```
+
+## Additional Package
+
+[GWmodel](https://cran.r-project.org/web/packages/GWmodel/index.html)
+
+[Package `GWmodel`](https://cran.r-project.org/web/packages/GWmodel/GWmodel.pdf)
+
+Focus is on the Geographically weighted summary statistics (GWSS)
+
+Which helps to determine the optimal cut-off metrics
+
+bw.gwr - e.g. look into data and recommend appropriate bandwidth for cut off adaptive - optimum number of neighbours for statistical significance.
+
+## Data Import and Preparation
+
+For this in-class exericse, Hunan shp file will be used to
+
+```{r}
+hunan_sf <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+Note CRS is not defined when importing the data and the CRS is WGS84.
+
+## Importign the Hunan_2012 table
+
+```{r}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+Note: read_csv() is from the tidyverse package
+
+### Joining Hunan and Hunan_2012
+
+```{r}
+hunan_sf <- left_join(hunan_sf ,hunan2012) %>%
+  select(1:3, 7, 15, 16, 31, 32)
+```
+
+NAME_2, ID_3, NAME_3 (name of county), COUNTY, GDP, 26 - GIO, 31- Agri, 32- Service
+
+A selection is done in the code chunk above to select variables that will be used for analysis
+
+for relational joins there has to be a common identifier - values have to be identical
+
+> Good practice: to check through the name and the values/fields to ensure they are the same before performing the join. In this case from observation County has the same variable name. For this exercise the COUNTY variable was added into the hunan_2012 dataset. Otherwise, NAME_3 will have to be used and argument `JOIN_BY()` has to be used.
+
+E.g. the website from URA code to convert from mix of upper case and lower case (data from singstat) to all upper case before joining with the URA data
+
+## Converting to SpatialPolygon Data.Frame
+
+To use GWmodel the file has to be converted from SF to SP
+
+```{r}
+hunan_sp <- hunan_sf %>%
+  as_Spatial()
+```
+
+A list is given instead of a data table.
+
+> class(hunan_sp) \[1\] "SpatialPolygonsDataFrame" attr(,"package") \[1\] "sp"
+
+## Geographically Weighted Summary Statistics with adaptative bandwidth
+
+### Determining adaptive bandwidth
+
+::: panel-tabset
+## Cross Validation - "taking one out and putting one back"
+
+```{r}
+bw_CV <- bw.gwr(GDPPC ~ 1, # arbitrary number 1 as independent variable
+             data = hunan_sp, # hunan data
+             approach = "CV", # cross validation is used
+             adaptive = TRUE,
+             kernel = "bisquare",
+             longlat = T) # value taken in is in KM
+```
+
+The score will eventually stop and the optimal number of neighbour is 22. This is also the same result if AIC is used. However, note that this will not always be the case for both approaches. \## AIC
+
+```{r}
+bw_CV <- bw.gwr(GDPPC ~ 1, 
+             data = hunan_sp, 
+             approach = "AIC", 
+             adaptive = TRUE,
+             kernel = "bisquare",
+             longlat = T)
+```
+
+change rate will stop and that is where the optimal value is determined Statistical method
+:::
+
+## Geographically Weighted Summary Statistics with fixed bandwidth
+
+### Determining fixed bandwidth
+
+::: panel-tabset
+## Cross Validation
+
+```{r}
+bw_CV <- bw.gwr(GDPPC ~ 1,
+             data = hunan_sp,
+             approach = "CV",
+             adaptive = FALSE,
+             kernel = "bisquare",
+             longlat = T)
+```
+
+Value is in KM - 76 KM \## AIC
+
+```{r}
+bw_CV <- bw.gwr(GDPPC ~ 1, 
+             data = hunan_sp, 
+             approach = "AIC", 
+             adaptive = FALSE,
+             kernel = "bisquare",
+             longlat = T)
+```
+:::
+
+When using different methods some would give the same answwer while some would give a different answer. So it is a good practice to test out the different methods
+
+In this case the adaptive method is better as the Cross Validation and AIC gives the same output.
+
+## Geographically Weighted Summary Statistics with adaptative bandwidth
+
+### Computing geographically weighted summary statistics
+
+```{r}
+bw_AIC <- bw.gwr(GDPPC ~ 1, 
+             data = hunan_sp, 
+             approach = "AIC", 
+             adaptive = TRUE,
+             kernel = "bisquare",
+             longlat = T)
+
+bw_AIC
+```
+
+```{r}
+gwstat <- gwss(data = hunan_sp,
+               vars = "GDPPC",
+               bw = bw_AIC,
+               kernel = "bisquare",
+               adaptive = TRUE,
+               longlat = T)
+
+```
+
+> Note: that the Kernel, Adaptive and Longlat have to remain the same when doing the calulation
+
+### Preparign the output data
+
+Code chunk below is used to extract **SDF** data table from **gwss** object output from `gwss()`. It will be converted into data.frame by using `as.data.frame()`
+
+```{r}
+gwstat_df <- as.data.frame(gwstat$SDF)
+```
+
+Next, `cbin*d()` is used to append the newly derived data.frame onto *hunan_sf* sf data.frame
+
+```{r}
+hunan_gstat <- cbind(hunan_sf, gwstat_df)
+```
+
+::: panel-tabset
+## The Geographhically Weighted Mean
+
+```{r}
+#| echo: false
+tm_shape(hunan_gstat) +
+  tm_fill("GDPPC_LM",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5) + # or tm_polygons
+  tm_layout(main.title = "distribution of geogrpahically weighted mean",
+            main.title.position = "centre",
+            main.title.size = 2.0,
+            legend.title.size = 1.2,
+            legend.height = 1.50,
+            legend.width = 1.50,
+            frame = TRUE)
+```
+
+Showing growth at the main cities first whereas the rural areas see slower growth - which is commonly observed in developing countries.
+## The code
+
+```{r fig.width=12, fig.height=8}
+#| eval: FALSE
+tm_shape(hunan_gstat) +
+  tm_fill("GDPPC_LM",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5) + # or tm_polygons
+  tm_layout(main.title = "distribution of geogrpahically weighted mean",
+            main.title.position = "centre",
+            main.title.size = 2.0,
+            legend.title.size = 1.2,
+            legend.height = 1.50,
+            legend.width = 1.50,
+            frame = TRUE)
+```
+:::
+
+## Geogrpahically Weighted Correlation with Adaptive bandwidth
+
+> Business Question: Is there any relationship between GDP per capita and Gross Industry Output?
+
+## Conventional Statistical Solution
+```{r}
+
+```
+
+From the p-value there is a relatively strong correlation and statistical significance.
+
+Certain areas not as highly correlated with neighbours while others are more correlated - Geographic view vs statistical solution view.
+
+gwCorr - 0.750 to 0.761 
+
+The 1st band not as correlated with its neighbours 
+
+Local correlation can also be shown 
+
+```{r}
+
+```
+
+
+### Computing gwCorrelation
+
+```{r}
+
+```
+
+column 12 and 13 selected where we see the correlation coefficient. 

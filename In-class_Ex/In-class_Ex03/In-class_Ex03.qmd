@@ -40,13 +40,12 @@ childcare <- st_read(dsn = "data/geospatial",
   st_zm(drop = TRUE,
         what = "ZM") # to remove z value
 ```
-We can examine the structure of the output simple data features data tables in R studio.
 
+We can examine the structure of the output simple data features data tables in R studio.
 
 childcare File is in kml format hence the dimension shown is XYZ (additional dimension). It is important to note the dimension. Upon further inspection under geometry the childcare data has point Z.
 
 > Note: for take home exercise under entire data file, 1 folder as rawdata, with another separate folder as data for analysis.
-
 
 ## Visualising the Geospatial Data
 
@@ -59,21 +58,18 @@ plot(childcare, add = T, col = 'red', pch = 19) # followed by the childcare # si
 # add = T -> T = TRUE the point is plotted twice.
 ```
 
-Code chunk result when removing the st_geometry: 
+Code chunk result when removing the st_geometry:
 
 ```{r}
 plot(network)
 plot(childcare, add = T, col = 'red', pch = 19)
 ```
+
 ::: callout-note
-network has 3 columns:
-Link ID
-St_name
-Geometry 
+network has 3 columns: Link ID St_name Geometry
 
 Removing st_geometry will result in individual columns which are pulled out and plotted individually.
 :::
-
 
 To visualise the data with high cartographic quality and in an interactive manner. The mapping function of **tmap** package can be used as shown in the code chunk below.
 
@@ -91,8 +87,7 @@ ways to add markers;
 
 https://r-tmap.github.io/tmap/reference/index.html
 
-**Specify the shape object:**
-tm_symbols() tm_squares() tm_bubbles() tm_dots() - to keep the size constant when performing zoom functions tm_markers()
+**Specify the shape object:** tm_symbols() tm_squares() tm_bubbles() tm_dots() - to keep the size constant when performing zoom functions tm_markers()
 
 Making the plot an interactive layer
 
@@ -107,14 +102,12 @@ tmap_mode('plot') # to ensure after the session is ended it will end in the plot
 ```
 
 ::: callout-note
-Childcare & network can be switched on and off accordingly. 
+Childcare & network can be switched on and off accordingly.
 
-3 different data consumptions:
-2 layers of ESRI map data (WorldGray Canvas & OpenStreetMap)
-Topographic layer
+3 different data consumptions: 2 layers of ESRI map data (WorldGray Canvas & OpenStreetMap) Topographic layer
 :::
 
-mpabox ~ leaflet 
+mpabox \~ leaflet
 
 While using tmap methods requires a longer code chunk the benefit it brings are the flexibility and customisation that can be done.
 
@@ -128,8 +121,7 @@ lixels <- lixelize_lines(network,
                          mindist = 350)
 ```
 
-given that it is a road network and in the context of the childcare - so using the
-reasonable walking distance based on weather and perceived hindrance is about **700 metres** based on a study for perceivable walking distance.
+given that it is a road network and in the context of the childcare - so using the reasonable walking distance based on weather and perceived hindrance is about **700 metres** based on a study for perceivable walking distance.
 
 mindist is set as half for the minimum walking distance.
 
@@ -141,7 +133,7 @@ if increase to 500 the segment is 2645
 
 if reduce to 150m the segment is still the same 2645.
 
-For take home ex 3, the BMR has to be plotted - a rough gauge of the general distance so we should not use a distance smaller than the point. Calculating the nearest neighbour to find out the nearest neighbour - 
+For take home ex 3, the BMR has to be plotted - a rough gauge of the general distance so we should not use a distance smaller than the point. Calculating the nearest neighbour to find out the nearest neighbour -
 
 based on distances starting on the lowest 25 percentile of accidents along the road segment. Want to acheive a segment that can pick up some accident occurences.
 
@@ -187,9 +179,7 @@ densities <- nkde(network,
                   verbose = FALSE)
 ```
 
- # avoid gaussian if intensity changes to negative
- # 3 methods: simple, continous, discontinous
-
+\# avoid gaussian if intensity changes to negative \# 3 methods: simple, continous, discontinous
 
 the computed density values (i.e. densities) into *samples* and *lixels* objects as *density* field.
 
@@ -200,7 +190,7 @@ lixels$density <- densities
 
 To append the intensity values into the simple tibular frame or lixel data frame simialr to a left join.
 
-Avoid sorting to avoid changing the sequence. 
+Avoid sorting to avoid changing the sequence.
 
 values attached to the line and point.
 
@@ -237,7 +227,6 @@ kfun_childcare <- kfunctions(network,
                              conf_int = 0.05)
 ```
 
-
 The output of *kfunctions()* is a list with the following values:
 
 -   *plotkA*, a ggplot2 object representing the values of the k-function
@@ -246,19 +235,20 @@ The output of *kfunctions()* is a list with the following values:
 
 Visualising the ggplot2 object of k-function by using the code chunk below.
 
-::: panel-tabset
-## K-Function
+::: panel-tabset \## K-Function
+
 ```{r}
 kfun_childcare$plotk # whether to plot G / K function
 ```
+
 2 possible patterns observed
 
 regular pattern below the envelope - showing signs of regularity - childcare centres near to each other e.g. at 200m apart which is showing the signs of regularity
 
 and complete spatial randomness at the upper portion.
 
-
 ## G-Function
+
 ```{r}
 kfun_childcare$plotg # whether to plot G / K function
 ```
