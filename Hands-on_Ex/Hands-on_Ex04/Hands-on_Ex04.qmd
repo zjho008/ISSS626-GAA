@@ -310,9 +310,23 @@ table(n_comp$comp.id)
 
 Next, we will plot the distance weight matrix by using the code chunk below.
 
+```{r fig.width=8, fig.height=6}
+plot(hunan$geometry, border = "lightgrey")
+plot(wm_d62, coords, add = TRUE)
+plot(k1, coords, add = TRUE, col = "red", length = 0.08)
+```
 
+The red lines show the links of 1st nearest neighbours and the black lines show the links of neighbours within the cut-off distance of 62km.
 
+Alternatively, we can plot both of them next to each other by using the code chunk below.
 
+```{r fig.width=12, fig.height=8}
+par(mfrow = c(1,2))
+plot(hunan$geometry, border = "lightgrey", main = "1st nearest neighbours")
+plot(k1, coords, add = TRUE, col = "red", length = 0.88)
+plot(hunan$geometry, border = "lightgrey", main = "Distance link")
+plot(wm_d62, coords, add = TRUE, pch = 19, cex = 0.6)
+```
 
 
 
