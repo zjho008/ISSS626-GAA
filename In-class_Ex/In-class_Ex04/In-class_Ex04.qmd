@@ -45,7 +45,7 @@ hunan_sf <- st_read(dsn = "data/geospatial",
 ```
 Note CRS is not defined when importing the data and the CRS is WGS84.
 
-## Importign the Hunan_2012 table
+## Importing the Hunan_2012 table
 ```{r}
 hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
 ```
