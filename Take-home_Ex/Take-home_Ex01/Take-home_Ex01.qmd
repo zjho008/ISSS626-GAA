@@ -482,26 +482,6 @@ tm_shape(rdacc_sf_bmr) +
 
 Based on the plot above, some observations can be inferred from the map visual where accidents tend to be more concentrated in the provinces of Bangkok, Samut Prakan and Pathum Thani.
 
-```{r}
-# Plot the hexagon grid based on n_busstops
-tmap_mode("plot")
-busstop_map = tm_shape(odb10_final)+
-  tm_fill(
-    col = "n_busstops",
-    palette = "Blues",
-    style = "cont",
-    title = "Number of Bus Stops",
-    id = "loc_desc",
-    showNA = FALSE,
-    alpha = 0.6,
-    popup.format = list(
-      grid_id = list(format = "f", digits = 0)
-    )
-  )+
-  tm_borders(col = "grey40", lwd = 0.7)
-busstop_map
-```
-
 ### Temporal factors
 
 A series of time factors ranging from years to hours are also shown in relation to accident occurences.
@@ -1058,7 +1038,151 @@ From the test results from each province their R Values are also of very small p
 
 ### 2nd Order Spatial Point Patterns Analysis Methods
 
-The G function measures the distribution of the distances from an arbitrary event to its nearest event. In this section, you will learn how to compute G-function estimation by using [*Gest()*](https://rdrr.io/cran/spatstat/man/Gest.html) of **spatstat** package. You will also learn how to perform monta carlo simulation test using [*envelope()*](https://rdrr.io/cran/spatstat/man/envelope.html) of **spatstat** package.
+#### Analysing Spatial Point Process Using K-Function
+
+From our analysis above, noting that the limitation of nearest neighbour distance method is that it uses only nearest distance;
+
+The L function is an adjusted form of the K function that can be plotted as a straight line under complete spatial randomness (CSR). This makes it easier to detect deviations from randomness, i.e., clustering or dispersion.In practice, K function will be normalised to obtained a benchmark of zero.
+
+Hence, it can be used in helping to intepret how accident densities vary over distance, making it perfect for investigating whether accidents cluster at different scales (e.g., across neighbourhoods or road networks).
+
+For this section, L-function estimates will be computed by using [*Lest()*](https://rdrr.io/cran/spatstat/man/Lest.html) of **spatstat** package. A Monte Carlo simulation test will also be carried out using [*envelope()*](https://rdrr.io/cran/spatstat/man/envelope.html) of **spatstat** package.
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis results will allow further observation confirmation if accidents in the Bangkok Metropolitan Region are Randomly Distributed and if they exhibit Spatial Clustering or Randomness.
+
+The sequence is as follows:
+-  Computing the L-Function estimate
+-  Performing Complete Spatial Randomness Test
+
+::: panel-tabset
+
+## Bangkok
+
+> Computing L-fucntion estimate
+
+```{r}
+L_bk = Lest(bmr_accidents_bk_ppp, correction = "Ripley")
+plot(L_bk, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+> Performing Complete Spatial Randomness Test
+
+```{r}
+L_bk.csr <- envelope(bmr_accidents_bk_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_bk.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+
+## Samut Prakan
+
+> Computing L-fucntion estimate
+
+```{r}
+L_sp = Lest(bmr_accidents_sp_ppp, correction = "Ripley")
+plot(L_sp, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+> Performing Complete Spatial Randomness Test
+
+```{r}
+L_sp.csr <- envelope(bmr_accidents_sp_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_sp.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+## Pathum Thani
+
+> Computing L-fucntion estimate
+
+```{r}
+L_pt = Lest(bmr_accidents_pt_ppp, correction = "Ripley")
+plot(L_pt, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+> Performing Complete Spatial Randomness Test
+
+```{r}
+L_pt.csr <- envelope(bmr_accidents_pt_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_pt.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+## Nakhon Pathom
+
+> Computing L-fucntion estimate
+
+```{r}
+L_np = Lest(bmr_accidents_np_ppp, correction = "Ripley")
+plot(L_np, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+> Performing Complete Spatial Randomness Test
+
+```{r}
+L_np.csr <- envelope(bmr_accidents_np_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_np.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+## Samut Sakhon
+
+> Computing L-fucntion estimate
+
+```{r}
+L_ss = Lest(bmr_accidents_ss_ppp, correction = "Ripley")
+plot(L_ss, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+> Performing Complete Spatial Randomness Test
+
+```{r}
+L_ss.csr <- envelope(bmr_accidents_ss_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_ss.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+## Nonthaburi
+
+> Computing L-fucntion estimate
+
+```{r}
+L_nt = Lest(bmr_accidents_nt_ppp, correction = "Ripley")
+plot(L_nt, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+> Performing Complete Spatial Randomness Test
+
+```{r}
+L_nt.csr <- envelope(bmr_accidents_nt_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_nt.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+:::
 
 ### Spatio-temporal dynamics
 
