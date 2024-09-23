@@ -1,0 +1,15 @@
+---
+title: "In-class Exercise 5: "
+author: "Ho Zi Jun"
+date: "Sep 23, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 4
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: source
+---
+

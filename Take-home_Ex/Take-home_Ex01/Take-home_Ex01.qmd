@@ -57,7 +57,7 @@ In this exercise, seven R packages will be used, they are:
 | [*tmap*](https://cran.r-project.org/web/packages/tmap/index.html)                               | which provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API.                                                                                                                                                                            |
 | [*tidyverse*](https://www.tidyverse.org/)                                                       | a family of modern R packages specially designed to support data science, analysis and communication task including creating static statistical graphs                                                                                                                                                                               |
 | [*spNetwork*](https://cran.r-project.org/web/packages/spNetwork/index.html)                     | Which provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances |
-| [*clock*](https://www.tidyverse.org/blog/2021/03/clock-0-1-0/)                                  | package providing a comprehensive set of tools for working with date-times                                                                                                                                                                                                                                                           |
+| [*spdep*](https://cran.r-project.org/web/packages/sfdep/readme/README.html)                                  | to compute spatial contiguity weights                                                                                                                                                                                                                                                          |
 | [*lubridate*](https://cran.r-project.org/web/packages/graphlayouts/vignettes/graphlayouts.html) | package implements some graph layout algorithms that are not available in `igraph` or other packages                                                                                                                                                                                                                                 |
 
 : R Packages {.striped .hover tbl-colwidths="\[25,75\]"}
@@ -65,8 +65,8 @@ In this exercise, seven R packages will be used, they are:
 The code chunk below is used to setup the R environment
 
 ```{r}
-pacman::p_load(sf, spatstat, raster, tmap,
-               tidyverse, spNetwork, clock, lubridate)
+pacman::p_load(sf, spatstat, raster, tmap,tidyverse,
+               spNetwork, spdep, lubridate, future.apply)
 
 set.seed(1234) # To ensure that random processes in the code produce the same results every time the code is run. 
 ```
@@ -198,6 +198,27 @@ As the road data set provided by OSM is very comprehensive it will increase the 
 
 ```{r}
 unique(road_sf$highway)
+```
+
+The code chunk below is used to filter only the relevant highways based on the classification and selecting other relevant columns that will be used.
+
+```{r}
+road_sf <- road_sf %>%
+    filter(highway %in% c("motorway", "trunk", "primary", "secondary", "tertiary", "unclassified",
+                          "residential", "service", "track", "living_street", "road", "path", "footway")) %>%
+    select(name_en, surface, smoothness, width, lanes, oneway, bridge, layer, osm_id, osm_type, "geometry")
+```
+
+#### Saving the OSM rds file
+
+```{r}
+write_rds(road_sf, "data/rds/road_sf.rds")
+```
+
+To retrieve file
+
+```{r}
+road_sf <- read_rds("data/rds/road_sf.rds")
 ```
 :::
 
@@ -415,7 +436,7 @@ th_bmr_province <- st_intersection(thadm_bmr, road_sf)
 Following the earlier steps, this will be saved as an RDS file in order to improve computational efficiency.
 
 ```{r}
-write_rds(th_bmr_province, "data/rds/th_bmr_province.rds")
+write_rds(th_bmr_province, "data/rds/th_bmr_province.rds") 
 ```
 
 To retrieve file
@@ -1043,6 +1064,11 @@ To confirm the observed spatial patterns above, a hypothesis test will be conduc
 The sequence is as follows:
 -  Computing the L-Function estimate
 -  Performing Complete Spatial Randomness Test
+
+```{r}
+plan(multisession)
+```
+
 
 ::: panel-tabset
 
