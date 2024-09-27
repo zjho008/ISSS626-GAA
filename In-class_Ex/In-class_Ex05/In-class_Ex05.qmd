@@ -1,5 +1,5 @@
 ---
-title: "In-class Exercise 5: "
+title: "In-class Exercise 5: Global and Local Measures of Spatial Autocorrelation"
 author: "Ho Zi Jun"
 date: "Sep 23, 2024"
 date-modified: "last-modified"
@@ -13,3 +13,415 @@ execute:
 editor: source
 ---
 
+## Getting Startted
+
+-   Introducing [**sfdep**](https://sfdep.josiahparry.com/index.html).
+    -   `sfdep` creates a sf and tidyverse friendly interface to the package as well as introducing new functionalities that are not present in spdep.
+    -   sfdep utilizes list columns extensively to make this interface possible
+
+### Installing and Loadign the R Packages
+
+The code chunk below is used to perform the following tasks:
+
+-   creating a package list containing the necessary R packages,
+-   checking if the R packages in the package list have been installed in R,
+    -   if they have yet to be installed, RStudio will installed the missing packages,
+-   launching the packages into R environment.
+
+```{r}
+pacman::p_load(sf, sfdep, spdep, tmap, tidyverse)
+```
+
+## Getting the Data Into R Environment
+
+For the purpose of this in-class exercise, the Hunan data sets will be used. There are two data sets in this use case, they are:
+
+-   Hunan, a geospatial data set in ESRI shapefile format, and
+-   Hunan_2012, an attribute data set in csv format.
+
+### Import shapefile into r environment
+
+The code chunk below uses [`st_read()`](https://r-spatial.github.io/sf/reference/st_read.html) of **sf** package to import Hunan shapefile into R. The imported shapefile will be **simple features** Object of **sf**.
+
+```{r}
+hunan <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+### Import csv file into r environment (Attribute Table)
+
+Next, we will import *Hunan_2012.csv* into R by using [`read_csv()`](https://readr.tidyverse.org/reference/read_delim.html) of **readr** package. The output is R data frame class.
+
+```{r}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+### Combining the data by using left join
+
+The code chunk below will be used to update the attribute table of *hunan*'s SpatialPolygonsDataFrame with the attribute fields of *hunan2012* dataframe. This is performed by using [`left_join()`](https://dplyr.tidyverse.org/reference/mutate-joins.html) of **dplyr** package.
+
+```{r}
+hunan_GDPPC <- left_join(hunan,hunan2012) %>%
+  select(1:4, 7, 15)
+```
+
+::: callout-note
+For this exercise, we only retain columns 1 to 4, column 7 and column 15. It is advisable to examine the output sf data.frame to learn know what are these fields.
+
+In order to retain the geospatial properties, the left data frame must the sf data.frame (i.e. hunan)
+:::
+
+### Visualising by plotting a choropleth map
+
+Now, we are going to prepare a choropleth map showing the distribution of GDPPC 2012 by using `qtm()` of **tmap** package.
+
+::: panel-tabset
+## The plot
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+#| echo: false
+tmap_mode("plot")
+tm_shape(hunan_GDPPC) +
+  tm_fill("GDPPC", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "GDPPC") +
+  tm_layout(main.title = "Distribution of GDP per capita by county, Hunan Province",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha =0.2)
+```
+
+## The code
+
+```{r}
+#| eval: false
+tmap_mode("plot")
+tm_shape(hunan_GDPPC) +
+  tm_fill("GDPPC", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "GDPPC") +
+  tm_layout(main.title = "Distribution of GDP per capita by county, Hunan Province",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha =0.2)
+```
+:::
+
+## Global Measures of Spatial Autocorrelation
+
+### Step 1: Deriving Queens' contigutiy weights: sfdep methods
+
+```{r}
+wm_q <- hunan_GDPPC %>%
+  mutate(nb = st_contiguity(geometry),
+         wt = st_weights(nb,
+                         style = "W"),
+         .before = 1)
+```
+
+### The `wm_q`
+
+```{r}
+wm_q
+```
+
+### Computing local Moran's I
+
+In the code chunk below, [`global_moran()`](https://sfdep.josiahparry.com/reference/global_moran) function is used to compute the Moran's I value. Different from the spdep package, the output is a tibble data.frame.
+
+```{r}
+moranI <- global_moran(wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt)
+glimpse(moranI)
+```
+
+### Performing Global Moran’sI test
+
+Moran's I test will be performed instead of just computing the Moran's I statistics. With sfdep package, Moran's I test can be performed by using [`global_moran_test()`](https://sfdep.josiahparry.com/reference/global_moran_test.html) as shown in the code chunk below.
+
+```{r}
+global_moran_test(wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt)
+```
+
+::: callout-tip
+-   The default for `alternative` argument is "two.sided". Other supported arguments are "greater" or "less". randomization, and
+-   By default the `randomization` argument is **TRUE**. Otherwise if FALSE, under the assumption of normality.
+:::
+
+### Performing Global Moran'I permutation test
+
+In practice, Monte carlo simulation should be used to perform the statistical test. For **sfdep**, it is supported by [`globel_moran_perm()`](https://sfdep.josiahparry.com/reference/global_moran_perm.html)
+
+::: panel-tabset
+## Step 1
+
+It is a good practice to use `set.seed()` before performing simulation. This is to ensure that the computation is reproducible.
+
+```{r}
+set.seed(1234)
+```
+
+## Step 2
+
+Next, `global_moran_perm()` is used to perform Monte Carlo simulation.
+
+```{r}
+global_moran_perm(wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt,
+                  nsim = 99)
+```
+
+## Report
+
+The statistical report on previous tab shows that the p-value (2.2e-16 is the scientific notation of 0.00000000000000022) is smaller than alpha value of 0.05. Hence, we have [enough statistical evidence to reject the null hypothesis]{.underline} that the spatial distribution of GPD per capita resembles a random distribution (i.e. independent from spatial). Because the Moran's I statistics is greater than 0. We can infer that the spatial distribution shows sign of clustering.
+:::
+
+## LISA Map
+
+LISA map is a categorical map showing **outliers** and **clusters**. There are two types of **outliers** namely: High-Low and Low-High outliers. Likewise, there are two types of **clusters** namely: High-High and Low-Low clusters. In fact, LISA map is an interpreted map by combining local Moran's I of geographical areas and their respective p-values.
+
+## Computing local Moran's I
+
+::: panel-tabset
+## The code
+
+The code chunk below demonstrates how to compute Local Moran's I of GDPPC at county level by using `local_moran()` of sfdep package
+
+```{r}
+lisa <- wm_q %>%
+  mutate(local_moran = local_moran(
+    GDPPC, nb, wt, nsim = 99), # 100 simulations
+          .before = 1) %>%
+  unnest(local_moran)
+```
+
+## The output
+
+The output of `local_moran()` is a sf data.frame containing the columns ii, eii, var_ii, z_ii, p_ii, p_ii_sim, and p_folded_sim.
+
+-   ii: local moran statistic
+-   eii: expectation of local moran statistic; for localmoran_permthe permutation sample means
+-   var_ii: variance of local moran statistic; for localmoran_permthe permutation sample standard deviations
+-   z_ii: standard deviate of local moran statistic; for localmoran_perm based on permutation sample means and standard deviations p_ii: p-value of local moran statistic using pnorm(); for localmoran_perm using standard deviatse based on permutation sample means and standard deviations p_ii_sim: For `localmoran_perm()`, `rank()` and `punif()` of observed statistic rank for \[0, 1\] p-values using `alternative=` -p_folded_sim: the simulation folded \[0, 0.5\] range ranked p-value (based on https://github.com/pysal/esda/blob/4a63e0b5df1e754b17b5f1205b cadcbecc5e061/esda/crand.py#L211-L213)
+-   skewness: For `localmoran_perm`, the output of e1071::skewness() for the permutation samples underlying the standard deviates
+-   kurtosis: For `localmoran_perm`, the output of e1071::kurtosis() for the permutation samples underlying the standard deviates.
+:::
+
+## Visualising p-value of local Moran's I
+
+In this code chunk below, tmap functions are used prepare a choropleth map by using value in the *ii* field.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+tmap_mode("plot")
+tm_shape(lisa) +
+  tm_fill("p_ii_sim") + 
+  tm_borders(alpha = 0.5) +
+   tm_layout(main.title = "p-value of local Moran's I",
+            main.title.size = 2)
+```
+
+## Visualising local Moran's I
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+tmap_mode("plot")
+  tm_shape(lisa) +
+    tm_fill("ii") +
+    tm_borders(alpha = 0.5) +
+    tm_view(set.zoom.limits = c(6,8)) +
+    tm_layout(
+      main.title = "local Moran's I of GDPPC",
+      main.title.size = 2)
+```
+
+### Comparison - local Moran’s I and p-value
+
+```{r}
+#| echo: false
+#| fig-height: 8
+#| fig-width: 8
+tmap_mode("plot")
+map1 <- tm_shape(lisa) +
+  tm_fill("p_ii",
+          breaks = c(0, 0.001, 0.01, 0.05, 1),
+              labels = c("0.001", "0.01", "0.05", "Not sig")) + 
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title = "p-value of local Moran's I",
+            main.title.size = 0.8)
+
+map2 <- tm_shape(lisa) +
+  tm_fill("ii") + 
+  tm_borders(alpha = 0.5) +
+  tm_view(set.zoom.limits = c(6,8)) +
+  tm_layout(main.title = "local Moran's I of GDPPC",
+            main.title.size = 0.8)
+  
+tmap_arrange(map1, map2, ncol = 2)  
+```
+
+## Plotting LISA Map
+
+```{r}
+lisa_sig <- lisa %>%
+  filter(p_ii_sim < 0.05)
+tmap_mode("plot")
+tm_shape(lisa) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(lisa_sig) +
+  tm_fill("mean") +
+  tm_borders(alpha = 0.4)
+
+```
+
+LISA map is a categorical map showing outliers and clusters. there are two types of outliers namely: High-Low and Low-High outliers. Likewise, there are two types of clusters namely: High-High and Low-Low clusters. In fact, LISA map is an interpreted map by combining local Moran's I of geographical areas and their respective p-values. For instance isolating those below p-value of 0.05.
+
+## Hot Spot and Cold Spot Area Analysis (HCSA)
+
+::: columns
+HCSA uses spatial weights to identify locations of statistically significant hot spots and cold spots in an spatially weighted attribute that are in proximity to one another based on a calculated distance. The analysis groups features when similar high (hot) or low (cold) values are found in a cluster. The polygon features usually represent administration boundaries or a custom grid structure.
+
+![](images/HCSA.png)
+:::
+
+## Computing local Gi\* statistics
+
+we will need to derive a spatial weight matrix before we can compute local Gi\* statistics. The code chunk below will be used to derive a spatial weight matrix by using sfdep functions and tidyverse approach.
+
+```{r}
+wm_idw <- hunan_GDPPC %>%
+  mutate(nb = include_self(
+    st_contiguity(geometry)),
+    wts = st_inverse_distance(nb,
+                              geometry,
+                              scale = 1,
+                              alpha = 1),
+          .before = 1)
+```
+
+### Computing the local Gi\* statistics by using the code chunk below:
+
+```{r}
+HCSA <- wm_idw %>%
+  mutate(local_Gi = local_gstar_perm(
+    GDPPC, nb, wts, nsim = 99),
+          .before = 1) %>%
+  unnest(local_Gi)
+HCSA
+```
+
+## Visualising Gi\*
+
+```{r}
+#| fig-width: 8
+#| fig-height: 10
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.5) +
+  tm_view(set.zoom.limits = c(6,8))
+```
+## Visualising p-value of HCSA
+
+```{r}
+#| fig-width: 8
+#| fig-height: 10
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_fill("p_sim") + 
+  tm_borders(alpha = 0.5)
+```
+
+### Visuaising local HCSA
+
+For effective comparison, both maps can be plotted next to each other as shown below.
+
+
+```{r}
+#| echo: false
+#| fig-height: 7
+#| code-fold: true
+tmap_mode("plot")
+map1 <- tm_shape(HCSA) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.5) +
+  tm_view(set.zoom.limits = c(6,8)) +
+  tm_layout(main.title = "Gi* of GDPPC",
+            main.title.size = 0.8)
+
+map2 <- tm_shape(HCSA) +
+  tm_fill("p_value",
+          breaks = c(0, 0.001, 0.01, 0.05, 1),
+              labels = c("0.001", "0.01", "0.05", "Not sig")) + 
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title = "p-value of Gi*",
+            main.title.size = 0.8)
+
+tmap_arrange(map1, map2, ncol = 2)
+```
+
+## Emerging hotspot
+
+Plotting the significant (i.e. **p-values less than 0.05**) hot spot and cold spot areas by using appropriate tmap functions as shown below.
+
+::: pane-tabset
+## The plot
+
+```{r}
+#| echo: false
+#| fig-height: 10
+#| fig-width: 7
+HCSA_sig <- HCSA  %>%
+  filter(p_sim < 0.05)
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(HCSA_sig) +
+  tm_fill("cluster") + 
+  tm_borders(alpha = 0.4)
+```
+
+## The code
+
+```{r}
+#| eval: false
+#| fig-height: 10
+#| fig-width: 7
+HCSA_sig <- HCSA  %>%
+  filter(p_sim < 0.05)
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(HCSA_sig) +
+  tm_fill("cluster") + 
+  tm_borders(alpha = 0.4)
+```
+## Observations
+
+The plot reveals that there is one hot spot area and two cold spot areas. Interestingly, the hot spot areas coincide with the High-high cluster identifies by using local Moran's I method in the earlier sub-section.
+:::

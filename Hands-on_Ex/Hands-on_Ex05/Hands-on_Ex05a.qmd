@@ -1,0 +1,26 @@
+---
+title: "Hands-on Exercise 5a: Spatial Weights and Applications"
+author: "Ho Zi Jun"
+date: "Sep 20, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 5
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: source
+---
+
+## Overview
+
+In this hands-on exercise, you will learn how to compute Global Measures of Spatial Autocorrelation (GMSA) by using **spdep** package. By the end to this hands-on exercise, you will be able to:
+
+-   import geospatial data using appropriate function(s) of **sf** package,
+-   import csv file using appropriate function of **readr** package,
+-   perform relational join using appropriate join function of **dplyr** package,
+-   compute Global Spatial Autocorrelation (GSA) statistics by using appropriate functions of **spdep** package,
+    -   plot Moran scatterplot,
+    -   compute and plot spatial correlogram using appropriate function of **spdep** package.
+-   provide statistically correct interpretation of GSA statistics.

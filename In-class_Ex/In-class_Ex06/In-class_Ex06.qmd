@@ -1,0 +1,16 @@
+---
+title: "In-class Exercise 6"
+author: "Ho Zi Jun"
+date: "Sep 30, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 5
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: source
+---
+
+## Getting Startted

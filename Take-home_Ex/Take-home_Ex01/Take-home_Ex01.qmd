@@ -1077,11 +1077,7 @@ plan(multisession)
 > Computing L-function estimate
 
 ```{r}
-L_bk = Lest(bmr_accidents_bk_ppp, correction = "Ripley")
-plot(L_bk, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
+ 
 
 > Performing Complete Spatial Randomness Test
 
