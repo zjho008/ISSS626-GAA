@@ -2,7 +2,7 @@
 title: "ISSS626-Geospatial Analytics and Applications Homepage"
 about:
   template: jolla
-  image-width: 35em
+  image-width: 40em
   image-shape: rectangle
   image: 'images/GAA_AI_GEN.jpg'
   links:
