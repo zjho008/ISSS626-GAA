@@ -66,7 +66,7 @@ The code chunk below is used to setup the R environment
 
 ```{r}
 pacman::p_load(sf, spatstat, raster, tmap,tidyverse,
-               spNetwork, spdep, lubridate, future.apply)
+               spNetwork, spdep, lubridate)
 
 set.seed(1234) # To ensure that random processes in the code produce the same results every time the code is run. 
 ```
@@ -205,8 +205,8 @@ The code chunk below is used to filter only the relevant highways based on the c
 ```{r}
 road_sf <- road_sf %>%
     filter(highway %in% c("motorway", "trunk", "primary", "secondary", "tertiary", "unclassified",
-                          "residential", "service", "track", "living_street", "road", "path", "footway")) %>%
-    select(name_en, surface, smoothness, width, lanes, oneway, bridge, layer, osm_id, osm_type, "geometry")
+                          "residential", "service")) %>%
+    select(highway, osm_id, osm_type, geometry)
 ```
 
 #### Saving the OSM rds file
@@ -283,7 +283,7 @@ thadm <- st_transform(thadm, crs = 32647)
 thadm2 <- st_transform(thadm2, crs = 32647)
 ```
 
-Checks
+Doing checks to ensure the following steps have been carried out correctly.
 
 ```{r}
 st_crs(thadm)
@@ -320,6 +320,9 @@ Alternatively, we can also choose the plot the sf object by using a specific att
 ```{r}
 plot(thadm["ADM1_EN"])
 ```
+`plot()` function is utilised again to visualise the features but consisting the districts
+
+::: panel-tabset
 
 ```{r fig.width=12, fig.height=8}
 plot(st_geometry(thadm2))
@@ -328,6 +331,7 @@ plot(st_geometry(thadm2))
 ```{r}
 plot(thadm2["ADM2_EN"])
 ```
+:::
 
 ```{r fig.width=15, fig.height=10}
 tm_shape(thadm)+
@@ -472,7 +476,7 @@ The barplot while not classified under as a spatial EDA kick-starts the EDA proc
 ```{r fig.width=10, fig.height=6}
 ggplot(rdacc_sf_bmr, aes(x = province_en)) +
   geom_bar(fill = "salmon", color = "black", bins = 20) +
-  geom_text(stat = "count", aes(label = ..count..), vjust = -0.5) +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5) +
   labs(title = "Count of Accidents by Province within BMR",
        x = "Province",
        y = "Count of Accidents")
@@ -820,6 +824,8 @@ kde_bmr_accidents_bw_raster
 ```
 
 ```{r}
+#| fig-width: 10
+#| fig-height: 8
 tm_shape(kde_bmr_accidents_bw_raster) + 
   tm_raster("layer", palette = "viridis") +
   tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
@@ -1046,162 +1052,3 @@ clarkevans.test(bmr_accidents_nt_ppp,
 :::
 
 From the test results from each province their R Values are also of very small p-value, this further helps in the analysis that we reject the null hypothesis (Ho) at the 95% confidence level. The hypothesis that the distribution of accident spots in the provinces are also not randomly distributed; instead, the accidents are significantly clustered in certain areas.
-
-### 2nd Order Spatial Point Patterns Analysis Methods
-
-#### Analysing Spatial Point Process Using K-Function
-
-From our analysis above, noting that the limitation of nearest neighbour distance method is that it uses only nearest distance;
-
-The L function is an adjusted form of the K function that can be plotted as a straight line under complete spatial randomness (CSR). This makes it easier to detect deviations from randomness, i.e., clustering or dispersion.In practice, K function will be normalised to obtained a benchmark of zero.
-
-Hence, it can be used in helping to intepret how accident densities vary over distance, making it perfect for investigating whether accidents cluster at different scales (e.g., across neighbourhoods or road networks).
-
-For this section, L-function estimates will be computed by using [*Lest()*](https://rdrr.io/cran/spatstat/man/Lest.html) of **spatstat** package. A Monte Carlo simulation test will also be carried out using [*envelope()*](https://rdrr.io/cran/spatstat/man/envelope.html) of **spatstat** package.
-
-To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis results will allow further observation confirmation if accidents in the Bangkok Metropolitan Region are Randomly Distributed and if they exhibit Spatial Clustering or Randomness.
-
-The sequence is as follows:
--  Computing the L-Function estimate
--  Performing Complete Spatial Randomness Test
-
-```{r}
-plan(multisession)
-```
-
-
-::: panel-tabset
-
-## Bangkok
-
-> Computing L-function estimate
-
-```{r}
- 
-
-> Performing Complete Spatial Randomness Test
-
-```{r}
-L_bk.csr <- envelope(bmr_accidents_bk_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_bk.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-
-## Samut Prakan
-
-> Computing L-function estimate
-
-```{r}
-L_sp = Lest(bmr_accidents_sp_ppp, correction = "Ripley")
-plot(L_sp, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-> Performing Complete Spatial Randomness Test
-
-```{r}
-L_sp.csr <- envelope(bmr_accidents_sp_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_sp.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-## Pathum Thani
-
-> Computing L-function estimate
-
-```{r}
-L_pt = Lest(bmr_accidents_pt_ppp, correction = "Ripley")
-plot(L_pt, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-> Performing Complete Spatial Randomness Test
-
-```{r}
-L_pt.csr <- envelope(bmr_accidents_pt_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_pt.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-## Nakhon Pathom
-
-> Computing L-function estimate
-
-```{r}
-L_np = Lest(bmr_accidents_np_ppp, correction = "Ripley")
-plot(L_np, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-> Performing Complete Spatial Randomness Test
-
-```{r}
-L_np.csr <- envelope(bmr_accidents_np_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_np.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-## Samut Sakhon
-
-> Computing L-function estimate
-
-```{r}
-L_ss = Lest(bmr_accidents_ss_ppp, correction = "Ripley")
-plot(L_ss, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-> Performing Complete Spatial Randomness Test
-
-```{r}
-L_ss.csr <- envelope(bmr_accidents_ss_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_ss.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-## Nonthaburi
-
-> Computing L-function estimate
-
-```{r}
-L_nt = Lest(bmr_accidents_nt_ppp, correction = "Ripley")
-plot(L_nt, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-> Performing Complete Spatial Randomness Test
-
-```{r}
-L_nt.csr <- envelope(bmr_accidents_nt_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_nt.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-:::
-
-### Spatio-temporal dynamics
-
-## Analysis Results
-
-### Results of Spatial Analysis of Accidents on the Thailand’s Road Network
-
-### Results of Identifying Accident Black Spots on Thailand's National Highways
-
-## Evaluation

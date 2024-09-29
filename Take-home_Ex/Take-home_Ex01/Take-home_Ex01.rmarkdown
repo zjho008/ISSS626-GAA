@@ -14,6 +14,7 @@ editor: source
 ---
 
 
+
 # Overview: Case study on factors affecting road traffic accidents in the Bangkok Metropolitan Region (BMR)
 
 According to the [*World Health Organization (WHO)*](https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries), road traffic accidents claim the lives of around 1.19 million people annually and leave 20 to 50 million others with non-fatal injuries. Vulnerable road users, such as pedestrians, cyclists, and motorcyclists, account for more than half of these fatalities.
@@ -58,7 +59,7 @@ In this exercise, seven R packages will be used, they are:
 | [*tmap*](https://cran.r-project.org/web/packages/tmap/index.html)                               | which provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API.                                                                                                                                                                            |
 | [*tidyverse*](https://www.tidyverse.org/)                                                       | a family of modern R packages specially designed to support data science, analysis and communication task including creating static statistical graphs                                                                                                                                                                               |
 | [*spNetwork*](https://cran.r-project.org/web/packages/spNetwork/index.html)                     | Which provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances |
-| [*clock*](https://www.tidyverse.org/blog/2021/03/clock-0-1-0/)                                  | package providing a comprehensive set of tools for working with date-times                                                                                                                                                                                                                                                           |
+| [*spdep*](https://cran.r-project.org/web/packages/sfdep/readme/README.html)                                  | to compute spatial contiguity weights                                                                                                                                                                                                                                                          |
 | [*lubridate*](https://cran.r-project.org/web/packages/graphlayouts/vignettes/graphlayouts.html) | package implements some graph layout algorithms that are not available in `igraph` or other packages                                                                                                                                                                                                                                 |
 
 : R Packages {.striped .hover tbl-colwidths="\[25,75\]"}
@@ -66,12 +67,14 @@ In this exercise, seven R packages will be used, they are:
 The code chunk below is used to setup the R environment
 
 
+
 ```{r}
-pacman::p_load(sf, spatstat, raster, tmap,
-               tidyverse, spNetwork, clock, lubridate)
+pacman::p_load(sf, spatstat, raster, tmap,tidyverse,
+               spNetwork, spdep, lubridate)
 
 set.seed(1234) # To ensure that random processes in the code produce the same results every time the code is run. 
 ```
+
 
 
 ## Preparing the datasets
@@ -83,9 +86,11 @@ This project will focus on the [**Bangkok Metropolitan Region**](https://en.wiki
 The code chunk below will be used to facilitate the extraction of the BMR for the datasets to avoid unnecessary provinces to be read and putting a strain on computing resources.
 
 
+
 ```{r}
 bmr_provinces <- c("Bangkok", "Samut Prakan", "Pathum Thani", "Nakhon Pathom", "Samut Sakhon", "Nonthaburi")
 ```
+
 
 
 ### Importing the Aspatial data
@@ -93,9 +98,11 @@ bmr_provinces <- c("Bangkok", "Samut Prakan", "Pathum Thani", "Nakhon Pathom", "
 The `thai_road_accident_2019_2022` data set is csv file format, [*read_csv()*](https://readr.tidyverse.org/reference/read_delim.html) of the **readr** package will be used to import `thai_road_accident_2019_2022.csv` as shown from the code chunk below. The output R Object is called `rdacc` as is a tibble data frame.
 
 
+
 ```{r}
 rdacc <- read_csv("data/rawdata/thai_road_accident_2019_2022.csv")
 ```
+
 
 
 Upon some initial observation of the data set, it is observed that there are missing / NA values in the latitude & longitude columns which will have to be removed as it will not be suitable to do any spatial analysis on this observations. Following which there is also an incident_datetime column spanning from years 2019 to 2022 which will be utilised to identify the date and time occurrences of accidents. As such that column will be transformed for the date and time to be used for analysis.
@@ -103,6 +110,7 @@ Upon some initial observation of the data set, it is observed that there are mis
 Additionally to further set the scene [(timings typically from 7 – 9 AM and 4 – 7 PM on weekdays while considering weekends to be peak throughout)](https://www.elevenbangkok.com/getting-around-bangkok) will also be as pre-determined for Bangkok's rush hours otherwise known as peak hours traffic.
 
 The code chunk below also converts `rdacc` data frame into a simple feature data frame by using [*st_as_sf()*](https://r-spatial.github.io/sf/reference/st_as_sf.html) of **sf** packages.
+
 
 
 ```{r}
@@ -123,7 +131,9 @@ rdacc_sf <- rdacc %>%
 ```
 
 
+
 #### Selecting the BMR provinces
+
 
 
 ```{r}
@@ -132,7 +142,9 @@ rdacc_sf_bmr <- rdacc_sf %>%
 ```
 
 
+
 The simple feature data frame is saved into a physical file for usage. By doing so the need to repeat the steps above is not needed when running the quarto document.
+
 
 
 ```{r}
@@ -140,7 +152,9 @@ write_rds(rdacc_sf_bmr, "data/rds/rdacc_sf_bmr.rds")
 ```
 
 
+
 **To retrieve file**
+
 
 
 ```{r}
@@ -148,12 +162,15 @@ rdacc_sf_bmr <- read_rds("data/rds/rdacc_sf_bmr.rds")
 ```
 
 
+
 #### Using `st_geometry()`
+
 
 
 ```{r}
 st_geometry(rdacc_sf_bmr)
 ```
+
 
 
 ### Importing Geospatial data
@@ -164,10 +181,12 @@ st_geometry(rdacc_sf_bmr)
 This dataset is in `shp` format and the code chunk below is used to read the file into the R environment.
 
 
+
 ```{r}
 road_sf <- st_read(dsn = "data/rawdata", 
                    layer = "hotosm_tha_roads_lines_shp")
 ```
+
 
 
 ## Assigning EPSG code and projection transformation
@@ -175,12 +194,15 @@ road_sf <- st_read(dsn = "data/rawdata",
 Upon importing the OSM Export, it is observed from the results that the CRS field shows NA. Hence, we will set the CRS to WGS84 with the default EPSG code of 4326 using `st_set_crs()` of **sf** package.
 
 
+
 ```{r}
 road_sf <- st_set_crs(road_sf, 4326)
 ```
 
 
+
 Now, to check the CSR again by using the code chunk below.
+
 
 
 ```{r}
@@ -188,7 +210,9 @@ st_crs(road_sf)
 ```
 
 
+
 Following which, we can utilise `st_transform()` of **sf** package to re-project `road_sf` from one coordinate system to another coordinate system mathematically.
+
 
 
 ```{r}
@@ -197,9 +221,11 @@ road_sf <- st_transform(road_sf,
 ```
 
 
+
 ## Viewing the `road_sf` data frame
 
 Next, let us display the content of `road_sf` sf data frame as shown in the code chunk below using `st_geometry()` and `glimpse()` functions.
+
 
 
 ```{r}
@@ -211,9 +237,11 @@ glimpse(road_sf)
 ```
 
 
+
 ## Final Check
 
 To check the CSR again by using the code chunk below.
+
 
 
 ```{r}
@@ -221,14 +249,50 @@ st_crs(road_sf)
 ```
 
 
+
 ## Selecting the relevant highway classifications
 
 As the road data set provided by OSM is very comprehensive it will increase the computation times a lot and some of the classes might not be useful for analysis. Hence, we will explore what are the classes included and selecting those relevant ones based on the [Highway Classification](https://wiki.openstreetmap.org/wiki/WikiProject_Thailand#Highway_classification).
 
 
+
 ```{r}
 unique(road_sf$highway)
 ```
+
+
+
+The code chunk below is used to filter only the relevant highways based on the classification and selecting other relevant columns that will be used.
+
+
+
+```{r}
+road_sf <- road_sf %>%
+    filter(highway %in% c("motorway", "trunk", "primary", "secondary", "tertiary", "unclassified",
+                          "residential", "service")) %>%
+    select(highway, osm_id, osm_type, geometry)
+```
+
+
+
+#### Saving the OSM rds file
+
+
+
+```{r}
+write_rds(road_sf, "data/rds/road_sf.rds")
+```
+
+
+
+To retrieve file
+
+
+
+```{r}
+road_sf <- read_rds("data/rds/road_sf.rds")
+```
+
 
 :::
 
@@ -244,13 +308,16 @@ It is also relevant to note from the HDX website the levels stated in the datase
 [![Thailand - Subnational Administrative Boundaries](images/notethaadm.png)](https://data.humdata.org/dataset/cod-ab-tha?)
 
 
+
 ```{r}
 thadm <- st_read(dsn = "data/rawdata", 
                  layer = "tha_admbnda_adm1_rtsd_20220121")
 ```
 
 
+
 The message above reveals that the geospatial objects are multipolygon features. There are a total of 77 multipolygon feature representing the different provinces in Thailand and 16 fields in thadm (Thailand Administrative) simple feature data frame. `thadm` is in WGS84 Geodetic coordinates system. The bounding box provides the x extend and y extend of the data.
+
 
 
 ```{r}
@@ -259,9 +326,11 @@ thadm2 <- st_read(dsn = "data/rawdata",
 ```
 
 
+
 ## Working with `st_geometry()`
 
 The column in the sf data.frame that contains the geometries is a list, of class sfc. We can retrieve the geometry list-column in this case by thadm\$geometry, but the more generic way uses st_geometry() as shown in the code chunk below.
+
 
 
 ```{r}
@@ -269,12 +338,15 @@ st_geometry(thadm)
 ```
 
 
+
 Notice that the print only displays basic information of the feature class such as type of geometry, the geographic extent of the features and the coordinate system of the data.
+
 
 
 ```{r}
 st_geometry(thadm2)
 ```
+
 
 
 ## Working with projection
@@ -284,12 +356,15 @@ One of the common issue that can happen during importing geospatial data into R 
 This is an example the coordinate system of mpsz simple feature data frame by using st_crs() of sf package as shown in the code chunk below.
 
 
+
 ```{r}
 st_crs(thadm)
 ```
 
 
+
 Although thadm data frame is projected in WGS84 but when we read until the end of the print, it indicates that the EPSG is 4326. This is a wrong EPSG code because the correct EPSG code for Thailand should be [32647](https://epsg.io/32647).
+
 
 
 ```{r}
@@ -305,7 +380,9 @@ thadm2 <- st_transform(thadm2, crs = 32647)
 ```
 
 
-Checks
+
+Doing checks to ensure the following steps have been carried out correctly.
+
 
 
 ```{r}
@@ -317,9 +394,11 @@ st_crs(thadm2)
 ```
 
 
+
 ## Working with `glimpse()`
 
 Besides the basic feature information, we also would like to learn more about the associated attribute information in the data frame. This is the time `glimpse()` of dplyr comes in handy as shown in the code chunk below.
+
 
 
 ```{r}
@@ -327,7 +406,9 @@ glimpse(thadm)
 ```
 
 
+
 `glimpse()` report reveals the data type of each fields. For example `date` field is in **date** data type, `Shape_Leng` and `Shape_Area` fields are all in **double-precision values**.
+
 
 
 ```{r}
@@ -335,9 +416,11 @@ glimpse(thadm2)
 ```
 
 
+
 ## Plotting the Geospatial Data
 
 In geospatial data science, by looking at the feature information is not enough. We are also interested to visualise the geospatial features. This is the time `plot()` of R Graphic comes in very handy as shown in the code chunk below.
+
 
 
 ```{r fig.width=12, fig.height=8}
@@ -345,12 +428,21 @@ plot(st_geometry(thadm))
 ```
 
 
+
 Alternatively, we can also choose the plot the sf object by using a specific attribute as shown in the code chunk below.
+
 
 
 ```{r}
 plot(thadm["ADM1_EN"])
 ```
+
+
+`plot()` function is utilised again to visualise the features but consisting the districts
+
+::: panel-tabset
+
+
 
 ```{r fig.width=12, fig.height=8}
 plot(st_geometry(thadm2))
@@ -359,6 +451,11 @@ plot(st_geometry(thadm2))
 ```{r}
 plot(thadm2["ADM2_EN"])
 ```
+
+
+:::
+
+
 
 ```{r fig.width=15, fig.height=10}
 tm_shape(thadm)+
@@ -377,6 +474,7 @@ tm_shape(thadm)+
   tmap_options(max.categories = 77)
 ```
 
+
 :::
 
 ## Data Wrangling
@@ -384,6 +482,7 @@ tm_shape(thadm)+
 ### Defining Study Area of Data
 
 `bmr_provinces` will be used in confining the geospatial data to the study area,we will utilise the code chunk below.
+
 
 
 ```{r}
@@ -433,9 +532,11 @@ tm_shape(thadm2_bmr)+
 ```
 
 
+
 The simple feature data frame is saved into a physical file for usage. By doing so the need to repeat the steps above is not needed.
 
 #### Saving the Province level rds file
+
 
 
 ```{r}
@@ -443,7 +544,9 @@ write_rds(thadm_bmr, "data/rds/thadm_bmr.rds")
 ```
 
 
+
 To retrieve file
+
 
 
 ```{r}
@@ -451,7 +554,9 @@ thadm_bmr <- read_rds("data/rds/thadm_bmr.rds")
 ```
 
 
+
 #### Saving the District level rds file
+
 
 
 ```{r}
@@ -459,7 +564,9 @@ write_rds(thadm2_bmr, "data/rds/thadm2_bmr.rds")
 ```
 
 
+
 To retrieve file
+
 
 
 ```{r}
@@ -467,9 +574,11 @@ thadm2_bmr <- read_rds("data/rds/thadm2_bmr.rds")
 ```
 
 
+
 ## Deriving the intersection of BMR on the province level
 
 In this step, the code chunk uses `st_intersection()` at the province level and saved as an RDS file.
+
 
 
 ```{r}
@@ -477,15 +586,19 @@ th_bmr_province <- st_intersection(thadm_bmr, road_sf)
 ```
 
 
+
 Following the earlier steps, this will be saved as an RDS file in order to improve computational efficiency.
 
 
+
 ```{r}
-write_rds(th_bmr_province, "data/rds/th_bmr_province.rds")
+write_rds(th_bmr_province, "data/rds/th_bmr_province.rds") 
 ```
 
 
+
 To retrieve file
+
 
 
 ```{r}
@@ -493,7 +606,9 @@ th_bmr_province <- read_rds("data/rds/th_bmr_province.rds")
 ```
 
 
+
 In this following step, `st_intersection()` function is applied at the district level and saved as an RDS file.
+
 
 
 ```{r}
@@ -505,12 +620,15 @@ write_rds(th_bmr_network,"data/rds/th_bmr_network.rds")
 ```
 
 
+
 To retrieve file
+
 
 
 ```{r}
 th_bmr_network <- read_rds("data/rds/th_bmr_network.rds")
 ```
+
 
 
 ## Exploratory Data Analysis (EDA)
@@ -522,14 +640,16 @@ We will proceed to do some initial visualisation of the data to get a better sen
 The barplot while not classified under as a spatial EDA kick-starts the EDA process.
 
 
+
 ```{r fig.width=10, fig.height=6}
 ggplot(rdacc_sf_bmr, aes(x = province_en)) +
   geom_bar(fill = "salmon", color = "black", bins = 20) +
-  geom_text(stat = "count", aes(label = ..count..), vjust = -0.5) +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5) +
   labs(title = "Count of Accidents by Province within BMR",
        x = "Province",
        y = "Count of Accidents")
 ```
+
 
 
 From the barplot it can be observed that out of the 6 provinces in the BMR, Bangkok has the highest count of accidents followed by Samut Prakan and Pathum Thani.
@@ -541,6 +661,7 @@ The elements of tmap are utilised in the code chunk below to plat a cartographic
 Making use of the `view mode` it presents details for each accident point in the BMR, stating the `presumed_cause`, `accident_type`, weather and road conditions as well as shown in a snippet below.
 
 [Snapshot of an accident point](images/snippet1.png)
+
 
 
 ```{r fig.width=10, fig.height=8}
@@ -557,6 +678,7 @@ tm_shape(rdacc_sf_bmr) +
 ```
 
 
+
 Based on the plot above, some observations can be inferred from the map visual where accidents tend to be more concentrated in the provinces of Bangkok, Samut Prakan and Pathum Thani.
 
 ### Temporal factors
@@ -567,6 +689,7 @@ A series of time factors ranging from years to hours are also shown in relation 
 #### Years
 
 
+
 ```{r}
 ggplot(rdacc_sf_bmr, aes(x = Year)) +
   geom_bar(fill = "blue", color = "black") +
@@ -574,9 +697,11 @@ ggplot(rdacc_sf_bmr, aes(x = Year)) +
 ```
 
 
+
 Based on the year observations the accidents seem relatively even with the exception of year 2022 surpassing a 3500 accident count.
 
 #### Months
+
 
 
 ```{r}
@@ -584,6 +709,7 @@ ggplot(rdacc_sf_bmr, aes(x = Month_fac)) +
   geom_bar(fill = "blue", color = "black") +
  labs(x = "Month", y = "Count", title = "Barplot of Accidents in BMR across Months")
 ```
+
 
 
 For a month period, we can observe that the Months of January, April, October and December stand out amongst the rest of the months. A simple explanation could be:
@@ -598,6 +724,7 @@ Note that this are some assumptions based on occurring events/festivals that occ
 #### Days
 
 
+
 ```{r}
 ggplot(rdacc_sf_bmr, aes(x = Dayofweek)) +
   geom_bar(fill = "blue", color = "black") +
@@ -605,7 +732,9 @@ ggplot(rdacc_sf_bmr, aes(x = Dayofweek)) +
 ```
 
 
+
 #### Hours
+
 
 
 ```{r}
@@ -613,6 +742,7 @@ ggplot(rdacc_sf_bmr, aes(x = Hour_of_day)) +
   geom_bar(fill = "blue", color = "black") +
  labs(x = "Hour of Day", y = "Count", title = "Barplot of Accidents in BMR across 24 hours")
 ```
+
 
 
 Higher occurence of accidents occuring during the following hours:
@@ -633,13 +763,16 @@ Moving to geospatial analysis, the packages require the input geospatial data in
 The code chunk below uses as_Spatial() of **sf** package to convert the geospatial data from simple feature data frame to sp's Spatial class.
 
 
+
 ```{r}
 bmr_accidents <- as_Spatial(rdacc_sf_bmr)
 bmr <- as_Spatial(thadm_bmr)
 ```
 
 
+
 Displaying the information of the Spatial\* classes as shown in the code chunk below.
+
 
 
 ```{r}
@@ -651,7 +784,9 @@ bmr
 ```
 
 
+
 #### Converting Spatial class into generic sp format
+
 
 
 ```{r}
@@ -661,7 +796,9 @@ bmr_sp <- as(bmr, "SpatialPolygons")
 ```
 
 
+
 Displaying the sp objects properties as shown below.
+
 
 
 ```{r}
@@ -673,9 +810,11 @@ bmr_sp
 ```
 
 
+
 #### Converting the generic sp format into spatstat’s ppp format
 
 Next, as.ppp() function of **spatstat** will be used to convert the spatial data into spatstat’s ppp object format.
+
 
 
 ```{r}
@@ -689,7 +828,9 @@ plot(bmr_accidents_ppp)
 ```
 
 
+
 Using the `summary()` function allows a preview of the summary statistics of the newly created ppp object.
+
 
 
 ```{r}
@@ -697,9 +838,11 @@ summary(bmr_accidents_ppp)
 ```
 
 
+
 ##### Handling duplicated points
 
 Before any further evaluation, the ***ppp*** object will be checked for duplicates using the code chunk below.
+
 
 
 ```{r}
@@ -707,9 +850,11 @@ any(duplicated(bmr_accidents_ppp))
 ```
 
 
+
 Upon running the code chunk it gives a result of FALSE indicating no duplicated observations.
 
 To count the number of co-incidence points, the multiplicity() function will be used as shown in the code chunk below.
+
 
 
 ```{r}
@@ -717,7 +862,9 @@ multiplicity(bmr_accidents_ppp)
 ```
 
 
+
 Following which to know how many locations have more than one point event, the code chunk below can be used.
+
 
 
 ```{r}
@@ -725,22 +872,25 @@ sum(multiplicity(bmr_accidents_ppp) > 1)
 ```
 
 
+
 The output shows that there 0 duplicated point events.
 
 The code chunk below is used to view the point events and plot the `rdacc_sf_bmr` data with the code chunk below.
 
 
+
 ```{r}
-tmap_mode("view")
+tmap_mode("plot")
 tm_shape(rdacc_sf_bmr) +
   tm_dots(alpha = 0.5,
           size = 0.05)
-tmap_mode("plot")
 ```
 
 
 
+
 Additionally, the code chunk below is used to plot a map to show spatial patterns of the accidents.
+
 
 
 ```{r}
@@ -754,11 +904,13 @@ tm_shape(rdacc_sf_bmr)+
 
 
 
+
 ### Creating *owin* object
 
 In the next step of spatial point patterns analysis, is to confine the analysis with a geographical area (etc. like Singapore boundary) and in the case for this exercise the BMR. In spatstat, an object called owin is specially designed to help represent this polygonal region.
 
 The code chunk below is used to covert `bmr_sp` SpatialPolygon object into owin object of spatstat and subsequently the plot with a summary() function of Base R.
+
 
 
 ```{r}
@@ -774,11 +926,13 @@ summary(bmr_owin)
 ```
 
 
+
 ### Combining point events object and ***owin*** object
 
 In the final stage of geospatial data wrangling, we will extract the accident events that are located within the BMR by using the code chunk below.
 
 The output object combines both the point and polygon features in one ppp object class as shown below.
+
 
 
 ```{r}
@@ -790,12 +944,15 @@ summary(bmr_accidents_ppp)
 ```
 
 
+
 The newly derived `bmr_accidents_ppp` is plotted below.
+
 
 
 ```{r}
 plot(bmr_accidents_ppp)
 ```
+
 
 
 ### 1st Order Spatial Point Patterns analysis (SPPA)
@@ -812,6 +969,7 @@ The computation of kernel density estimation (KDE) of accident spots in BMR. The
 :::
 
 
+
 ```{r}
 kde_bmr_accidents_bw <- density(bmr_accidents_ppp,
                                 sigma = bw.diggle,
@@ -821,9 +979,11 @@ plot(kde_bmr_accidents_bw)
 ```
 
 
+
 From the plot, we can observe that the output range from 0 to 0.00015 which are too small to comprehend. This due to the unit of measurement in metres, implying that the density values computed is in the unit of "number of points per square meter". 
 
 Code chunk below retrieves the bandwidth used to compute the kde layer.
+
 
 
 ```{r}
@@ -831,9 +991,11 @@ bw <- bw.diggle(bmr_accidents_ppp)
 bw
 ```
 
+
 #### Rescaling of KDE Values
 
 The `rescale.ppp()` function of the spatstat package is then used to convert the unit of measurement from metres to kilometres.
+
 
 
 ```{r}
@@ -841,7 +1003,9 @@ bmr_accidents_ppp.km <- rescale.ppp(bmr_accidents_ppp, 1000, "km")
 ```
 
 
+
 Upon rescaling, the `density()` can be re-run with the rescaled data and plotting the output again.
+
 
 
 ```{r}
@@ -851,6 +1015,7 @@ kde_bmr_accidents.bw <- density(bmr_accidents_ppp.km,
                                 kernel = "gaussian")
 plot(kde_bmr_accidents.bw)
 ```
+
 
 ::: callout-note
 Notice that the output plot is identical to the earlier version, the only changes are the data values in the legend.
@@ -865,6 +1030,7 @@ In this section, the KDE layer will be computed with a bandwidth of 1000 metres.
 > In the code chunk below, the sigma value used is 1 as the unit of measurement for **bmr_accidents_ppp.km** is in kilometres. (e.g. 1000m = 1km)
 
 
+
 ```{r}
 kde_bmr_accidents_1 <- density(bmr_accidents_ppp.km,
                                sigma=1,
@@ -872,6 +1038,7 @@ kde_bmr_accidents_1 <- density(bmr_accidents_ppp.km,
                                kernel="gaussian")
 plot(kde_bmr_accidents_1)
 ```
+
 
 
 ::: callout-tip
@@ -888,6 +1055,7 @@ With how the plot seems to show concentrated accident hotspots, due to how a fix
 One way to overcome this problem is by using adaptive bandwidth instead. In this section, adaptive kernel density estimation will be derived by using `density.adaptive() `of **spatstat**.
 
 
+
 ```{r}
 kde_bmr_accidents_adaptive <- adaptive.density(bmr_accidents_ppp.km,
                                                method="kernel")
@@ -897,7 +1065,9 @@ plot(kde_bmr_accidents_adaptive)
 ```
 
 
+
 Comparing the fixed and adaptive kernel density estimation outputs by using the code chunk below:
+
 
 
 ```{r fig.width=16, fig.height=6}
@@ -906,9 +1076,11 @@ plot(kde_bmr_accidents.bw, main = "Fixed bandwidth")
 plot(kde_bmr_accidents_adaptive, main = "Adaptive bandwidth")
 ```
 
+
 #### Converting of output into raster
 
 Next, the gridded kernel density objects will be converted into RasterLayer object by using `raster()` of **raster** package.
+
 
 
 ```{r}
@@ -917,11 +1089,13 @@ kde_bmr_accidents_bw_raster <- raster(kde_bmr_accidents.bw)
 kde_bmr_accidents_bw_raster # Checking the properties of the RasterLayer
 ```
 
+
 From the results, the CRS property is stated as NA.
 
 #### Assigning projection systems
 
 Code chunk below will be used to include the CRS information on kde_bmr_accidents_bw_raster RasterLayer.
+
 
 
 ```{r}
@@ -930,6 +1104,8 @@ kde_bmr_accidents_bw_raster
 ```
 
 ```{r}
+#| fig-width: 10
+#| fig-height: 8
 tm_shape(kde_bmr_accidents_bw_raster) + 
   tm_raster("layer", palette = "viridis") +
   tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
@@ -981,9 +1157,11 @@ plot(nt, main = "Nonthaburi")
 ```
 
 
+
 #### Creating ***owin*** object
 
 Similarly, now we will convert these sf objects into owin objects that is required by spatstat.
+
 
 
 ```{r}
@@ -996,7 +1174,9 @@ nt_owin = as.owin(nt)
 ```
 
 
+
 #### Combining accident points and the study area of BMR
+
 
 
 ```{r}
@@ -1009,7 +1189,9 @@ bmr_accidents_nt_ppp = bmr_accidents_ppp[nt_owin]
 ```
 
 
+
 Following which, rescale.ppp() function is used to transform the unit of measurement from metres to kilometres similar to what was done in the section above.
+
 
 
 ```{r}
@@ -1022,7 +1204,9 @@ bmr_accidents_nt_ppp.km = rescale.ppp(bmr_accidents_nt_ppp, 1000, "km")
 ```
 
 
+
 The code chunk below is used to plot these six study areas (provinces) within the BMR and the location of incidents of the road accidents.
+
 
 
 ```{r fig.width=16, fig.height=10}
@@ -1036,7 +1220,9 @@ plot(bmr_accidents_nt_ppp.km, main="Nonthaburi")
 ```
 
 
+
 #### Computing KDE of the study areas
+
 
 
 ```{r}
@@ -1074,6 +1260,7 @@ plot(density(bmr_accidents_nt_ppp.km,
 ```
 
 
+
 #### Nearest Neighbour Analysis
 
 In this section, the Clark-Evans test of aggregation for a spatial point patternv will be performed by using `clarkevans.test()` of **statspat**.
@@ -1087,6 +1274,7 @@ H1= The distribution of accident spots in BMR are not randomly distributed.
 A 95% confidence interval will be used.
 
 
+
 ```{r}
 clarkevans.test(bmr_accidents_ppp,
                 correction="none",
@@ -1094,6 +1282,7 @@ clarkevans.test(bmr_accidents_ppp,
                 alternative=c("clustered"),
                 nsim=99)
 ```
+
 
 ::: callout-note
 ## Conclusions from the test result
@@ -1109,6 +1298,7 @@ This suggests that accident spots in BMR are more likely to be found around othe
 ## Bangkok
 
 
+
 ```{r}
 clarkevans.test(bmr_accidents_bk_ppp,
                 correction="none",
@@ -1118,7 +1308,9 @@ clarkevans.test(bmr_accidents_bk_ppp,
 ```
 
 
+
 ## Samut Prakan
+
 
 
 ```{r}
@@ -1130,7 +1322,9 @@ clarkevans.test(bmr_accidents_sp_ppp,
 ```
 
 
+
 ## Pathum Thani
+
 
 
 ```{r}
@@ -1142,7 +1336,9 @@ clarkevans.test(bmr_accidents_pt_ppp,
 ```
 
 
+
 ## Nakhon Pathom
+
 
 
 ```{r}
@@ -1154,7 +1350,9 @@ clarkevans.test(bmr_accidents_np_ppp,
 ```
 
 
+
 ## Samut Sakhon
+
 
 
 ```{r}
@@ -1166,7 +1364,9 @@ clarkevans.test(bmr_accidents_ss_ppp,
 ```
 
 
+
 ## Nonthaburi
+
 
 
 ```{r}
@@ -1177,189 +1377,7 @@ clarkevans.test(bmr_accidents_nt_ppp,
                 nsim=99)
 ```
 
+
 :::
 
 From the test results from each province their R Values are also of very small p-value, this further helps in the analysis that we reject the null hypothesis (Ho) at the 95% confidence level. The hypothesis that the distribution of accident spots in the provinces are also not randomly distributed; instead, the accidents are significantly clustered in certain areas.
-
-### 2nd Order Spatial Point Patterns Analysis Methods
-
-#### Analysing Spatial Point Process Using K-Function
-
-From our analysis above, noting that the limitation of nearest neighbour distance method is that it uses only nearest distance;
-
-The L function is an adjusted form of the K function that can be plotted as a straight line under complete spatial randomness (CSR). This makes it easier to detect deviations from randomness, i.e., clustering or dispersion.In practice, K function will be normalised to obtained a benchmark of zero.
-
-Hence, it can be used in helping to intepret how accident densities vary over distance, making it perfect for investigating whether accidents cluster at different scales (e.g., across neighbourhoods or road networks).
-
-For this section, L-function estimates will be computed by using [*Lest()*](https://rdrr.io/cran/spatstat/man/Lest.html) of **spatstat** package. A Monte Carlo simulation test will also be carried out using [*envelope()*](https://rdrr.io/cran/spatstat/man/envelope.html) of **spatstat** package.
-
-To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis results will allow further observation confirmation if accidents in the Bangkok Metropolitan Region are Randomly Distributed and if they exhibit Spatial Clustering or Randomness.
-
-The sequence is as follows:
--  Computing the L-Function estimate
--  Performing Complete Spatial Randomness Test
-
-::: panel-tabset
-
-## Bangkok
-
-> Computing L-fucntion estimate
-
-
-```{r}
-L_bk = Lest(bmr_accidents_bk_ppp, correction = "Ripley")
-plot(L_bk, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-
-> Performing Complete Spatial Randomness Test
-
-
-```{r}
-L_bk.csr <- envelope(bmr_accidents_bk_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_bk.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-
-
-## Samut Prakan
-
-> Computing L-fucntion estimate
-
-
-```{r}
-L_sp = Lest(bmr_accidents_sp_ppp, correction = "Ripley")
-plot(L_sp, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-
-> Performing Complete Spatial Randomness Test
-
-
-```{r}
-L_sp.csr <- envelope(bmr_accidents_sp_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_sp.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-
-## Pathum Thani
-
-> Computing L-fucntion estimate
-
-
-```{r}
-L_pt = Lest(bmr_accidents_pt_ppp, correction = "Ripley")
-plot(L_pt, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-
-> Performing Complete Spatial Randomness Test
-
-
-```{r}
-L_pt.csr <- envelope(bmr_accidents_pt_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_pt.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-
-## Nakhon Pathom
-
-> Computing L-fucntion estimate
-
-
-```{r}
-L_np = Lest(bmr_accidents_np_ppp, correction = "Ripley")
-plot(L_np, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-
-> Performing Complete Spatial Randomness Test
-
-
-```{r}
-L_np.csr <- envelope(bmr_accidents_np_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_np.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-
-## Samut Sakhon
-
-> Computing L-fucntion estimate
-
-
-```{r}
-L_ss = Lest(bmr_accidents_ss_ppp, correction = "Ripley")
-plot(L_ss, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-
-> Performing Complete Spatial Randomness Test
-
-
-```{r}
-L_ss.csr <- envelope(bmr_accidents_ss_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_ss.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-
-## Nonthaburi
-
-> Computing L-fucntion estimate
-
-
-```{r}
-L_nt = Lest(bmr_accidents_nt_ppp, correction = "Ripley")
-plot(L_nt, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)",
-     xlim=c(0,1000))
-```
-
-
-> Performing Complete Spatial Randomness Test
-
-
-```{r}
-L_nt.csr <- envelope(bmr_accidents_nt_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
-```
-
-```{r}
-plot(L_nt.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
-```
-
-:::
-
-### Spatio-temporal dynamics
-
-## Analysis Results
-
-### Results of Spatial Analysis of Accidents on the Thailand’s Road Network
-
-### Results of Identifying Accident Black Spots on Thailand's National Highways
-
-## Evaluation
-
