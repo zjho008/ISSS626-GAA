@@ -13,4 +13,262 @@ execute:
 editor: source
 ---
 
-## Getting Startted
+# Overview
+
+Emerging Hot Spot Analysis (EHSA) is a spatio-temporal analysis method for revealing and describing how hot spot and cold spot areas evolve over time. The analysis consist of four main steps:
+
+-   Building the space-time cube ,
+-   Usind data to perform Getis-Ord local Gi\* statistic for each bin by using an FDR correction,
+-   Evaluating hot and cold spot trends by using Mann-Kendall trend test,
+-   Categorising each study area location based on the z-score and p-value for each location with data, and with the hot spot z-score and p-value for each bin. Sieving away those that do not conform to the significance level.
+
+
+# Getting started
+
+## Installing and Loading the R Packages
+
+```{r}
+pacman::p_load(sf, sfdep, tmap, plotly, tidyverse)
+```
+
+## The Data
+
+-   Hunan, a geospatial data set in ESRI shapefile format, and
+-   Hunan_GDPPC, an attribute data set in csv format.
+
+## Importing geospatial data
+
+In the code chunk below, `st_read()` of **sf** package is used to import *Hunan* shapefile into R.
+
+```{r}
+hunan <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+## Importing attribute table
+
+In the code chunk below, `read_csv()` of **readr** is used to import *Hunan_GDPPC.csv* into R.
+
+```{r}
+GDPPC <- read_csv("data/aspatial/Hunan_GDPPC.csv")
+```
+
+# Creating a Time Series Cube
+
+[spacetime and spacetime cubes](https://sfdep.josiahparry.com/articles/spacetime-s3.html) illustrates the basic concept of spatio-temporal cube and its implementation in sfdep package.
+
+Spacetime cube is useful for fixed administrative boundary, planning area, planing subzone etc but not applicable for dynamic space events such as forest areas, flooding for instance.
+
+In the code chunk below, [`spacetime()`](https://sfdep.josiahparry.com/reference/spacetime.html) of sfdep is used to create a spatio-temporal cube.
+
+
+```{r}
+GDPPC_st <- spacetime(GDPPC, hunan,  # two data files: spatial and attribute
+                      .loc_col = "County", # indicating which field is spatial
+                      .time_col = "Year") # indicating which field is the attribute
+```
+
+::: callout-note
+Original time/date field cannot be used as it is in continuous form
+Hence, date has to be converted to integer or to drop away the time to have a continuous Day/Month/Year indicators.
+:::
+
+Next, `is_spacetime_cube()` of sfdep package which will be used to verify if GDPPC_st is indeed a space-time cube object.
+
+
+```{r}
+is_spacetime_cube(GDPPC_st)
+```
+
+The **TRUE** return confirms that *GDPPC_st* object is indeed an time-space cube.
+
+## Computing Gi\*
+
+In this section we will compute the local Gi\* statistics.
+
+```{r}
+GDPPC_nb <- GDPPC_st %>%
+  activate("geometry") %>% # to use the geometric layer and exclude the attributes; this line is needed before computing the weight matrix
+  
+  mutate(nb = include_self(st_contiguity(geometry)), # include_self function 
+    
+# parsing tp calculate the spatial weight - using mutate to attain the two columns 
+         wt = st_inverse_distance(nb, geometry,
+                                  scale = 1, 
+                                  alpha = 1), # extra parameters to emphasise distance decay
+         .before = 1) %>%
+  set_nbs("nb") %>% # for the data to be arranged in time-sequence
+  set_wts("wt")
+```
+> Sorting should not be done after time-space cube is calculated
+
+Note that this dataset now has neighbours and weights for each time-slice.
+
+Using `head()` function
+
+```{r}
+head(GDPPC_nb)
+```
+
+## Computing Gi\*
+
+Now to utilise th new columns to manually calculate the local Gi\* for each location. We can do this by grouping by *Year* and using `local_gstar_perm()` of sfdep package. 
+
+After which, we `use unnest()` to unnest *gi_star* column of the newly created *gi_starts* data.frame.
+
+```{r}
+gi_stars <- GDPPC_nb %>% 
+  group_by(Year) %>% 
+  mutate(gi_star = local_gstar_perm(
+    GDPPC, nb, wt)) %>% 
+  tidyr::unnest(gi_star)
+```
+
+# Mann-Kendall Test
+
+To perform confirmatory analysis whether there is a monotonic (meaning there is no trend) or no monotonic trend
+
+With  Gi\* measures calculated the next step is to evaluate each location for a trend using the Mann-Kendall test. The code chunk below uses the Changsha county.
+
+```{r}
+cbg <- gi_stars %>% 
+  ungroup() %>% # since it is a 'cube' to filter away the other county
+  filter(County == "Changsha") |> 
+  select(County, Year, gi_star)
+```
+
+Plotting the result by using ggplot2 functions.
+
+```{r}
+ggplot(data = cbg, 
+       aes(x = Year, 
+           y = gi_star)) +
+  geom_line() +
+  theme_light()
+```
+
+From the plot, we can are unable to interpret much as it is static.
+
+## Interacitve Mann-Kendall Plot
+
+Creating an interactive plot by using `ggplotly()` of **plotly** package.
+
+```{r}
+p <- ggplot(data = cbg, 
+       aes(x = Year, 
+           y = gi_star)) +
+  geom_line() +
+  theme_light()
+
+ggplotly(p)
+```
+
+For such a test it is advisable to have at least 10 years of data.
+
+### Mann-Kendall Test
+
+Reject the null-hypothesis null if the p-value is smaller than the alpha value (i.e. 1-confidence level)
+
+### Printing Mann-Kendall Test Report
+
+Kendall package is a special package to run this calculation
+
+```{r}
+cbg %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>% 
+  tidyr::unnest_wider(mk)  # to generate the report
+```
+In the above result, sl is the p-value. This result tells us that there is a slight upward but insignificant trend.
+
+To attain the p-values for some of which are closer or further away from one.
+
+strong close to 1
+
+## Mann-Kendall test data.frame
+
+We can replicate this for each location by using `group_by()` of dplyr package.
+
+```{r}
+ehsa <- gi_stars %>%
+  group_by(County) %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>%
+  tidyr::unnest_wider(mk)
+```
+
+```{r}
+head(ehsa)
+```
+
+### Mann-Kendall test data.frame
+
+We can also sort to show significant emerging hot/cold spots
+
+```{r}
+emerging <- ehsa %>% 
+  arrange(sl, abs(tau)) %>% 
+  slice(1:10)
+head(emerging)
+```
+
+## Performing Emerging Hotspot Analysis (To confirm on the classification )
+
+Lastly, we will perform EHSA analysis by using [`emerging_hotspot_analysis()`](https://sfdep.josiahparry.com/reference/emerging_hotspot_analysis.html) of sfdep package. 
+
+It takes a spacetime object x (i.e. GDPPC_st), and the quoted name of the variable of interest (i.e. GDPPC) for .var argument. The k argument is used to specify the number of time lags which is set to 1 by default. Lastly, nsim map numbers of simulation to be performed.
+
+```{r}
+ehsa <- emerging_hotspot_analysis(
+  x = GDPPC_st, 
+  .var = "GDPPC", 
+  k = 1, 
+  nsim = 99 #no of simulations is 100
+)
+```
+
+### Visualising the distribution of EHSA classes
+
+In the code chunk below, ggplot2 functions are used to reveal the distribution of EHSA classes using a bar chart.
+
+```{r}
+#| fig-width: 10
+ggplot(data = ehsa,
+       aes(x = classification)) +
+  geom_bar()
+
+```
+
+The bar chart above shows that sporadic cold spots class has the highest number of counties.
+
+> Note that the p-value is calculated here and some of them are not statistically significant despite the representation of the bar chart.
+
+### Visualising EHSA
+
+In this section, it illustrates how to visualise the geographic distribution EHSA classes. However, before we can do so, we need to join both *hunan* and *ehsa* together by using the code chunk below.
+
+```{r}
+hunan_ehsa <- hunan %>%
+  left_join(ehsa,
+            by = join_by(County == location))
+
+```
+
+tmap functions are used to plot a categorical choropleth map by using the code chunk below:
+
+```{r}
+#| code-fold: true
+#| fig-width: 8
+ehsa_sig <- hunan_ehsa  %>%
+  filter(p_value < 0.05)
+tmap_mode("plot")
+tm_shape(hunan_ehsa) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(ehsa_sig) +
+  tm_fill("classification") + 
+  tm_borders(alpha = 0.4)
+```
+We can backtrack to `cbg` whether it is an oscillating hotspot and compare with the chart.
