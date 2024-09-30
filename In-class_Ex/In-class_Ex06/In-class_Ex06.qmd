@@ -23,9 +23,9 @@ Emerging Hot Spot Analysis (EHSA) is a spatio-temporal analysis method for revea
 -   Categorising each study area location based on the z-score and p-value for each location with data, and with the hot spot z-score and p-value for each bin. Sieving away those that do not conform to the significance level.
 
 
-# Getting started
+## Getting started
 
-## Installing and Loading the R Packages
+### Installing and Loading the R Packages
 
 ```{r}
 pacman::p_load(sf, sfdep, tmap, plotly, tidyverse)
@@ -53,7 +53,7 @@ In the code chunk below, `read_csv()` of **readr** is used to import *Hunan_GDPP
 GDPPC <- read_csv("data/aspatial/Hunan_GDPPC.csv")
 ```
 
-# Creating a Time Series Cube
+## Creating a Time Series Cube
 
 [spacetime and spacetime cubes](https://sfdep.josiahparry.com/articles/spacetime-s3.html) illustrates the basic concept of spatio-temporal cube and its implementation in sfdep package.
 
@@ -124,7 +124,7 @@ gi_stars <- GDPPC_nb %>%
   tidyr::unnest(gi_star)
 ```
 
-# Mann-Kendall Test
+## Mann-Kendall Test
 
 To perform confirmatory analysis whether there is a monotonic (meaning there is no trend) or no monotonic trend
 
@@ -149,7 +149,7 @@ ggplot(data = cbg,
 
 From the plot, we can are unable to interpret much as it is static.
 
-## Interacitve Mann-Kendall Plot
+### Interacitve Mann-Kendall Plot
 
 Creating an interactive plot by using `ggplotly()` of **plotly** package.
 
@@ -186,7 +186,7 @@ To attain the p-values for some of which are closer or further away from one.
 
 strong close to 1
 
-## Mann-Kendall test data.frame
+### Mann-Kendall test data.frame
 
 We can replicate this for each location by using `group_by()` of dplyr package.
 

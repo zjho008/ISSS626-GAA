@@ -1,0 +1,104 @@
+---
+title: "Take-home Exercise 2: Geospatial Analytics in Thailand Tourism Sector (Pre, During, Post COVID-19)"
+author: "Ho Zi Jun"
+date: "Sep 30, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 1
+execute:
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+editor: source
+---
+
+# Overview: Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics
+
+## Getting Started
+
+### Installing and Loading the R Packages
+
+The following R packages will be launched into the R environment using the following code chunk below.
+
+The R packages needed for this exercise are as follows:
+
+1.  Spatial data handling
+    -   **sf**, **rgdal**, **spdep** and **sfdep**
+2.  Attribute data handling
+    -   **tidyverse**, especially **readr**, **ggplot2** and **dplyr**
+3.  Choropleth mapping
+    -   **tmap**
+4.  Multivariate data visualisation and analysis
+    -   **coorplot**, **ggpubr**, and **heatmaply**
+5.  Cluster analysis
+    -   **cluster**
+    -   **ClustGeo**
+
+
+```{r}
+pacman::p_load(sf, spdep, sfdep, tmap, tidyverse, ClustGeo,
+               cluster, factoextra, NbClust, heatmaply,
+               corrplot, psych, GGally, ggpubr, plotly)
+```
+
+
+### The Data
+
+For this exercise, two data sets will be utilised. They are:
+
+-  [Thailand Domestic Tourism Statistics](https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics) at Kaggle.
+-  [Thailand - Subnational Administrative Boundaries](https://data.humdata.org/dataset/cod-ab-tha?) at HDX. the province boundary data set is used for this exercise.
+
+#### Loading the Attribute Data
+
+There are 2 versions of this dataset `thailand_domestic_tourism_2019_2023.csv` & `thailand_domestic_tourism_2019_2023_ver2.csv`. Version 2 will be used for this exercise.
+
+```{r}
+thdt <- read_csv("data/aspatial/thailand_domestic_tourism_2019_2023_ver2.csv")
+```
+
+#### Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)
+
+The code chunk below is used to import the Subnational Administrative Boundaries of Thailand. Level 1 will be used as it represents the province boundary as seen in the HDX website. 
+
+![](images/level1.png)
+
+```{r}
+thadmin <- st_read(dsn = "data/geospatial", 
+                 layer = "tha_admbnda_adm1_rtsd_20220121")
+```
+
+
+## Personal Notes (to be removed)
+
+Data covers several years and have several attributes
+
+geospatial data - is in high res - has small multiple islands - have to note the small islands - probably remove or have it in one of the territory 
+
+pre , during , post covid (three temporal terms)
+changes in revenue and other measures to be investigated. 
+
+Uneven spatial distributions
+
+If key indicators (multiple indicators to look out for) are independent from - space, space & time (cross sectional - pre, etc during post covid)
+
+
+If it is indeed spatial and spatial temporal dependent 
+
+cluster - outliers - hotspots - local moran I to detect cluster and outlier 
+G* statistics to discover hot and cold spots. 
+
+Emerging hotspots - have to be continuous - for 3 years, 4 years, months etc. 
+Note for this data set what is the constraint to see the data continuously.
+
+sfdep - advantages - 
+
+spacetime cube - created by sfdep
+
+
+points below the teen birth rate is about LISA
+
+have to recode the date
+ 
+Refer to hands on ex - hunan case - maybe the GPD - 

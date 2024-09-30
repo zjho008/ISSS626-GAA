@@ -13,6 +13,8 @@ execute:
 editor: source
 ---
 
+# Overview: Global and Local Measures of Spatial Autocorrelation
+
 ## Getting Startted
 
 -   Introducing [**sfdep**](https://sfdep.josiahparry.com/index.html).
