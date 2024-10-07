@@ -165,6 +165,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html">
  <span class="dropdown-text">Hands-on Exercise 6: Geographical Segmentation with Spatially Constrained Clustering Techniques</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html">
+ <span class="dropdown-text">Hands-on Exercise 7: Geographically Weighted Regression</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -195,6 +199,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex06/In-class_Ex06.html">
  <span class="dropdown-text">In-class Exercise 6</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex07/In-class_Ex07.html">
+ <span class="dropdown-text">In-class Exercise 7</span></a>
   </li>  
     </ul>
   </li>
@@ -239,18 +247,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#overview-discovering-impacts-of-covid-19-on-thailand-tourism-economy-at-the-province-level-using-spatial-and-spatio-temporal-statistics" id="toc-overview-discovering-impacts-of-covid-19-on-thailand-tourism-economy-at-the-province-level-using-spatial-and-spatio-temporal-statistics" class="nav-link active" data-scroll-target="#overview-discovering-impacts-of-covid-19-on-thailand-tourism-economy-at-the-province-level-using-spatial-and-spatio-temporal-statistics"><span class="header-section-number">2</span> Overview: Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics</a>
+  <li><a href="#overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics" id="toc-overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics" class="nav-link active" data-scroll-target="#overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics"><span class="header-section-number">2</span> Overview: Discovering the impacts of COVID-19 on Thailand’s tourism economy using spatial and spatio-temporal statistics</a>
   <ul>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">2.1</span> Getting Started</a>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task"><span class="header-section-number">2.1</span> The Task</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">2.2</span> Getting Started</a>
   <ul class="collapse">
-  <li><a href="#installing-and-loading-the-r-packages" id="toc-installing-and-loading-the-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-the-r-packages"><span class="header-section-number">2.1.1</span> Installing and Loading the R Packages</a></li>
-  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">2.1.2</span> The Data</a>
+  <li><a href="#installing-and-loading-the-r-packages" id="toc-installing-and-loading-the-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-the-r-packages"><span class="header-section-number">2.2.1</span> Installing and Loading the R Packages</a></li>
+  </ul></li>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">2.3</span> The Data</a>
   <ul class="collapse">
-  <li><a href="#loading-the-attribute-data" id="toc-loading-the-attribute-data" class="nav-link" data-scroll-target="#loading-the-attribute-data"><span class="header-section-number">2.1.2.1</span> Loading the Attribute Data</a></li>
-  <li><a href="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries" id="toc-loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="nav-link" data-scroll-target="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.1.2.2</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</a></li>
+  <li><a href="#loading-the-attribute-data" id="toc-loading-the-attribute-data" class="nav-link" data-scroll-target="#loading-the-attribute-data"><span class="header-section-number">2.3.1</span> Loading the Attribute Data</a>
+  <ul class="collapse">
+  <li><a href="#data-dictionary" id="toc-data-dictionary" class="nav-link" data-scroll-target="#data-dictionary"><span class="header-section-number">2.3.1.1</span> Data Dictionary</a></li>
+  </ul></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">2.3.2</span> Data Preparation</a>
+  <ul class="collapse">
+  <li><a href="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries" id="toc-loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="nav-link" data-scroll-target="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.3.2.1</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#personal-notes-to-be-removed" id="toc-personal-notes-to-be-removed" class="nav-link" data-scroll-target="#personal-notes-to-be-removed"><span class="header-section-number">2.2</span> Personal Notes (to be removed)</a></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda"><span class="header-section-number">2.4</span> Exploratory Data Analysis (EDA)</a></li>
+  <li><a href="#personal-notes-to-be-removed" id="toc-personal-notes-to-be-removed" class="nav-link" data-scroll-target="#personal-notes-to-be-removed"><span class="header-section-number">2.5</span> Personal Notes (to be removed)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -284,7 +300,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 30, 2024</p>
+      <p class="date-modified">October 7, 2024</p>
     </div>
   </div>
     
@@ -295,12 +311,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="overview-discovering-impacts-of-covid-19-on-thailand-tourism-economy-at-the-province-level-using-spatial-and-spatio-temporal-statistics" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Overview: Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics</h1>
-<section id="getting-started" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">2.1</span> Getting Started</h2>
-<section id="installing-and-loading-the-r-packages" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="installing-and-loading-the-r-packages"><span class="header-section-number">2.1.1</span> Installing and Loading the R Packages</h3>
+<section id="overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Overview: Discovering the impacts of COVID-19 on Thailand’s tourism economy using spatial and spatio-temporal statistics</h1>
+<p>Tourism plays a significant role in Thailand’s economy, contributing about 20% to the country’s GDP. In 2019, Thailand generated 90 billion USD from both domestic and international tourism, but the COVID-19 pandemic led to a drastic drop in revenues to 24 billion USD by 2020.</p>
+<p>The figure below illustrates the total revenue from the tourism sector from January 2019 to February 2023, highlighting a gradual recovery in tourism revenue starting in September 2021.</p>
+<p><img src="images/th_ex2_img1.png" class="img-fluid"></p>
+<section id="the-task" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="the-task"><span class="header-section-number">2.1</span> The Task</h2>
+<p>As an eager geospatial analytics novice, the aim is to explore the following:</p>
+<ul>
+<li>Whether the key indicators of Thailand’s tourism economy are independent of spatial and spatio-temporal factors.</li>
+<li>If dependencies exist, aim to identify the clusters, outliers, and emerging hot or cold spots within the tourism economy.</li>
+</ul>
+<p>The specific tasks for this exercise are:</p>
+<ul>
+<li>Using appropriate sf and tidyverse functions, prepare the following geospatial data layers:
+<ul>
+<li>A study area layer in sf polygon format, covering <a href="https://en.wikipedia.org/wiki/Provinces_of_Thailand">provinces in Thailand</a>, including Bangkok.</li>
+<li>A tourism economy indicators layer for the study area in sf polygon format.</li>
+<li>A derived tourism economy indicator layer in the <a href="https://sfdep.josiahparry.com/articles/spacetime-s3">spatio-temporal s3 class of sfdep</a>, with a monthly and yearly time series.</li>
+</ul></li>
+<li>Using the extracted data, conduct the following analyses using sfdep methods:
+<ul>
+<li>Global spatial autocorrelation analysis.</li>
+<li>Local spatial autocorrelation analysis.</li>
+<li>Emerging hotspot analysis.</li>
+</ul></li>
+<li>Describe the spatial patterns identified through these analyses.</li>
+</ul>
+</section>
+<section id="getting-started" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">2.2</span> Getting Started</h2>
+<section id="installing-and-loading-the-r-packages" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="installing-and-loading-the-r-packages"><span class="header-section-number">2.2.1</span> Installing and Loading the R Packages</h3>
 <p>The following R packages will be launched into the R environment using the following code chunk below.</p>
 <p>The R packages needed for this exercise are as follows:</p>
 <ol type="1">
@@ -332,27 +375,168 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               corrplot, psych, GGally, ggpubr, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="the-data" class="level3" data-number="2.1.2">
-<h3 data-number="2.1.2" class="anchored" data-anchor-id="the-data"><span class="header-section-number">2.1.2</span> The Data</h3>
+</section>
+<section id="the-data" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="the-data"><span class="header-section-number">2.3</span> The Data</h2>
 <p>For this exercise, two data sets will be utilised. They are:</p>
 <ul>
 <li><a href="https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics">Thailand Domestic Tourism Statistics</a> at Kaggle.</li>
 <li><a href="https://data.humdata.org/dataset/cod-ab-tha?">Thailand - Subnational Administrative Boundaries</a> at HDX. the province boundary data set is used for this exercise.</li>
 </ul>
-<section id="loading-the-attribute-data" class="level4" data-number="2.1.2.1">
-<h4 data-number="2.1.2.1" class="anchored" data-anchor-id="loading-the-attribute-data"><span class="header-section-number">2.1.2.1</span> Loading the Attribute Data</h4>
-<p>There are 2 versions of this dataset <code>thailand_domestic_tourism_2019_2023.csv</code> &amp; <code>thailand_domestic_tourism_2019_2023_ver2.csv</code>. Version 2 will be used for this exercise.</p>
+<section id="loading-the-attribute-data" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="loading-the-attribute-data"><span class="header-section-number">2.3.1</span> Loading the Attribute Data</h3>
+<p>There are 2 versions of this dataset <code>thailand_domestic_tourism_2019_2023.csv</code> &amp; <code>thailand_domestic_tourism_2019_2023_ver2.csv</code>. Version 2 will be used for this exercise. The csv file will be imported using <code>read_csv</code> function of <strong>readr</strong> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>thdt <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/thailand_domestic_tourism_2019_2023_ver2.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><code>glimpse()</code> is used to have a brief overview of the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(thdt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 30,800
+Columns: 7
+$ date          &lt;chr&gt; "1 01 2019", "1 01 2019", "1 01 2019", "1 01 2019", "1 0…
+$ province_thai &lt;chr&gt; "กรุงเทพมหานคร", "ลพบุรี", "พระนครศรีอยุธยา", "สระบุรี", "ชัยนาท…
+$ province_eng  &lt;chr&gt; "Bangkok", "Lopburi", "Phra Nakhon Si Ayutthaya", "Sarab…
+$ region_thai   &lt;chr&gt; "ภาคกลาง", "ภาคกลาง", "ภาคกลาง", "ภาคกลาง", "ภาคกลาง", "…
+$ region_eng    &lt;chr&gt; "central", "central", "central", "central", "central", "…
+$ variable      &lt;chr&gt; "ratio_tourist_stay", "ratio_tourist_stay", "ratio_touri…
+$ value         &lt;dbl&gt; 93.37, 61.32, 73.37, 67.33, 79.31, 71.70, 64.65, 71.21, …</code></pre>
+</div>
+</div>
+<section id="data-dictionary" class="level4" data-number="2.3.1.1">
+<h4 data-number="2.3.1.1" class="anchored" data-anchor-id="data-dictionary"><span class="header-section-number">2.3.1.1</span> Data Dictionary</h4>
+<p>This dataset contains statistics on domestic tourism in Thailand from Jan 2019 to Feb 2023, broken down by province. The dataset includes information on the number of <code>tourists</code>, the <code>occupancy rate</code>, and the <code>profits generated by tourism</code> in each <code>province</code>, as well as the <code>nationality of the tourists</code> (Thai vs.&nbsp;foreign).</p>
+<p>Sourced from raw data provided by the <a href="https://www.mots.go.th/news/category/411">Official Ministry of Tourism and Sports Statistics</a>, which was manually entered into Excel files.</p>
+<p>The author has pre-processed the data using Python with the intention of making it more accessible in the appropriate format which has the potential to provide valuable insights into the domestic tourism industry in Thailand, including trends and patterns across different provinces over time. Researchers, analysts, and policy-makers with an interest in the domestic tourism sector in Thailand may find this dataset useful for their work. Source: (<a href="https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics/data">Thailand Domestic Tourism Statistics by Thaweewat R</a>)</p>
+<p>The description for some of the variables have been re-phrased for a more accurate alignment of understanding in line with the variables.</p>
+<table class="table-striped table-hover caption-top table">
+<caption>R Packages</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 75%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><em>date</em></td>
+<td style="text-align: left;">The month and year in which the statistics were recorded. The dataset covers the years 2019-2023.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>province_thai</em></td>
+<td style="text-align: left;">The name of the province in Thailand, in the Thai language.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>province_eng</em></td>
+<td style="text-align: left;">The name of the province in Thailand, in English.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>region_thai</em></td>
+<td style="text-align: left;">The name of the region in Thailand to which the province belongs, in the Thai language.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>region_eng</em></td>
+<td style="text-align: left;">The name of the region in Thailand to which the province belongs, in English.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>variable(s)</em></td>
+<td style="text-align: left;">The 8 types of data being recorded, such as the number of tourists or the occupancy rate.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>no_tourist_all</code> The total number of tourists (foreign &amp; domestic) who visited the province</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>no_tourist_foreign</code> The number of foreign tourists who visited the province</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>no_tourist_occupied</code> The total number of occupied hotel rooms in the province</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>no_tourist_thai</code> The number of Thai tourists (domestic) who visited the province</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><blockquote class="blockquote">
+<p><code>occupancy_rate</code> The percentage of occupied travel accommodation in the province |</p>
+</blockquote></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>revenue_all</code> The revenue generated by the tourism industry in the province, in Thai Baht</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>revenue_foreign</code> The revenue generated by foreign tourists in the province, in Thai Baht</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>revenue_thai</code> The revenue generated by Thai tourists in the province, in Thai Baht</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>value</em></td>
+<td style="text-align: left;">The value of the data being recorded.</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="level4" data-number="2.1.2.2">
-<h4 data-number="2.1.2.2" class="anchored" data-anchor-id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.1.2.2</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</h4>
+</section>
+<section id="data-preparation" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">2.3.2</span> Data Preparation</h3>
+<p>The two following code chunks are utilised to check for any duplicated or missing values in each column</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(thdt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(thdt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>The results above tell us that there are no duplicated values and no values that are missing.</p>
+<p>The relevant columns that will be used for analysis will then be selected.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>thai_tourism <span class="ot">&lt;-</span> thdt <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date, province_eng, variable) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_value =</span> <span class="fu">sum</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(thai_tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+# Groups:   date, province_eng [1]
+  date      province_eng  variable           total_value
+  &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt;                    &lt;dbl&gt;
+1 1 01 2019 Amnat Charoen no_tourist_all         21790  
+2 1 01 2019 Amnat Charoen no_tourist_foreign       818  
+3 1 01 2019 Amnat Charoen no_tourist_stay         8551  
+4 1 01 2019 Amnat Charoen no_tourist_thai        20972  
+5 1 01 2019 Amnat Charoen ratio_tourist_stay        65.2
+6 1 01 2019 Amnat Charoen revenue_all         34510000  </code></pre>
+</div>
+</div>
+<section id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="level4" data-number="2.3.2.1">
+<h4 data-number="2.3.2.1" class="anchored" data-anchor-id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.3.2.1</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</h4>
 <p>The code chunk below is used to import the Subnational Administrative Boundaries of Thailand. Level 1 will be used as it represents the province boundary as seen in the HDX website.</p>
 <p><img src="images/level1.png" class="img-fluid"></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>thadmin <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">layer =</span> <span class="st">"tha_admbnda_adm1_rtsd_20220121"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>thadmin <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">layer =</span> <span class="st">"tha_admbnda_adm1_rtsd_20220121"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">17</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `tha_admbnda_adm1_rtsd_20220121' from data source 
   `C:\zjho008\ISSS626-GAA\Take-home_Ex\Take-home_Ex02\data\geospatial' 
@@ -364,11 +548,59 @@ Bounding box:  xmin: 97.34336 ymin: 5.613038 xmax: 105.637 ymax: 20.46507
 Geodetic CRS:  WGS 84</code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>thadmin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 77 features and 4 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 97.34336 ymin: 5.613038 xmax: 105.637 ymax: 20.46507
+Geodetic CRS:  WGS 84
+First 10 features:
+   Shape_Leng Shape_Area                  ADM1_EN ADM1_PCODE
+1    2.417227 0.13133873                  Bangkok       TH10
+2    1.695100 0.07926199             Samut Prakan       TH11
+3    1.251111 0.05323766               Nonthaburi       TH12
+4    1.884945 0.12698345             Pathum Thani       TH13
+5    3.041716 0.21393797 Phra Nakhon Si Ayutthaya       TH14
+6    1.739908 0.07920961                Ang Thong       TH15
+7    5.693342 0.54578838                 Lop Buri       TH16
+8    1.778326 0.06872655                Sing Buri       TH17
+9    2.896316 0.20907828                 Chai Nat       TH18
+10   4.766446 0.29208711                 Saraburi       TH19
+                         geometry
+1  MULTIPOLYGON (((100.6139 13...
+2  MULTIPOLYGON (((100.7306 13...
+3  MULTIPOLYGON (((100.3415 14...
+4  MULTIPOLYGON (((100.8916 14...
+5  MULTIPOLYGON (((100.5131 14...
+6  MULTIPOLYGON (((100.3332 14...
+7  MULTIPOLYGON (((101.3453 15...
+8  MULTIPOLYGON (((100.3691 15...
+9  MULTIPOLYGON (((100.1199 15...
+10 MULTIPOLYGON (((101.3994 15...</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(thadmin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 77
+Columns: 5
+$ Shape_Leng &lt;dbl&gt; 2.417227, 1.695100, 1.251111, 1.884945, 3.041716, 1.739908,…
+$ Shape_Area &lt;dbl&gt; 0.13133873, 0.07926199, 0.05323766, 0.12698345, 0.21393797,…
+$ ADM1_EN    &lt;chr&gt; "Bangkok", "Samut Prakan", "Nonthaburi", "Pathum Thani", "P…
+$ ADM1_PCODE &lt;chr&gt; "TH10", "TH11", "TH12", "TH13", "TH14", "TH15", "TH16", "TH…
+$ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((100.6139 13..., MULTIPOLYGON (…</code></pre>
+</div>
+</div>
 </section>
 </section>
 </section>
-<section id="personal-notes-to-be-removed" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="personal-notes-to-be-removed"><span class="header-section-number">2.2</span> Personal Notes (to be removed)</h2>
+<section id="exploratory-data-analysis-eda" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="exploratory-data-analysis-eda"><span class="header-section-number">2.4</span> Exploratory Data Analysis (EDA)</h2>
+</section>
+<section id="personal-notes-to-be-removed" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="personal-notes-to-be-removed"><span class="header-section-number">2.5</span> Personal Notes (to be removed)</h2>
 <p>Data covers several years and have several attributes</p>
 <p>geospatial data - is in high res - has small multiple islands - have to note the small islands - probably remove or have it in one of the territory</p>
 <p>pre , during , post covid (three temporal terms) changes in revenue and other measures to be investigated.</p>

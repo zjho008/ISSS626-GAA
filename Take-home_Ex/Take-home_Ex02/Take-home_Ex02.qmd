@@ -13,92 +13,237 @@ execute:
 editor: source
 ---
 
-# Overview: Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics
+# Overview
+
+Tourism plays a significant role in Thailand's economy, contributing about 20% of the country's GDP. In 2019, Thailand generated 90 billion USD from both domestic and international tourism, but the COVID-19 pandemic led to a drastic drop in revenues down to 24 billion USD in 2020.
+
+The figure below illustrates the total revenue from the tourism sector from January 2019 to February 2023, highlighting a gradual recovery in tourism revenue starting in September 2021.
+
+![](images/th_ex2_img1.png)
+
+Nonetheless, it is important to point out that the tourism economy of Thailand does not have an even distribution. The figures below illustrate that the tourism economy of Thailand mainly revolves around 5 provinces: Bangkok, Phuket, Chiang Mai, Sukhothai & Phetchaburi.
+
+
+
+![](images/th_ex2_img2.png)
+
+The main aim of this initiative is to discover the impacts of COVID-19 on Thailand's tourism economy using spatial and spatio-temporal statistics.
+
+## The Task
+
+As an eager geospatial analytics learner, the objectives are to explore the following:
+
+-   Whether the key indicators of Thailand's tourism economy are independent of spatial and spatio-temporal factors.
+-   If dependencies exist, aim to identify the clusters, outliers, and emerging hot or cold spots within the tourism economy.
+
+The specific tasks for this exercise are:
+
+-   Using appropriate sf and tidyverse functions, prepare the following geospatial data layers:
+    -   A study area layer in sf polygon format, covering [provinces in Thailand](https://en.wikipedia.org/wiki/Provinces_of_Thailand), including Bangkok.
+    -   A tourism economy indicators layer for the study area in sf polygon format.
+    -   A derived tourism economy indicator layer in the [spatio-temporal s3 class of sfdep](https://sfdep.josiahparry.com/articles/spacetime-s3), with a monthly and yearly time series.
+-   Using the extracted data, conduct the following analyses using sfdep methods:
+    -   Global spatial autocorrelation analysis
+    -   Local spatial autocorrelation analysis
+    -   Emerging hotspot analysis
+-   Describe the spatial patterns identified through these analyses.
 
 ## Getting Started
 
 ### Installing and Loading the R Packages
 
-The following R packages will be launched into the R environment using the following code chunk below.
+The following R packages will be launched into the R environment using `p_load()` from **pacman package** below.
 
 The R packages needed for this exercise are as follows:
 
 1.  Spatial data handling
-    -   **sf**, **rgdal**, **spdep** and **sfdep**
+    -   **sf**, **spdep** and **sfdep**
 2.  Attribute data handling
     -   **tidyverse**, especially **readr**, **ggplot2** and **dplyr**
 3.  Choropleth mapping
     -   **tmap**
-4.  Multivariate data visualisation and analysis
-    -   **coorplot**, **ggpubr**, and **heatmaply**
-5.  Cluster analysis
-    -   **cluster**
-    -   **ClustGeo**
-
 
 ```{r}
-pacman::p_load(sf, spdep, sfdep, tmap, tidyverse, ClustGeo,
-               cluster, factoextra, NbClust, heatmaply,
-               corrplot, psych, GGally, ggpubr, plotly)
+pacman::p_load(sf, spdep, sfdep,
+               tmap, tidyverse)
 ```
 
-
-### The Data
+## The Data
 
 For this exercise, two data sets will be utilised. They are:
 
--  [Thailand Domestic Tourism Statistics](https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics) at Kaggle.
--  [Thailand - Subnational Administrative Boundaries](https://data.humdata.org/dataset/cod-ab-tha?) at HDX. the province boundary data set is used for this exercise.
+-   [Thailand Domestic Tourism Statistics](https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics) at Kaggle.
+-   [Thailand - Subnational Administrative Boundaries](https://data.humdata.org/dataset/cod-ab-tha?) at HDX. the province boundary data set is used for this exercise.
 
-#### Loading the Attribute Data
+### Loading the Attribute Data
 
-There are 2 versions of this dataset `thailand_domestic_tourism_2019_2023.csv` & `thailand_domestic_tourism_2019_2023_ver2.csv`. Version 2 will be used for this exercise.
+There are 2 versions of this dataset `thailand_domestic_tourism_2019_2023.csv` & `thailand_domestic_tourism_2019_2023_ver2.csv`. Version 2 will be used for this exercise. The csv file will be imported using `read_csv` function of **readr** package.
 
 ```{r}
 thdt <- read_csv("data/aspatial/thailand_domestic_tourism_2019_2023_ver2.csv")
 ```
 
-#### Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)
+`glimpse()` is used to have a brief overview of the data.
 
-The code chunk below is used to import the Subnational Administrative Boundaries of Thailand. Level 1 will be used as it represents the province boundary as seen in the HDX website. 
+```{r}
+glimpse(thdt)
+```
+
+#### Data Dictionary
+
+This dataset contains statistics on domestic tourism in Thailand from Jan 2019 to Feb 2023, broken down by province. The dataset includes information on the number of `tourists`, the `occupancy rate`, and the `profits generated by tourism` in each `province`, as well as the
+
+Sourced from raw data provided by the [Official Ministry of Tourism and Sports Statistics](https://www.mots.go.th/news/category/411), which was manually entered into Excel files.
+
+The author has pre-processed the data using Python with the intention of making it more accessible in the appropriate format which has the potential to provide valuable insights into the domestic tourism industry in Thailand, including trends and patterns across different provinces over time. Researchers, analysts, and policy-makers with an interest in the domestic tourism sector in Thailand may find this dataset useful for their work. Source: ([Thailand Domestic Tourism Statistics by Thaweewat R](https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics/data))
+
+The description for some of the variables have been re-phrased for a more accurate alignment of understanding in line with the variables.
+
+| Column | Description |
+|:------------------------------|:----------------------------------------|
+| *date* | The month and year in which the statistics were recorded. The dataset covers the years 2019-2023. |
+| *province_thai* | The name of the province in Thailand, in the Thai language. |
+| *province_eng* | The name of the province in Thailand, in English. |
+| *region_thai* | The name of the region in Thailand to which the province belongs, in the Thai language. |
+| *region_eng* | The name of the region in Thailand to which the province belongs, in English. |
+| *variable* | The 8 types of data being recorded, such as the number of tourists or the occupancy rate. |
+|  | `no_tourist_all` The total number of tourists (domestic & foreign) who visited the province |
+|  | `no_tourist_foreign` The number of foreign tourists who visited the province |
+|  | `no_tourist_thai` The number of Thai tourists (domestic) who visited the province |
+|  | `no_tourist_occupied` -\> `no_tourist_stay` The total number of occupied hotel rooms in the province |
+|  | `occupancy_rate` -\> `ratio_tourist_stay` The percentage of occupied travel accommodation in the province |
+|  | `revenue_all` The revenue generated by the tourism industry in the province, in Thai Baht |
+|  | `revenue_foreign` The revenue generated by foreign tourists in the province, in Thai Baht |
+|  | `revenue_thai` The revenue generated by Thai tourists in the province, in Thai Baht |
+| *value* | The value of the data being recorded. |
+
+: R Packages {.striped .hover tbl-colwidths="\[25,75\]"}
+
+#### Data Preparation
+
+The two following code chunks are utilised to check for any duplicated or missing values in each column
+
+```{r}
+any(duplicated(thdt))
+```
+
+```{r}
+sum(is.na(thdt))
+```
+
+The results above tell us that there are no duplicated values and no values that are missing.
+
+The relevant columns that will be used for analysis will then be selected.
+
+```{r}
+thai_tourism <- thdt %>%
+  select(date, province_eng, variable, value)
+head(thai_tourism)
+```
+
+In the following code chunk, `write_rds()` of **readr** package is used to save the extracted attribute data table into an output file in rds format. The output file is saved in the rds folder.
+
+```{r}
+write_rds(thai_tourism,
+          "data/rds/thai_tourism.rds")
+```
+
+#### Exploratory Data Analysis (EDA)
+
+```{r}
+thai_tourism %>%
+  filter(variable == "revenue_thai") %>% 
+  ggplot(aes(value,fill = variable)) +
+  geom_histogram(bins = 20) +
+  theme(legend.position="none")
+```
+
+```{r}
+thai_tourism %>%
+  filter(variable == "ratio_tourist_stay") %>% 
+  ggplot(aes(value,fill = variable)) +
+  geom_histogram(bins = 20) +
+  theme(legend.position="none")
+```
+
+```{r}
+thai_tourism %>%
+  filter(variable == "no_tourist_all") %>% 
+  ggplot(aes(value,fill = variable)) +
+  geom_histogram(bins = 20) +
+  theme(legend.position="none")
+```
+
+### Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)
+
+The code chunk below is used to import the Subnational Administrative Boundaries of Thailand. Level 1 will be used as it represents the province boundary as seen in the HDX website.
 
 ![](images/level1.png)
 
 ```{r}
 thadmin <- st_read(dsn = "data/geospatial", 
-                 layer = "tha_admbnda_adm1_rtsd_20220121")
+                 layer = "tha_admbnda_adm1_rtsd_20220121") %>%
+  select(1:3, 5, 17) %>%
+  rename(province_eng = ADM1_EN)
 ```
 
+The message above reveals that the geospatial objects are multipolygon features. There are a total of 77 multipolygon feature representing the different provinces in Thailand and 16 fields in thadmin (Thailand Administrative) simple feature data frame. `thadmin` is in WGS84 Geodetic coordinates system. The bounding box provides the x extend and y extend of the data.
+
+```{r}
+thadmin
+```
+
+```{r}
+glimpse(thadmin)
+```
+
+#### Relational Join
+
+```{r}
+thailand_tourism <- left_join(thadmin,
+                              thai_tourism, by = c("province_eng" = "province_eng"))
+```
+
+
+```{r}
+foreign_tourists <- thailand_tourism %>%
+  filter(variable == "no_tourist_foreign")
+
+no_foreign_tourist <- st_as_sf(foreign_tourists)
+
+tmap_mode("plot")
+basemap01 <- tm_shape(no_foreign_tourist) +
+  tm_polygons(col = "total_value", palette = "Blues") +
+  tm_text("province_eng", size = 0.5)
+
+# Display the interactive map
+basemap01
+```
 
 ## Personal Notes (to be removed)
 
 Data covers several years and have several attributes
 
-geospatial data - is in high res - has small multiple islands - have to note the small islands - probably remove or have it in one of the territory 
+geospatial data - is in high res - has small multiple islands - have to note the small islands - probably remove or have it in one of the territory
 
-pre , during , post covid (three temporal terms)
-changes in revenue and other measures to be investigated. 
+pre , during , post covid (three temporal terms) changes in revenue and other measures to be investigated.
 
 Uneven spatial distributions
 
 If key indicators (multiple indicators to look out for) are independent from - space, space & time (cross sectional - pre, etc during post covid)
 
+If it is indeed spatial and spatial temporal dependent
 
-If it is indeed spatial and spatial temporal dependent 
+cluster - outliers - hotspots - local moran I to detect cluster and outlier G\* statistics to discover hot and cold spots.
 
-cluster - outliers - hotspots - local moran I to detect cluster and outlier 
-G* statistics to discover hot and cold spots. 
+Emerging hotspots - have to be continuous - for 3 years, 4 years, months etc. Note for this data set what is the constraint to see the data continuously.
 
-Emerging hotspots - have to be continuous - for 3 years, 4 years, months etc. 
-Note for this data set what is the constraint to see the data continuously.
-
-sfdep - advantages - 
+sfdep - advantages -
 
 spacetime cube - created by sfdep
-
 
 points below the teen birth rate is about LISA
 
 have to recode the date
- 
-Refer to hands on ex - hunan case - maybe the GPD - 
+
+Refer to hands on ex - hunan case - maybe the GPD -
