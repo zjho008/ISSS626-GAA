@@ -247,7 +247,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics" id="toc-overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics" class="nav-link active" data-scroll-target="#overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics"><span class="header-section-number">2</span> Overview: Discovering the impacts of COVID-19 on Thailand’s tourism economy using spatial and spatio-temporal statistics</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">2</span> Overview</a>
   <ul>
   <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task"><span class="header-section-number">2.1</span> The Task</a></li>
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">2.2</span> Getting Started</a>
@@ -258,15 +258,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#loading-the-attribute-data" id="toc-loading-the-attribute-data" class="nav-link" data-scroll-target="#loading-the-attribute-data"><span class="header-section-number">2.3.1</span> Loading the Attribute Data</a>
   <ul class="collapse">
-  <li><a href="#data-dictionary" id="toc-data-dictionary" class="nav-link" data-scroll-target="#data-dictionary"><span class="header-section-number">2.3.1.1</span> Data Dictionary</a></li>
+  <li><a href="#data-dictionary-for-attribute-data" id="toc-data-dictionary-for-attribute-data" class="nav-link" data-scroll-target="#data-dictionary-for-attribute-data"><span class="header-section-number">2.3.1.1</span> Data Dictionary for Attribute Data</a></li>
+  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">2.3.1.2</span> Data Integrity Checks</a></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">2.3.1.3</span> Data Preparation</a></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda"><span class="header-section-number">2.3.1.4</span> Exploratory Data Analysis (EDA)</a></li>
   </ul></li>
-  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">2.3.2</span> Data Preparation</a>
+  <li><a href="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries" id="toc-loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="nav-link" data-scroll-target="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.3.2</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</a>
   <ul class="collapse">
-  <li><a href="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries" id="toc-loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="nav-link" data-scroll-target="#loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.3.2.1</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</a></li>
+  <li><a href="#renaming-of-column" id="toc-renaming-of-column" class="nav-link" data-scroll-target="#renaming-of-column"><span class="header-section-number">2.3.2.1</span> Renaming of column</a></li>
+  <li><a href="#setting-of-coordinate-reference-system-crs" id="toc-setting-of-coordinate-reference-system-crs" class="nav-link" data-scroll-target="#setting-of-coordinate-reference-system-crs"><span class="header-section-number">2.3.2.2</span> Setting of Coordinate reference system (CRS)</a></li>
+  <li><a href="#selecting-required-fields" id="toc-selecting-required-fields" class="nav-link" data-scroll-target="#selecting-required-fields"><span class="header-section-number">2.3.2.3</span> Selecting Required Fields</a></li>
+  <li><a href="#data-inconsistency" id="toc-data-inconsistency" class="nav-link" data-scroll-target="#data-inconsistency"><span class="header-section-number">2.3.2.4</span> Data Inconsistency</a></li>
+  <li><a href="#relational-join" id="toc-relational-join" class="nav-link" data-scroll-target="#relational-join"><span class="header-section-number">2.3.2.5</span> Relational Join</a></li>
+  <li><a href="#saving-rds-files" id="toc-saving-rds-files" class="nav-link" data-scroll-target="#saving-rds-files"><span class="header-section-number">2.3.2.6</span> Saving rds files</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda"><span class="header-section-number">2.4</span> Exploratory Data Analysis (EDA)</a></li>
-  <li><a href="#personal-notes-to-be-removed" id="toc-personal-notes-to-be-removed" class="nav-link" data-scroll-target="#personal-notes-to-be-removed"><span class="header-section-number">2.5</span> Personal Notes (to be removed)</a></li>
+  <li><a href="#visualing-the-indicators-of-tourism-economy-of-thailand" id="toc-visualing-the-indicators-of-tourism-economy-of-thailand" class="nav-link" data-scroll-target="#visualing-the-indicators-of-tourism-economy-of-thailand"><span class="header-section-number">2.4</span> Visualing the Indicators of tourism economy of Thailand</a>
+  <ul class="collapse">
+  <li><a href="#visualing-number-of-tourists-variable" id="toc-visualing-number-of-tourists-variable" class="nav-link" data-scroll-target="#visualing-number-of-tourists-variable"><span class="header-section-number">2.4.1</span> Visualing Number of Tourists Variable</a>
+  <ul class="collapse">
+  <li><a href="#all-tourists" id="toc-all-tourists" class="nav-link" data-scroll-target="#all-tourists"><span class="header-section-number">2.4.1.1</span> All Tourists</a></li>
+  <li><a href="#foreign-tourists" id="toc-foreign-tourists" class="nav-link" data-scroll-target="#foreign-tourists"><span class="header-section-number">2.4.1.2</span> Foreign Tourists</a></li>
+  <li><a href="#domestic-tourists" id="toc-domestic-tourists" class="nav-link" data-scroll-target="#domestic-tourists"><span class="header-section-number">2.4.1.3</span> Domestic Tourists</a></li>
+  </ul></li>
+  <li><a href="#visualing-revenue-variable" id="toc-visualing-revenue-variable" class="nav-link" data-scroll-target="#visualing-revenue-variable"><span class="header-section-number">2.4.2</span> Visualing Revenue Variable</a>
+  <ul class="collapse">
+  <li><a href="#all-revenue" id="toc-all-revenue" class="nav-link" data-scroll-target="#all-revenue"><span class="header-section-number">2.4.2.1</span> All Revenue</a></li>
+  <li><a href="#foreign-revenue" id="toc-foreign-revenue" class="nav-link" data-scroll-target="#foreign-revenue"><span class="header-section-number">2.4.2.2</span> Foreign Revenue</a></li>
+  <li><a href="#domestic-revenue" id="toc-domestic-revenue" class="nav-link" data-scroll-target="#domestic-revenue"><span class="header-section-number">2.4.2.3</span> Domestic Revenue</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#spatial-weights-and-applications" id="toc-spatial-weights-and-applications" class="nav-link" data-scroll-target="#spatial-weights-and-applications"><span class="header-section-number">2.5</span> Spatial Weights and Applications</a>
+  <ul class="collapse">
+  <li><a href="#computing-queen-contiguity-based-neighbours" id="toc-computing-queen-contiguity-based-neighbours" class="nav-link" data-scroll-target="#computing-queen-contiguity-based-neighbours"><span class="header-section-number">2.5.1</span> Computing (QUEEN) contiguity based neighbours</a></li>
+  <li><a href="#computing-rook-contiguity-based-neighbours" id="toc-computing-rook-contiguity-based-neighbours" class="nav-link" data-scroll-target="#computing-rook-contiguity-based-neighbours"><span class="header-section-number">2.5.2</span> Computing (ROOK) contiguity based neighbours</a></li>
+  <li><a href="#visualising-contiguity-weights" id="toc-visualising-contiguity-weights" class="nav-link" data-scroll-target="#visualising-contiguity-weights"><span class="header-section-number">2.5.3</span> Visualising contiguity weights</a>
+  <ul class="collapse">
+  <li><a href="#plotting-queen-contiguity-based-neighbours-map" id="toc-plotting-queen-contiguity-based-neighbours-map" class="nav-link" data-scroll-target="#plotting-queen-contiguity-based-neighbours-map"><span class="header-section-number">2.5.3.1</span> Plotting Queen contiguity based neighbours map</a></li>
+  <li><a href="#plotting-rook-contiguity-based-neighbours-map" id="toc-plotting-rook-contiguity-based-neighbours-map" class="nav-link" data-scroll-target="#plotting-rook-contiguity-based-neighbours-map"><span class="header-section-number">2.5.3.2</span> Plotting Rook contiguity based neighbours map</a></li>
+  <li><a href="#plotting-both-queen-and-rook-contiguity-based-neighbours-maps" id="toc-plotting-both-queen-and-rook-contiguity-based-neighbours-maps" class="nav-link" data-scroll-target="#plotting-both-queen-and-rook-contiguity-based-neighbours-maps"><span class="header-section-number">2.5.3.3</span> Plotting both Queen and Rook contiguity based neighbours maps</a></li>
+  </ul></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -300,7 +332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 7, 2024</p>
+      <p class="date-modified">October 14, 2024</p>
     </div>
   </div>
     
@@ -311,14 +343,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="overview-discovering-the-impacts-of-covid-19-on-thailands-tourism-economy-using-spatial-and-spatio-temporal-statistics" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Overview: Discovering the impacts of COVID-19 on Thailand’s tourism economy using spatial and spatio-temporal statistics</h1>
-<p>Tourism plays a significant role in Thailand’s economy, contributing about 20% to the country’s GDP. In 2019, Thailand generated 90 billion USD from both domestic and international tourism, but the COVID-19 pandemic led to a drastic drop in revenues to 24 billion USD by 2020.</p>
+<section id="overview" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Overview</h1>
+<p>Tourism plays a significant role in Thailand’s economy, contributing about 20% of the country’s GDP. In 2019, Thailand generated 90 billion USD from both domestic and international tourism, but the COVID-19 pandemic led to a drastic drop in revenues down to 24 billion USD in 2020.</p>
 <p>The figure below illustrates the total revenue from the tourism sector from January 2019 to February 2023, highlighting a gradual recovery in tourism revenue starting in September 2021.</p>
 <p><img src="images/th_ex2_img1.png" class="img-fluid"></p>
+<p>Nonetheless, it is important to point out that the tourism economy of Thailand does not have an even distribution. The figures below illustrate that the tourism economy of Thailand mainly revolves around 5 provinces: Bangkok, Phuket, Chiang Mai, Sukhothai &amp; Phetchaburi.</p>
+<p><img src="images/th_ex2_img2.png" class="img-fluid"></p>
+<p>The main aim of this initiative is to discover the impacts of COVID-19 on Thailand’s tourism economy using spatial and spatio-temporal statistics.</p>
 <section id="the-task" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="the-task"><span class="header-section-number">2.1</span> The Task</h2>
-<p>As an eager geospatial analytics novice, the aim is to explore the following:</p>
+<p>The objectives are to explore the following:</p>
 <ul>
 <li>Whether the key indicators of Thailand’s tourism economy are independent of spatial and spatio-temporal factors.</li>
 <li>If dependencies exist, aim to identify the clusters, outliers, and emerging hot or cold spots within the tourism economy.</li>
@@ -333,9 +368,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 <li>Using the extracted data, conduct the following analyses using sfdep methods:
 <ul>
-<li>Global spatial autocorrelation analysis.</li>
-<li>Local spatial autocorrelation analysis.</li>
-<li>Emerging hotspot analysis.</li>
+<li>Global spatial autocorrelation analysis</li>
+<li>Local spatial autocorrelation analysis</li>
+<li>Emerging hotspot analysis</li>
 </ul></li>
 <li>Describe the spatial patterns identified through these analyses.</li>
 </ul>
@@ -344,12 +379,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="2.2" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">2.2</span> Getting Started</h2>
 <section id="installing-and-loading-the-r-packages" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="installing-and-loading-the-r-packages"><span class="header-section-number">2.2.1</span> Installing and Loading the R Packages</h3>
-<p>The following R packages will be launched into the R environment using the following code chunk below.</p>
+<p>The following R packages will be launched into the R environment using <code>p_load()</code> from <strong>pacman package</strong> below.</p>
 <p>The R packages needed for this exercise are as follows:</p>
 <ol type="1">
 <li>Spatial data handling
 <ul>
-<li><strong>sf</strong>, <strong>rgdal</strong>, <strong>spdep</strong> and <strong>sfdep</strong></li>
+<li><strong>sf</strong>, <strong>spdep</strong> and <strong>sfdep</strong></li>
 </ul></li>
 <li>Attribute data handling
 <ul>
@@ -359,20 +394,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><strong>tmap</strong></li>
 </ul></li>
-<li>Multivariate data visualisation and analysis
-<ul>
-<li><strong>coorplot</strong>, <strong>ggpubr</strong>, and <strong>heatmaply</strong></li>
-</ul></li>
-<li>Cluster analysis
-<ul>
-<li><strong>cluster</strong></li>
-<li><strong>ClustGeo</strong></li>
-</ul></li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, sfdep, tmap, tidyverse, ClustGeo,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               cluster, factoextra, NbClust, heatmaply,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               corrplot, psych, GGally, ggpubr, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, sfdep,tmap,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               tidyverse, plotly, Kendall)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co"># setting seed to ensure reproducibility</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -387,11 +413,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="loading-the-attribute-data"><span class="header-section-number">2.3.1</span> Loading the Attribute Data</h3>
 <p>There are 2 versions of this dataset <code>thailand_domestic_tourism_2019_2023.csv</code> &amp; <code>thailand_domestic_tourism_2019_2023_ver2.csv</code>. Version 2 will be used for this exercise. The csv file will be imported using <code>read_csv</code> function of <strong>readr</strong> package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>thdt <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/thailand_domestic_tourism_2019_2023_ver2.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tourism_stats <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/thailand_domestic_tourism_2019_2023_ver2.csv"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><code>glimpse()</code> is used to have a brief overview of the data.</p>
+<p><code>glimpse()</code> is used to have a brief overview of the data. This will enable us to see the columns and their respective data types.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(thdt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tourism_stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 30,800
 Columns: 7
@@ -404,9 +430,9 @@ $ variable      &lt;chr&gt; "ratio_tourist_stay", "ratio_tourist_stay", "ratio_t
 $ value         &lt;dbl&gt; 93.37, 61.32, 73.37, 67.33, 79.31, 71.70, 64.65, 71.21, …</code></pre>
 </div>
 </div>
-<section id="data-dictionary" class="level4" data-number="2.3.1.1">
-<h4 data-number="2.3.1.1" class="anchored" data-anchor-id="data-dictionary"><span class="header-section-number">2.3.1.1</span> Data Dictionary</h4>
-<p>This dataset contains statistics on domestic tourism in Thailand from Jan 2019 to Feb 2023, broken down by province. The dataset includes information on the number of <code>tourists</code>, the <code>occupancy rate</code>, and the <code>profits generated by tourism</code> in each <code>province</code>, as well as the <code>nationality of the tourists</code> (Thai vs.&nbsp;foreign).</p>
+<section id="data-dictionary-for-attribute-data" class="level4" data-number="2.3.1.1">
+<h4 data-number="2.3.1.1" class="anchored" data-anchor-id="data-dictionary-for-attribute-data"><span class="header-section-number">2.3.1.1</span> Data Dictionary for Attribute Data</h4>
+<p>This dataset contains statistics on tourism in Thailand from Jan 2019 to Feb 2023, broken down by province. The dataset includes information on the number of <code>tourists</code>, the <code>occupancy rate</code>, and the <code>profits generated by tourism</code> in each <code>province</code>, as well as the</p>
 <p>Sourced from raw data provided by the <a href="https://www.mots.go.th/news/category/411">Official Ministry of Tourism and Sports Statistics</a>, which was manually entered into Excel files.</p>
 <p>The author has pre-processed the data using Python with the intention of making it more accessible in the appropriate format which has the potential to provide valuable insights into the domestic tourism industry in Thailand, including trends and patterns across different provinces over time. Researchers, analysts, and policy-makers with an interest in the domestic tourism sector in Thailand may find this dataset useful for their work. Source: (<a href="https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics/data">Thailand Domestic Tourism Statistics by Thaweewat R</a>)</p>
 <p>The description for some of the variables have been re-phrased for a more accurate alignment of understanding in line with the variables.</p>
@@ -444,12 +470,12 @@ $ value         &lt;dbl&gt; 93.37, 61.32, 73.37, 67.33, 79.31, 71.70, 64.65, 71.
 <td style="text-align: left;">The name of the region in Thailand to which the province belongs, in English.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><em>variable(s)</em></td>
+<td style="text-align: left;"><em>variable</em></td>
 <td style="text-align: left;">The 8 types of data being recorded, such as the number of tourists or the occupancy rate.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>no_tourist_all</code> The total number of tourists (foreign &amp; domestic) who visited the province</td>
+<td style="text-align: left;"><code>no_tourist_all</code> The total number of tourists (domestic &amp; foreign) who visited the province</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
@@ -457,86 +483,173 @@ $ value         &lt;dbl&gt; 93.37, 61.32, 73.37, 67.33, 79.31, 71.70, 64.65, 71.
 </tr>
 <tr class="odd">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>no_tourist_occupied</code> The total number of occupied hotel rooms in the province</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
 <td style="text-align: left;"><code>no_tourist_thai</code> The number of Thai tourists (domestic) who visited the province</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><blockquote class="blockquote">
-<p><code>occupancy_rate</code> The percentage of occupied travel accommodation in the province |</p>
-</blockquote></td>
-</tr>
 <tr class="even">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>no_tourist_occupied</code> -&gt; <code>no_tourist_stay</code> The total number of occupied hotel rooms in the province</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>occupancy_rate</code> -&gt; <code>ratio_tourist_stay</code> The percentage of occupied travel accommodation in the province</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><code>revenue_all</code> The revenue generated by the tourism industry in the province, in Thai Baht</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><code>revenue_foreign</code> The revenue generated by foreign tourists in the province, in Thai Baht</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><code>revenue_thai</code> The revenue generated by Thai tourists in the province, in Thai Baht</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><em>value</em></td>
 <td style="text-align: left;">The value of the data being recorded.</td>
 </tr>
 </tbody>
 </table>
+<p>From the description above, we can identify the columns to be selected for analysis. For this exercise, the columns: <code>date</code>, <code>province_eng</code>, <code>variable</code> and <code>value</code> will be selected.</p>
 </section>
-</section>
-<section id="data-preparation" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">2.3.2</span> Data Preparation</h3>
+<section id="data-integrity-checks" class="level4" data-number="2.3.1.2">
+<h4 data-number="2.3.1.2" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">2.3.1.2</span> Data Integrity Checks</h4>
 <p>The two following code chunks are utilised to check for any duplicated or missing values in each column</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(thdt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(tourism_stats))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(thdt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(tourism_stats))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
 </div>
-<p>The results above tell us that there are no duplicated values and no values that are missing.</p>
-<p>The relevant columns that will be used for analysis will then be selected.</p>
+<p>The results above tell us that there are no duplicated and missing values.</p>
+</section>
+<section id="data-preparation" class="level4" data-number="2.3.1.3">
+<h4 data-number="2.3.1.3" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">2.3.1.3</span> Data Preparation</h4>
+<p>The relevant columns that will be used for analysis are then selected using the code chunk below.Additionally, the <code>province_eng</code> column will be renamed to <code>province</code> since we are only taking this particular column and not the column labelled <code>province_thai</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>thai_tourism <span class="ot">&lt;-</span> thdt <span class="sc">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date, province_eng, variable) <span class="sc">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_value =</span> <span class="fu">sum</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(thai_tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 4
-# Groups:   date, province_eng [1]
-  date      province_eng  variable           total_value
-  &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt;                    &lt;dbl&gt;
-1 1 01 2019 Amnat Charoen no_tourist_all         21790  
-2 1 01 2019 Amnat Charoen no_tourist_foreign       818  
-3 1 01 2019 Amnat Charoen no_tourist_stay         8551  
-4 1 01 2019 Amnat Charoen no_tourist_thai        20972  
-5 1 01 2019 Amnat Charoen ratio_tourist_stay        65.2
-6 1 01 2019 Amnat Charoen revenue_all         34510000  </code></pre>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tourism_stats_selected <span class="ot">&lt;-</span> tourism_stats <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, province_eng, variable, value) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">province =</span> province_eng)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouping by province and year, then summarizing total tourist count</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>tourism_stats_grouped <span class="ot">&lt;-</span> tourism_stats <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(province_eng, variable) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">province =</span> province_eng) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_value =</span> <span class="fu">sum</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exploratory-data-analysis-eda" class="level4" data-number="2.3.1.4">
+<h4 data-number="2.3.1.4" class="anchored" data-anchor-id="exploratory-data-analysis-eda"><span class="header-section-number">2.3.1.4</span> Exploratory Data Analysis (EDA)</h4>
+<p>Exploratory data analysis (EDA) will be carried out in this section using statistical graphic functions of <strong>ggplot2</strong> package. The variables are plotted to get a sense of the distribution.</p>
+<section id="revenue" class="level5" data-number="2.3.1.4.1">
+<h5 data-number="2.3.1.4.1" class="anchored" data-anchor-id="revenue"><span class="header-section-number">2.3.1.4.1</span> Revenue</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tourism_stats_selected <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"revenue_all"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value,<span class="at">fill =</span> variable)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<section id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="level4" data-number="2.3.2.1">
-<h4 data-number="2.3.2.1" class="anchored" data-anchor-id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.3.2.1</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</h4>
-<p>The code chunk below is used to import the Subnational Administrative Boundaries of Thailand. Level 1 will be used as it represents the province boundary as seen in the HDX website.</p>
+</div>
+<p>It can be observed that the revenue generated by tourism is right skewed as such in can also be interpreted that a number of provinces are the ones generating majority of the revenue for Thailand’s tourism.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Domestic Tourism</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Foreign Tourism</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tourism_stats_selected <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"revenue_thai"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value,<span class="at">fill =</span> variable)) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tourism_stats_selected <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"revenue_foreign"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value,<span class="at">fill =</span> variable)) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Similarly, when looking at domestic and foreign tourism revenue individually the plots are also showing a right skew.</p>
+</section>
+<section id="occupancy-rate-ratio_tourist_stay" class="level5" data-number="2.3.1.4.2">
+<h5 data-number="2.3.1.4.2" class="anchored" data-anchor-id="occupancy-rate-ratio_tourist_stay"><span class="header-section-number">2.3.1.4.2</span> Occupancy rate (<code>ratio_tourist_stay</code>)</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tourism_stats_selected <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"ratio_tourist_stay"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value,<span class="at">fill =</span> variable)) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="total-number-of-tourists" class="level5" data-number="2.3.1.4.3">
+<h5 data-number="2.3.1.4.3" class="anchored" data-anchor-id="total-number-of-tourists"><span class="header-section-number">2.3.1.4.3</span> Total number of tourists</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tourism_stats_selected <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"no_tourist_all"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value,<span class="at">fill =</span> variable)) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From the above histogram plots, the variables of revenue generated by tourism and total number of tourists are right-skewed which can be interpreted as the vast majority of data points being concentrated near zero. This is indeed consistent with the table shown in the overview where a few provinces in Thailand dominate tourist visits and revenue while most of the other provinces contribute less.</p>
+<p>For <code>ratio_tourist_stay</code> the histogram appears to be relatively symmetric with a slight skew to the right.</p>
+</section>
+</section>
+</section>
+<section id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="loading-the-geospatial-data-thailand---subnational-administrative-boundaries"><span class="header-section-number">2.3.2</span> Loading the Geospatial Data (Thailand - Subnational Administrative Boundaries)</h3>
+<p>The code chunk below is used to import the Sub-national Administrative Boundaries of Thailand. Level 1 will be used as it represents the province boundary as seen in the HDX website.</p>
 <p><img src="images/level1.png" class="img-fluid"></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>thadmin <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">layer =</span> <span class="st">"tha_admbnda_adm1_rtsd_20220121"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">17</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>thadmin <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">layer =</span> <span class="st">"tha_admbnda_adm1_rtsd_20220121"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `tha_admbnda_adm1_rtsd_20220121' from data source 
   `C:\zjho008\ISSS626-GAA\Take-home_Ex\Take-home_Ex02\data\geospatial' 
@@ -548,74 +661,812 @@ Bounding box:  xmin: 97.34336 ymin: 5.613038 xmax: 105.637 ymax: 20.46507
 Geodetic CRS:  WGS 84</code></pre>
 </div>
 </div>
+<p>The message above reveals that the geospatial objects are multi-polygon features. There are a total of 77 multipolygon feature representing the different provinces in Thailand and 16 fields in thadmin (Thailand Administrative) simple feature data frame. <code>thadmin</code> is in WGS84 Geodetic coordinates system. The bounding box provides the x extend and y extend of the data.</p>
+<p>To learn more about the simple features object, we can apply <code>glimpse()</code> of dplyr package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>thadmin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Simple feature collection with 77 features and 4 fields
-Geometry type: MULTIPOLYGON
-Dimension:     XY
-Bounding box:  xmin: 97.34336 ymin: 5.613038 xmax: 105.637 ymax: 20.46507
-Geodetic CRS:  WGS 84
-First 10 features:
-   Shape_Leng Shape_Area                  ADM1_EN ADM1_PCODE
-1    2.417227 0.13133873                  Bangkok       TH10
-2    1.695100 0.07926199             Samut Prakan       TH11
-3    1.251111 0.05323766               Nonthaburi       TH12
-4    1.884945 0.12698345             Pathum Thani       TH13
-5    3.041716 0.21393797 Phra Nakhon Si Ayutthaya       TH14
-6    1.739908 0.07920961                Ang Thong       TH15
-7    5.693342 0.54578838                 Lop Buri       TH16
-8    1.778326 0.06872655                Sing Buri       TH17
-9    2.896316 0.20907828                 Chai Nat       TH18
-10   4.766446 0.29208711                 Saraburi       TH19
-                         geometry
-1  MULTIPOLYGON (((100.6139 13...
-2  MULTIPOLYGON (((100.7306 13...
-3  MULTIPOLYGON (((100.3415 14...
-4  MULTIPOLYGON (((100.8916 14...
-5  MULTIPOLYGON (((100.5131 14...
-6  MULTIPOLYGON (((100.3332 14...
-7  MULTIPOLYGON (((101.3453 15...
-8  MULTIPOLYGON (((100.3691 15...
-9  MULTIPOLYGON (((100.1199 15...
-10 MULTIPOLYGON (((101.3994 15...</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(thadmin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(thadmin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 77
-Columns: 5
+Columns: 17
 $ Shape_Leng &lt;dbl&gt; 2.417227, 1.695100, 1.251111, 1.884945, 3.041716, 1.739908,…
 $ Shape_Area &lt;dbl&gt; 0.13133873, 0.07926199, 0.05323766, 0.12698345, 0.21393797,…
 $ ADM1_EN    &lt;chr&gt; "Bangkok", "Samut Prakan", "Nonthaburi", "Pathum Thani", "P…
+$ ADM1_TH    &lt;chr&gt; "กรุงเทพมหานคร", "สมุทรปราการ", "นนทบุรี", "ปทุมธานี", "พระนครศรีอ…
 $ ADM1_PCODE &lt;chr&gt; "TH10", "TH11", "TH12", "TH13", "TH14", "TH15", "TH16", "TH…
+$ ADM1_REF   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ ADM1ALT1EN &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ ADM1ALT2EN &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ ADM1ALT1TH &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ ADM1ALT2TH &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ ADM0_EN    &lt;chr&gt; "Thailand", "Thailand", "Thailand", "Thailand", "Thailand",…
+$ ADM0_TH    &lt;chr&gt; "ประเทศไทย", "ประเทศไทย", "ประเทศไทย", "ประเทศไทย", "ประเทศ…
+$ ADM0_PCODE &lt;chr&gt; "TH", "TH", "TH", "TH", "TH", "TH", "TH", "TH", "TH", "TH",…
+$ date       &lt;date&gt; 2019-02-18, 2019-02-18, 2019-02-18, 2019-02-18, 2019-02-18…
+$ validOn    &lt;date&gt; 2022-01-22, 2022-01-22, 2022-01-22, 2022-01-22, 2022-01-22…
+$ validTo    &lt;date&gt; -001-11-30, -001-11-30, -001-11-30, -001-11-30, -001-11-30…
 $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((100.6139 13..., MULTIPOLYGON (…</code></pre>
 </div>
 </div>
+<section id="renaming-of-column" class="level4" data-number="2.3.2.1">
+<h4 data-number="2.3.2.1" class="anchored" data-anchor-id="renaming-of-column"><span class="header-section-number">2.3.2.1</span> Renaming of column</h4>
+<p>For ease of reference similar to what was done with the attribute data, <code>ADM1_EN</code> is renamed to <code>province</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>thadmin <span class="ot">&lt;-</span> thadmin <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">province =</span> ADM1_EN)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="setting-of-coordinate-reference-system-crs" class="level4" data-number="2.3.2.2">
+<h4 data-number="2.3.2.2" class="anchored" data-anchor-id="setting-of-coordinate-reference-system-crs"><span class="header-section-number">2.3.2.2</span> Setting of Coordinate reference system (CRS)</h4>
+<p>In this step, <code>st_crs()</code> function of the sf package will be utilised to check the CRS information. If the CRS is not reflecting 32647, the EPSG code of Thailand <code>st_transform()</code> function can be used to transform the EPSG code.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The projected coordinate system of Thailand is WGS 84 / UTM zone 47N and the EPSG code is <a href="https://epsg.io/32647#google_vignette">32647</a>.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(thadmin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: WGS 84 
+  wkt:
+GEOGCRS["WGS 84",
+    DATUM["World Geodetic System 1984",
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["latitude",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["longitude",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    ID["EPSG",4326]]</code></pre>
+</div>
+</div>
+<p>From the results above, we can see that the EPSG is 4326. Hence, <code>st_transform()</code> will be used to perform transformation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>thadmin <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(thadmin, <span class="at">crs =</span><span class="dv">32647</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>st_crs()</code> will be used for confirmation if the transformation has been done correctly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(thadmin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: EPSG:32647 
+  wkt:
+PROJCRS["WGS 84 / UTM zone 47N",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 47N",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",99,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",0,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 96°E and 102°E, northern hemisphere between equator and 84°N, onshore and offshore. China. Indonesia. Laos. Malaysia - West Malaysia. Mongolia. Myanmar (Burma). Russian Federation. Thailand."],
+        BBOX[0,96,84,102]],
+    ID["EPSG",32647]]</code></pre>
+</div>
+</div>
+</section>
+<section id="selecting-required-fields" class="level4" data-number="2.3.2.3">
+<h4 data-number="2.3.2.3" class="anchored" data-anchor-id="selecting-required-fields"><span class="header-section-number">2.3.2.3</span> Selecting Required Fields</h4>
+<p><img src="images/thadmin.png" class="img-fluid"></p>
+<p>Column 3 (province) and 17 (geometry) will be selected as the relevant columns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>thadmin <span class="ot">&lt;-</span> thadmin <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">3</span>, <span class="dv">17</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-inconsistency" class="level4" data-number="2.3.2.4">
+<h4 data-number="2.3.2.4" class="anchored" data-anchor-id="data-inconsistency"><span class="header-section-number">2.3.2.4</span> Data Inconsistency</h4>
+<p>Upon running through some observations with the <code>thadmin</code> simple feature data frame with <code>thai_tourism</code> it is observed that there are inconsistencies in the naming terminologies of the provinces.</p>
+<p><img src="images/inconsistent.png" class="img-fluid"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>HDX_province_names <span class="ot">&lt;-</span> <span class="fu">unique</span>(thadmin<span class="sc">$</span>province)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>HDX_province_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Bangkok"                  "Samut Prakan"            
+ [3] "Nonthaburi"               "Pathum Thani"            
+ [5] "Phra Nakhon Si Ayutthaya" "Ang Thong"               
+ [7] "Lop Buri"                 "Sing Buri"               
+ [9] "Chai Nat"                 "Saraburi"                
+[11] "Chon Buri"                "Rayong"                  
+[13] "Chanthaburi"              "Trat"                    
+[15] "Chachoengsao"             "Prachin Buri"            
+[17] "Nakhon Nayok"             "Sa Kaeo"                 
+[19] "Nakhon Ratchasima"        "Buri Ram"                
+[21] "Surin"                    "Si Sa Ket"               
+[23] "Ubon Ratchathani"         "Yasothon"                
+[25] "Chaiyaphum"               "Amnat Charoen"           
+[27] "Bueng Kan"                "Nong Bua Lam Phu"        
+[29] "Khon Kaen"                "Udon Thani"              
+[31] "Loei"                     "Nong Khai"               
+[33] "Maha Sarakham"            "Roi Et"                  
+[35] "Kalasin"                  "Sakon Nakhon"            
+[37] "Nakhon Phanom"            "Mukdahan"                
+[39] "Chiang Mai"               "Lamphun"                 
+[41] "Lampang"                  "Uttaradit"               
+[43] "Phrae"                    "Nan"                     
+[45] "Phayao"                   "Chiang Rai"              
+[47] "Mae Hong Son"             "Nakhon Sawan"            
+[49] "Uthai Thani"              "Kamphaeng Phet"          
+[51] "Tak"                      "Sukhothai"               
+[53] "Phitsanulok"              "Phichit"                 
+[55] "Phetchabun"               "Ratchaburi"              
+[57] "Kanchanaburi"             "Suphan Buri"             
+[59] "Nakhon Pathom"            "Samut Sakhon"            
+[61] "Samut Songkhram"          "Phetchaburi"             
+[63] "Prachuap Khiri Khan"      "Nakhon Si Thammarat"     
+[65] "Krabi"                    "Phangnga"                
+[67] "Phuket"                   "Surat Thani"             
+[69] "Ranong"                   "Chumphon"                
+[71] "Songkhla"                 "Satun"                   
+[73] "Trang"                    "Phatthalung"             
+[75] "Pattani"                  "Yala"                    
+[77] "Narathiwat"              </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>kaggle_province_names <span class="ot">&lt;-</span> <span class="fu">unique</span>(tourism_stats_grouped<span class="sc">$</span>province)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>kaggle_province_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Amnat Charoen"            "Ang Thong"               
+ [3] "Bangkok"                  "Bueng Kan"               
+ [5] "Buriram"                  "Chachoengsao"            
+ [7] "Chainat"                  "Chaiyaphum"              
+ [9] "Chanthaburi"              "Chiang Mai"              
+[11] "Chiang Rai"               "Chonburi"                
+[13] "Chumphon"                 "Kalasin"                 
+[15] "Kamphaeng Phet"           "Kanchanaburi"            
+[17] "Khon Kaen"                "Krabi"                   
+[19] "Lampang"                  "Lamphun"                 
+[21] "Loei"                     "Lopburi"                 
+[23] "Mae Hong Son"             "Maha Sarakham"           
+[25] "Mukdahan"                 "Nakhon Nayok"            
+[27] "Nakhon Pathom"            "Nakhon Phanom"           
+[29] "Nakhon Ratchasima"        "Nakhon Sawan"            
+[31] "Nakhon Si Thammarat"      "Nan"                     
+[33] "Narathiwat"               "Nong Bua Lamphu"         
+[35] "Nong Khai"                "Nonthaburi"              
+[37] "Pathum Thani"             "Pattani"                 
+[39] "Phang Nga"                "Phatthalung"             
+[41] "Phayao"                   "Phetchabun"              
+[43] "Phetchaburi"              "Phichit"                 
+[45] "Phitsanulok"              "Phra Nakhon Si Ayutthaya"
+[47] "Phrae"                    "Phuket"                  
+[49] "Prachinburi"              "Prachuap Khiri Khan"     
+[51] "Ranong"                   "Ratchaburi"              
+[53] "Rayong"                   "Roi Et"                  
+[55] "Sa Kaeo"                  "Sakon Nakhon"            
+[57] "Samut Prakan"             "Samut Sakhon"            
+[59] "Samut Songkhram"          "Saraburi"                
+[61] "Satun"                    "Sing Buri"               
+[63] "Sisaket"                  "Songkhla"                
+[65] "Sukhothai"                "Suphan Buri"             
+[67] "Surat Thani"              "Surin"                   
+[69] "Tak"                      "Trang"                   
+[71] "Trat"                     "Ubon Ratchathani"        
+[73] "Udon Thani"               "Uthai Thani"             
+[75] "Uttaradit"                "Yala"                    
+[77] "Yasothon"                </code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<caption>R Packages {.striped .hover tbl-colwidths=“[25,75]”} Nong Bua Lam Phu</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">tourism_stats</th>
+<th style="text-align: left;">thadmin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Lopburi</td>
+<td style="text-align: left;">Lop Buri</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Chainat</td>
+<td style="text-align: left;">Chai Nat</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Chonburi</td>
+<td style="text-align: left;">Chon Buri</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Prachinburi</td>
+<td style="text-align: left;">Prachin Buri</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Phang Nga</td>
+<td style="text-align: left;">Phangnga</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sisaket</td>
+<td style="text-align: left;">Si Sa Ket</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Buriram</td>
+<td style="text-align: left;">Buri Ram</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Nong Bua Lamphu</td>
+<td style="text-align: left;">Nong Bua Lam Phu</td>
+</tr>
+</tbody>
+</table>
+<p>On the right side of the table are the 8 provinces from <code>thadmin</code> that are inconsistent with the naming conventions from <code>tourism_stats</code></p>
+<p>The <code>gsub()</code> function from Base R will be used to for string substitution to modify the provinces that are not consistent. The naming convention from <code>tourism_stats</code> will be used.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a vector of old and new province names</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>rename <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Lopburi"</span>, <span class="st">"Chainat"</span>, <span class="st">"Chonburi"</span>, <span class="st">"Prachinburi"</span>, <span class="st">"Phang Nga"</span>, <span class="st">"Sisaket"</span>, <span class="st">"Buriram"</span>, <span class="st">"Nong Bua Lamphu"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>old_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Lop Buri"</span>, <span class="st">"Chai Nat"</span>, <span class="st">"Chon Buri"</span>, <span class="st">"Prachin Buri"</span>, <span class="st">"Phangnga"</span>, <span class="st">"Si Sa Ket"</span>, <span class="st">"Buri Ram"</span>, <span class="st">"Nong Bua Lam Phu"</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through the old and new names and apply gsub for each replacement</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_along</span>(old_names)) {</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  thadmin<span class="sc">$</span>province <span class="ot">&lt;-</span> <span class="fu">gsub</span>(old_names[i], rename[i], thadmin<span class="sc">$</span>province)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the updated province names</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(thadmin<span class="sc">$</span>province, <span class="at">n =</span> <span class="dv">77</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Bangkok"                  "Samut Prakan"            
+ [3] "Nonthaburi"               "Pathum Thani"            
+ [5] "Phra Nakhon Si Ayutthaya" "Ang Thong"               
+ [7] "Lopburi"                  "Sing Buri"               
+ [9] "Chainat"                  "Saraburi"                
+[11] "Chonburi"                 "Rayong"                  
+[13] "Chanthaburi"              "Trat"                    
+[15] "Chachoengsao"             "Prachinburi"             
+[17] "Nakhon Nayok"             "Sa Kaeo"                 
+[19] "Nakhon Ratchasima"        "Buriram"                 
+[21] "Surin"                    "Sisaket"                 
+[23] "Ubon Ratchathani"         "Yasothon"                
+[25] "Chaiyaphum"               "Amnat Charoen"           
+[27] "Bueng Kan"                "Nong Bua Lamphu"         
+[29] "Khon Kaen"                "Udon Thani"              
+[31] "Loei"                     "Nong Khai"               
+[33] "Maha Sarakham"            "Roi Et"                  
+[35] "Kalasin"                  "Sakon Nakhon"            
+[37] "Nakhon Phanom"            "Mukdahan"                
+[39] "Chiang Mai"               "Lamphun"                 
+[41] "Lampang"                  "Uttaradit"               
+[43] "Phrae"                    "Nan"                     
+[45] "Phayao"                   "Chiang Rai"              
+[47] "Mae Hong Son"             "Nakhon Sawan"            
+[49] "Uthai Thani"              "Kamphaeng Phet"          
+[51] "Tak"                      "Sukhothai"               
+[53] "Phitsanulok"              "Phichit"                 
+[55] "Phetchabun"               "Ratchaburi"              
+[57] "Kanchanaburi"             "Suphan Buri"             
+[59] "Nakhon Pathom"            "Samut Sakhon"            
+[61] "Samut Songkhram"          "Phetchaburi"             
+[63] "Prachuap Khiri Khan"      "Nakhon Si Thammarat"     
+[65] "Krabi"                    "Phang Nga"               
+[67] "Phuket"                   "Surat Thani"             
+[69] "Ranong"                   "Chumphon"                
+[71] "Songkhla"                 "Satun"                   
+[73] "Trang"                    "Phatthalung"             
+[75] "Pattani"                  "Yala"                    
+[77] "Narathiwat"              </code></pre>
+</div>
+</div>
+</section>
+<section id="relational-join" class="level4" data-number="2.3.2.5">
+<h4 data-number="2.3.2.5" class="anchored" data-anchor-id="relational-join"><span class="header-section-number">2.3.2.5</span> Relational Join</h4>
+<p>The code chunk below is used to join the aspatial and geospatial data by using the <code>left_join()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>thailand_tourism <span class="ot">&lt;-</span> <span class="fu">left_join</span>(thadmin,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                              tourism_stats_grouped, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"province"</span> <span class="ot">=</span> <span class="st">"province"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="saving-rds-files" class="level4" data-number="2.3.2.6">
+<h4 data-number="2.3.2.6" class="anchored" data-anchor-id="saving-rds-files"><span class="header-section-number">2.3.2.6</span> Saving rds files</h4>
+<p>In the following code chunk, <code>write_rds()</code> of <strong>readr</strong> package is used to save the extracted attribute data <code>thailand_tourism</code> into an output file in rds format. The output file is saved in the rds folder.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(thailand_tourism,</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"data/rds/thailand_tourism.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <strong>saved file</strong> can then be retrieved using the code chunk below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>thailand_tourism <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/thailand_tourism.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 </section>
-<section id="exploratory-data-analysis-eda" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="exploratory-data-analysis-eda"><span class="header-section-number">2.4</span> Exploratory Data Analysis (EDA)</h2>
+<section id="visualing-the-indicators-of-tourism-economy-of-thailand" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="visualing-the-indicators-of-tourism-economy-of-thailand"><span class="header-section-number">2.4</span> Visualing the Indicators of tourism economy of Thailand</h2>
+<section id="visualing-number-of-tourists-variable" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="visualing-number-of-tourists-variable"><span class="header-section-number">2.4.1</span> Visualing Number of Tourists Variable</h3>
+<p>A basemap will be prepared to show the distribution of the <strong>number of tourists</strong> in the provinces of Thailand.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>basemap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(thailand_tourism) <span class="sc">+</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>() <span class="sc">+</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"province"</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>basemap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="all-tourists" class="level4" data-number="2.4.1.1">
+<h4 data-number="2.4.1.1" class="anchored" data-anchor-id="all-tourists"><span class="header-section-number">2.4.1.1</span> All Tourists</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>all_tourists <span class="ot">=</span> thailand_tourism<span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span><span class="st">'no_tourist_all'</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>basemap01 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(all_tourists) <span class="sc">+</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">col =</span> <span class="st">"total_value"</span>, <span class="at">palette =</span> <span class="st">"Oranges"</span>, <span class="at">style=</span><span class="st">'quantile'</span>) <span class="sc">+</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"province"</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>basemap01</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="personal-notes-to-be-removed" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="personal-notes-to-be-removed"><span class="header-section-number">2.5</span> Personal Notes (to be removed)</h2>
-<p>Data covers several years and have several attributes</p>
-<p>geospatial data - is in high res - has small multiple islands - have to note the small islands - probably remove or have it in one of the territory</p>
-<p>pre , during , post covid (three temporal terms) changes in revenue and other measures to be investigated.</p>
-<p>Uneven spatial distributions</p>
-<p>If key indicators (multiple indicators to look out for) are independent from - space, space &amp; time (cross sectional - pre, etc during post covid)</p>
-<p>If it is indeed spatial and spatial temporal dependent</p>
-<p>cluster - outliers - hotspots - local moran I to detect cluster and outlier G* statistics to discover hot and cold spots.</p>
-<p>Emerging hotspots - have to be continuous - for 3 years, 4 years, months etc. Note for this data set what is the constraint to see the data continuously.</p>
-<p>sfdep - advantages -</p>
-<p>spacetime cube - created by sfdep</p>
-<p>points below the teen birth rate is about LISA</p>
-<p>have to recode the date</p>
-<p>Refer to hands on ex - hunan case - maybe the GPD -</p>
+<section id="foreign-tourists" class="level4" data-number="2.4.1.2">
+<h4 data-number="2.4.1.2" class="anchored" data-anchor-id="foreign-tourists"><span class="header-section-number">2.4.1.2</span> Foreign Tourists</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>foreign_tourists <span class="ot">=</span> thailand_tourism<span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span><span class="st">'no_tourist_foreign'</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>basemap02 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(foreign_tourists) <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">col =</span> <span class="st">"total_value"</span>, <span class="at">palette =</span> <span class="st">"Oranges"</span>, <span class="at">style=</span><span class="st">'quantile'</span>) <span class="sc">+</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"province"</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>basemap02</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="domestic-tourists" class="level4" data-number="2.4.1.3">
+<h4 data-number="2.4.1.3" class="anchored" data-anchor-id="domestic-tourists"><span class="header-section-number">2.4.1.3</span> Domestic Tourists</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>domestic_tourists <span class="ot">=</span> thailand_tourism<span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span><span class="st">'no_tourist_thai'</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>basemap03 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(domestic_tourists) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">col =</span> <span class="st">"total_value"</span>, <span class="at">palette =</span> <span class="st">"Oranges"</span>, <span class="at">style=</span><span class="st">'quantile'</span>) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"province"</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>basemap03</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="visualing-revenue-variable" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="visualing-revenue-variable"><span class="header-section-number">2.4.2</span> Visualing Revenue Variable</h3>
+<section id="all-revenue" class="level4" data-number="2.4.2.1">
+<h4 data-number="2.4.2.1" class="anchored" data-anchor-id="all-revenue"><span class="header-section-number">2.4.2.1</span> All Revenue</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>all_revenue <span class="ot">=</span> thailand_tourism<span class="sc">%&gt;%</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span><span class="st">'revenue_all'</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>basemap1 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(all_revenue) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">col =</span> <span class="st">"total_value"</span>, <span class="at">palette =</span> <span class="st">"Greens"</span>, <span class="at">style=</span><span class="st">'quantile'</span>) <span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"province"</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>basemap1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="foreign-revenue" class="level4" data-number="2.4.2.2">
+<h4 data-number="2.4.2.2" class="anchored" data-anchor-id="foreign-revenue"><span class="header-section-number">2.4.2.2</span> Foreign Revenue</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>foreign_revenue <span class="ot">=</span> thailand_tourism<span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span><span class="st">'revenue_foreign'</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>basemap2 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(foreign_revenue) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">col =</span> <span class="st">"total_value"</span>, <span class="at">palette =</span> <span class="st">"Greens"</span>, <span class="at">style=</span><span class="st">'quantile'</span>) <span class="sc">+</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"province"</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>basemap2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="domestic-revenue" class="level4" data-number="2.4.2.3">
+<h4 data-number="2.4.2.3" class="anchored" data-anchor-id="domestic-revenue"><span class="header-section-number">2.4.2.3</span> Domestic Revenue</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>thai_revenue <span class="ot">=</span> thailand_tourism<span class="sc">%&gt;%</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span><span class="st">'revenue_thai'</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>basemap3 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(thai_revenue) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">col =</span> <span class="st">"total_value"</span>, <span class="at">palette =</span> <span class="st">"Greens"</span>, <span class="at">style=</span><span class="st">'quantile'</span>) <span class="sc">+</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_text</span>(<span class="st">"province"</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>basemap3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="spatial-weights-and-applications" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="spatial-weights-and-applications"><span class="header-section-number">2.5</span> Spatial Weights and Applications</h2>
+<p>In this section, <a href="https://r-spatial.github.io/spdep/reference/poly2nb.html">poly2nb()</a> of <strong>spdep</strong> package is used to compute contiguity weight matrices for the study area.</p>
+<section id="computing-queen-contiguity-based-neighbours" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="computing-queen-contiguity-based-neighbours"><span class="header-section-number">2.5.1</span> Computing (QUEEN) contiguity based neighbours</h3>
+<p>The code chunk below is used to compute Queen contiguity weight matrix for revenue.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Revenue Generated by Tourism</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Revenue Generated by Foreigners</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Revenue Generated by Thais</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>wm_q <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(all_revenue, <span class="at">queen=</span><span class="cn">TRUE</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wm_q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Neighbour list object:
+Number of regions: 77 
+Number of nonzero links: 352 
+Percentage nonzero weights: 5.93692 
+Average number of links: 4.571429 
+1 region with no links:
+67
+2 disjoint connected subgraphs
+Link number distribution:
+
+ 0  1  2  3  4  5  6  7  8  9 
+ 1  1  5 17 15 17 10  5  4  2 
+1 least connected region:
+14 with 1 link
+2 most connected regions:
+29 51 with 9 links</code></pre>
+</div>
+</div>
+<p>The summary report above shows that there are 77 area units in Thailand which represent the provinces. There are 2 most connected area units eacah with 9 neighbours. There is only 1 area unit with only one neighbour.</p>
+<p>For each polygon in our polygon object, wm_q lists all neighbouring polygons. For example, to see the neighbours for the 51 polygon in the object, type:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>all_revenue<span class="sc">$</span>province[<span class="dv">51</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Tak"</code></pre>
+</div>
+</div>
+<p>The output reveals that Polygon ID = 51 is Tak province.</p>
+<p>To reveal the provinces of the nine neighbouring polygons, the code chunk will be used:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>all_revenue<span class="sc">$</span>province[<span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">25</span>,<span class="dv">28</span>,<span class="dv">30</span>,<span class="dv">31</span>,<span class="dv">33</span>,<span class="dv">35</span>,<span class="dv">55</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Nakhon Ratchasima" "Buriram"           "Chaiyaphum"       
+[4] "Nong Bua Lamphu"   "Udon Thani"        "Loei"             
+[7] "Maha Sarakham"     "Kalasin"           "Phetchabun"       </code></pre>
+</div>
+</div>
+<p>We can retrieve the revenue of these nine provinces by using the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>nb51 <span class="ot">&lt;-</span> wm_q[[<span class="dv">51</span>]]</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>nb51 <span class="ot">&lt;-</span> all_revenue<span class="sc">$</span>total_value[nb51]</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>nb51</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 260045700000   4810760000  13421950000  14370950000  12339730000
+[6]   4098740000   4543780000   8988760000  77869050000</code></pre>
+</div>
+</div>
+<p>The printed output above shows that the revenue of the nine nearest neighbours based on Queen’s method are 260045700000, 4810760000, 13421950000, 14370950000, 12339730000, 4098740000, 4543780000, 8988760000 and 77869050000 respectively.</p>
+<p>We can display the complete weight matrix by using <code>str()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(wm_q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 77
+ $ : int [1:6] 2 3 4 15 59 60
+ $ : int [1:2] 1 15
+ $ : int [1:4] 1 4 5 59
+ $ : int [1:6] 1 3 5 10 15 17
+ $ : int [1:7] 3 4 6 7 10 58 59
+ $ : int [1:4] 5 7 8 58
+ $ : int [1:8] 5 6 8 10 19 25 48 55
+ $ : int [1:5] 6 7 9 48 58
+ $ : int [1:4] 8 48 49 58
+ $ : int [1:5] 4 5 7 17 19
+ $ : int [1:3] 12 13 15
+ $ : int [1:2] 11 13
+ $ : int [1:5] 11 12 14 15 18
+ $ : int 13
+ $ : int [1:8] 1 2 4 11 13 16 17 18
+ $ : int [1:4] 15 17 18 19
+ $ : int [1:5] 4 10 15 16 19
+ $ : int [1:5] 13 15 16 19 20
+ $ : int [1:8] 7 10 16 17 18 20 25 29
+ $ : int [1:5] 18 19 21 29 33
+ $ : int [1:4] 20 22 33 34
+ $ : int [1:4] 21 23 24 34
+ $ : int [1:3] 22 24 26
+ $ : int [1:5] 22 23 26 34 38
+ $ : int [1:4] 7 19 29 55
+ $ : int [1:3] 23 24 38
+ $ : int [1:3] 32 36 37
+ $ : int [1:3] 29 30 31
+ $ : int [1:9] 19 20 25 28 30 31 33 35 55
+ $ : int [1:6] 28 29 31 32 35 36
+ $ : int [1:6] 28 29 30 32 53 55
+ $ : int [1:4] 27 30 31 36
+ $ : int [1:5] 20 21 29 34 35
+ $ : int [1:6] 21 22 24 33 35 38
+ $ : int [1:6] 29 30 33 34 36 38
+ $ : int [1:6] 27 30 32 35 37 38
+ $ : int [1:3] 27 36 38
+ $ : int [1:6] 24 26 34 35 36 37
+ $ : int [1:5] 40 41 46 47 51
+ $ : int [1:3] 39 41 51
+ $ : int [1:7] 39 40 43 45 46 51 52
+ $ : int [1:4] 43 44 52 53
+ $ : int [1:5] 41 42 44 45 52
+ $ : int [1:3] 42 43 45
+ $ : int [1:4] 41 43 44 46
+ $ : int [1:3] 39 41 45
+ $ : int [1:2] 39 51
+ $ : int [1:8] 7 8 9 49 50 51 54 55
+ $ : int [1:5] 9 48 51 57 58
+ $ : int [1:5] 48 51 52 53 54
+ $ : int [1:9] 39 40 41 47 48 49 50 52 57
+ $ : int [1:6] 41 42 43 50 51 53
+ $ : int [1:6] 31 42 50 52 54 55
+ $ : int [1:4] 48 50 53 55
+ $ : int [1:7] 7 25 29 31 48 53 54
+ $ : int [1:5] 57 59 60 61 62
+ $ : int [1:5] 49 51 56 58 59
+ $ : int [1:7] 5 6 8 9 49 57 59
+ $ : int [1:7] 1 3 5 56 57 58 60
+ $ : int [1:4] 1 56 59 61
+ $ : int [1:3] 56 60 62
+ $ : int [1:3] 56 61 63
+ $ : int [1:2] 62 70
+ $ : int [1:5] 65 68 71 73 74
+ $ : int [1:4] 64 66 68 73
+ $ : int [1:3] 65 68 69
+ $ : int 0
+ $ : int [1:5] 64 65 66 69 70
+ $ : int [1:3] 66 68 70
+ $ : int [1:3] 63 68 69
+ $ : int [1:5] 64 72 74 75 76
+ $ : int [1:3] 71 73 74
+ $ : int [1:4] 64 65 72 74
+ $ : int [1:4] 64 71 72 73
+ $ : int [1:3] 71 76 77
+ $ : int [1:3] 71 75 77
+ $ : int [1:2] 75 76
+ - attr(*, "class")= chr "nb"
+ - attr(*, "region.id")= chr [1:77] "1" "2" "3" "4" ...
+ - attr(*, "call")= language poly2nb(pl = all_revenue, queen = TRUE)
+ - attr(*, "type")= chr "queen"
+ - attr(*, "sym")= logi TRUE</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>wm_q_foreign <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(foreign_revenue, <span class="at">queen=</span><span class="cn">TRUE</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wm_q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Neighbour list object:
+Number of regions: 77 
+Number of nonzero links: 352 
+Percentage nonzero weights: 5.93692 
+Average number of links: 4.571429 
+1 region with no links:
+67
+2 disjoint connected subgraphs
+Link number distribution:
+
+ 0  1  2  3  4  5  6  7  8  9 
+ 1  1  5 17 15 17 10  5  4  2 
+1 least connected region:
+14 with 1 link
+2 most connected regions:
+29 51 with 9 links</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>wm_q_thais <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(thai_revenue, <span class="at">queen=</span><span class="cn">TRUE</span>)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wm_q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Neighbour list object:
+Number of regions: 77 
+Number of nonzero links: 352 
+Percentage nonzero weights: 5.93692 
+Average number of links: 4.571429 
+1 region with no links:
+67
+2 disjoint connected subgraphs
+Link number distribution:
+
+ 0  1  2  3  4  5  6  7  8  9 
+ 1  1  5 17 15 17 10  5  4  2 
+1 least connected region:
+14 with 1 link
+2 most connected regions:
+29 51 with 9 links</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="computing-rook-contiguity-based-neighbours" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="computing-rook-contiguity-based-neighbours"><span class="header-section-number">2.5.2</span> Computing (ROOK) contiguity based neighbours</h3>
+<p>The code chunk below is used to compute Rook contiguity weight matrix.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>wm_r <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(all_revenue, <span class="at">queen =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wm_r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Neighbour list object:
+Number of regions: 77 
+Number of nonzero links: 352 
+Percentage nonzero weights: 5.93692 
+Average number of links: 4.571429 
+1 region with no links:
+67
+2 disjoint connected subgraphs
+Link number distribution:
+
+ 0  1  2  3  4  5  6  7  8  9 
+ 1  1  5 17 15 17 10  5  4  2 
+1 least connected region:
+14 with 1 link
+2 most connected regions:
+29 51 with 9 links</code></pre>
+</div>
+</div>
+</section>
+<section id="visualising-contiguity-weights" class="level3" data-number="2.5.3">
+<h3 data-number="2.5.3" class="anchored" data-anchor-id="visualising-contiguity-weights"><span class="header-section-number">2.5.3</span> Visualising contiguity weights</h3>
+<p>To create a connectivity graph for polygons, we first need to obtain points that represent each polygon. The most common method for this is to calculate the centroids of the polygons. Using the sf package in R, the centroid for each polygon can be calculated. However, rather than simply applying <code>st_centroid()</code> directly on the geometry column, the coordinates of these centroids need to be extracted into a separate data frame.</p>
+<p>To achieve this, a mapping function will be used to apply <code>st_centroid()</code> to each polygon in the geometry column. The <code>map_dbl()</code> function from the purrr package will be used to handle this, as it applies a function to each element of a vector and returns a vector of the same length, which can then be used for further graph construction.</p>
+<p>To get our longitude values we map the st_centroid function over the geometry column of us.bound and access the longitude value through double bracket notation [[]] and 1. This allows us to get only the longitude, which is the first value in each centroid.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>longitude <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(all_revenue<span class="sc">$</span>geometry, <span class="sc">~</span><span class="fu">st_centroid</span>(.x)[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We do the same for latitude with one key difference. We access the second value per each centroid with [[2]].</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>latitude <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(all_revenue<span class="sc">$</span>geometry, <span class="sc">~</span><span class="fu">st_centroid</span>(.x)[[<span class="dv">2</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have latitude and longitude, we use cbind to put longitude and latitude into the same object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">cbind</span>(longitude, latitude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We check the first few observations to see if things are formatted correctly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(coords)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     longitude latitude
+[1,]  675514.6  1523087
+[2,]  685033.7  1503755
+[3,]  650477.2  1539777
+[4,]  681656.0  1555581
+[5,]  664627.1  1586462
+[6,]  645239.0  1617118</code></pre>
+</div>
+</div>
+<section id="plotting-queen-contiguity-based-neighbours-map" class="level4" data-number="2.5.3.1">
+<h4 data-number="2.5.3.1" class="anchored" data-anchor-id="plotting-queen-contiguity-based-neighbours-map"><span class="header-section-number">2.5.3.1</span> Plotting Queen contiguity based neighbours map</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(all_revenue<span class="sc">$</span>geometry, <span class="at">border=</span><span class="st">"lightgrey"</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wm_q, coords, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col=</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="plotting-rook-contiguity-based-neighbours-map" class="level4" data-number="2.5.3.2">
+<h4 data-number="2.5.3.2" class="anchored" data-anchor-id="plotting-rook-contiguity-based-neighbours-map"><span class="header-section-number">2.5.3.2</span> Plotting Rook contiguity based neighbours map</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(all_revenue<span class="sc">$</span>geometry, <span class="at">border=</span><span class="st">"lightgrey"</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wm_r, coords, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="plotting-both-queen-and-rook-contiguity-based-neighbours-maps" class="level4" data-number="2.5.3.3">
+<h4 data-number="2.5.3.3" class="anchored" data-anchor-id="plotting-both-queen-and-rook-contiguity-based-neighbours-maps"><span class="header-section-number">2.5.3.3</span> Plotting both Queen and Rook contiguity based neighbours maps</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(all_revenue<span class="sc">$</span>geometry, <span class="at">border=</span><span class="st">"lightgrey"</span>, <span class="at">main=</span><span class="st">"Queen Contiguity"</span>)</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wm_q, coords, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col=</span> <span class="st">"red"</span>)</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(all_revenue<span class="sc">$</span>geometry, <span class="at">border=</span><span class="st">"lightgrey"</span>, <span class="at">main=</span><span class="st">"Rook Contiguity"</span>)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wm_r, coords, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
+</section>
 </section>
 </section>
 

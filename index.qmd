@@ -21,7 +21,7 @@ about:
 listing:
   type: grid
   max-items: 24
-  page-size: 5
+  page-size: 6
   grid-item-align: center
   max-description-length: 130
   contents:
