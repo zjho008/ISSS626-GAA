@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ho Zi Jun">
 <meta name="dcterms.date" content="2024-09-20">
 
-<title>ISSS626-GAA (Geospatial Analytics and Applications) - Hands-on Exercise 5b: Local Measures of Spatial Autocorrelation</title>
+<title>Hands-on Exercise 5b: Local Measures of Spatial Autocorrelation – ISSS626-GAA (Geospatial Analytics and Applications)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -35,7 +35,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -119,13 +119,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Hands-on Exercise</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercise">    
@@ -161,10 +161,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html">
  <span class="dropdown-text">Hands-on Exercise 5b: Local Measures of Spatial Autocorrelation</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html">
+ <span class="dropdown-text">Hands-on Exercise 6: Geographical Segmentation with Spatially Constrained Clustering Techniques</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html">
+ <span class="dropdown-text">Hands-on Exercise 7: Geographically Weighted Regression</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08.html">
+ <span class="dropdown-text">Hands-on Exercise 8: Geographically Weighted Predictive Modelling</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercise" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">In-class Exercise</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercise">    
@@ -188,10 +200,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex05/In-class_Ex05.html">
  <span class="dropdown-text">In-class Exercise 5</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex06/In-class_Ex06.html">
+ <span class="dropdown-text">In-class Exercise 6</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex07/In-class_Ex07.html">
+ <span class="dropdown-text">In-class Exercise 7</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Take-home Exercise</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
@@ -217,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -231,40 +251,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#spatial-weights-and-applications" id="toc-spatial-weights-and-applications" class="nav-link active" data-scroll-target="#spatial-weights-and-applications"><span class="header-section-number">7</span> Spatial Weights and Applications</a>
+  <li><a href="#spatial-weights-and-applications" id="toc-spatial-weights-and-applications" class="nav-link active" data-scroll-target="#spatial-weights-and-applications"><span class="header-section-number">1</span> Spatial Weights and Applications</a>
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">7.1</span> Overview</a></li>
-  <li><a href="#the-study-area-and-data" id="toc-the-study-area-and-data" class="nav-link" data-scroll-target="#the-study-area-and-data"><span class="header-section-number">7.2</span> The Study Area and Data</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">1.1</span> Overview</a></li>
+  <li><a href="#the-study-area-and-data" id="toc-the-study-area-and-data" class="nav-link" data-scroll-target="#the-study-area-and-data"><span class="header-section-number">1.2</span> The Study Area and Data</a>
   <ul class="collapse">
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">7.2.1</span> Getting Started</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">1.2.1</span> Getting Started</a></li>
   </ul></li>
-  <li><a href="#getting-the-data-into-the-r-environment" id="toc-getting-the-data-into-the-r-environment" class="nav-link" data-scroll-target="#getting-the-data-into-the-r-environment"><span class="header-section-number">7.3</span> Getting the Data into the R environment</a>
+  <li><a href="#getting-the-data-into-the-r-environment" id="toc-getting-the-data-into-the-r-environment" class="nav-link" data-scroll-target="#getting-the-data-into-the-r-environment"><span class="header-section-number">1.3</span> Getting the Data into the R environment</a>
   <ul class="collapse">
-  <li><a href="#importing-shapefile-in-r-environment" id="toc-importing-shapefile-in-r-environment" class="nav-link" data-scroll-target="#importing-shapefile-in-r-environment"><span class="header-section-number">7.3.1</span> Importing shapefile in R environment</a></li>
-  <li><a href="#importing-csv-file-into-r-environment" id="toc-importing-csv-file-into-r-environment" class="nav-link" data-scroll-target="#importing-csv-file-into-r-environment"><span class="header-section-number">7.3.2</span> Importing csv file into R environment</a></li>
-  <li><a href="#performing-relational-join" id="toc-performing-relational-join" class="nav-link" data-scroll-target="#performing-relational-join"><span class="header-section-number">7.3.3</span> Performing relational join</a></li>
+  <li><a href="#importing-shapefile-in-r-environment" id="toc-importing-shapefile-in-r-environment" class="nav-link" data-scroll-target="#importing-shapefile-in-r-environment"><span class="header-section-number">1.3.1</span> Importing shapefile in R environment</a></li>
+  <li><a href="#importing-csv-file-into-r-environment" id="toc-importing-csv-file-into-r-environment" class="nav-link" data-scroll-target="#importing-csv-file-into-r-environment"><span class="header-section-number">1.3.2</span> Importing csv file into R environment</a></li>
+  <li><a href="#performing-relational-join" id="toc-performing-relational-join" class="nav-link" data-scroll-target="#performing-relational-join"><span class="header-section-number">1.3.3</span> Performing relational join</a></li>
   </ul></li>
-  <li><a href="#visualising-regional-development-indicator" id="toc-visualising-regional-development-indicator" class="nav-link" data-scroll-target="#visualising-regional-development-indicator"><span class="header-section-number">7.4</span> Visualising Regional Development Indicator</a></li>
-  <li><a href="#computing-contiguity-spatial-weights" id="toc-computing-contiguity-spatial-weights" class="nav-link" data-scroll-target="#computing-contiguity-spatial-weights"><span class="header-section-number">7.5</span> Computing Contiguity Spatial Weights</a>
+  <li><a href="#visualising-regional-development-indicator" id="toc-visualising-regional-development-indicator" class="nav-link" data-scroll-target="#visualising-regional-development-indicator"><span class="header-section-number">1.4</span> Visualising Regional Development Indicator</a></li>
+  <li><a href="#computing-contiguity-spatial-weights" id="toc-computing-contiguity-spatial-weights" class="nav-link" data-scroll-target="#computing-contiguity-spatial-weights"><span class="header-section-number">1.5</span> Computing Contiguity Spatial Weights</a>
   <ul class="collapse">
-  <li><a href="#computing-queen-contiguity-based-neighbours" id="toc-computing-queen-contiguity-based-neighbours" class="nav-link" data-scroll-target="#computing-queen-contiguity-based-neighbours"><span class="header-section-number">7.5.1</span> Computing (QUEEN) contiguity based neighbours</a>
+  <li><a href="#computing-queen-contiguity-based-neighbours" id="toc-computing-queen-contiguity-based-neighbours" class="nav-link" data-scroll-target="#computing-queen-contiguity-based-neighbours"><span class="header-section-number">1.5.1</span> Computing (QUEEN) contiguity based neighbours</a>
   <ul class="collapse">
-  <li><a href="#diy" id="toc-diy" class="nav-link" data-scroll-target="#diy"><span class="header-section-number">7.5.1.1</span> DIY</a></li>
+  <li><a href="#diy" id="toc-diy" class="nav-link" data-scroll-target="#diy"><span class="header-section-number">1.5.1.1</span> DIY</a></li>
   </ul></li>
-  <li><a href="#creating-rook-contiguity-based-neighbours" id="toc-creating-rook-contiguity-based-neighbours" class="nav-link" data-scroll-target="#creating-rook-contiguity-based-neighbours"><span class="header-section-number">7.5.2</span> Creating (ROOK) contiguity based neighbours</a></li>
-  <li><a href="#visualising-contiguity-weights" id="toc-visualising-contiguity-weights" class="nav-link" data-scroll-target="#visualising-contiguity-weights"><span class="header-section-number">7.5.3</span> Visualising contiguity weights</a>
+  <li><a href="#creating-rook-contiguity-based-neighbours" id="toc-creating-rook-contiguity-based-neighbours" class="nav-link" data-scroll-target="#creating-rook-contiguity-based-neighbours"><span class="header-section-number">1.5.2</span> Creating (ROOK) contiguity based neighbours</a></li>
+  <li><a href="#visualising-contiguity-weights" id="toc-visualising-contiguity-weights" class="nav-link" data-scroll-target="#visualising-contiguity-weights"><span class="header-section-number">1.5.3</span> Visualising contiguity weights</a>
   <ul class="collapse">
-  <li><a href="#plotting-queen-contiguity-based-neighbours-map" id="toc-plotting-queen-contiguity-based-neighbours-map" class="nav-link" data-scroll-target="#plotting-queen-contiguity-based-neighbours-map"><span class="header-section-number">7.5.3.1</span> Plotting Queen contiguity based neighbours map</a></li>
-  <li><a href="#plotting-rook-contiguity-based-neighbours-map" id="toc-plotting-rook-contiguity-based-neighbours-map" class="nav-link" data-scroll-target="#plotting-rook-contiguity-based-neighbours-map"><span class="header-section-number">7.5.3.2</span> Plotting Rook contiguity based neighbours map</a></li>
-  <li><a href="#plotting-both-queen-and-rook-contiguity-based-neighbours-maps" id="toc-plotting-both-queen-and-rook-contiguity-based-neighbours-maps" class="nav-link" data-scroll-target="#plotting-both-queen-and-rook-contiguity-based-neighbours-maps"><span class="header-section-number">7.5.3.3</span> Plotting both Queen and Rook contiguity based neighbours maps</a></li>
+  <li><a href="#plotting-queen-contiguity-based-neighbours-map" id="toc-plotting-queen-contiguity-based-neighbours-map" class="nav-link" data-scroll-target="#plotting-queen-contiguity-based-neighbours-map"><span class="header-section-number">1.5.3.1</span> Plotting Queen contiguity based neighbours map</a></li>
+  <li><a href="#plotting-rook-contiguity-based-neighbours-map" id="toc-plotting-rook-contiguity-based-neighbours-map" class="nav-link" data-scroll-target="#plotting-rook-contiguity-based-neighbours-map"><span class="header-section-number">1.5.3.2</span> Plotting Rook contiguity based neighbours map</a></li>
+  <li><a href="#plotting-both-queen-and-rook-contiguity-based-neighbours-maps" id="toc-plotting-both-queen-and-rook-contiguity-based-neighbours-maps" class="nav-link" data-scroll-target="#plotting-both-queen-and-rook-contiguity-based-neighbours-maps"><span class="header-section-number">1.5.3.3</span> Plotting both Queen and Rook contiguity based neighbours maps</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#computing-distance-based-neighbours" id="toc-computing-distance-based-neighbours" class="nav-link" data-scroll-target="#computing-distance-based-neighbours"><span class="header-section-number">7.6</span> Computing distance based neighbours</a>
+  <li><a href="#computing-distance-based-neighbours" id="toc-computing-distance-based-neighbours" class="nav-link" data-scroll-target="#computing-distance-based-neighbours"><span class="header-section-number">1.6</span> Computing distance based neighbours</a>
   <ul class="collapse">
-  <li><a href="#determine-the-cut-off-distance" id="toc-determine-the-cut-off-distance" class="nav-link" data-scroll-target="#determine-the-cut-off-distance"><span class="header-section-number">7.6.1</span> Determine the cut-off distance</a></li>
-  <li><a href="#computing-fixed-distance-weight-matrix" id="toc-computing-fixed-distance-weight-matrix" class="nav-link" data-scroll-target="#computing-fixed-distance-weight-matrix"><span class="header-section-number">7.6.2</span> Computing fixed distance weight matrix</a>
+  <li><a href="#determine-the-cut-off-distance" id="toc-determine-the-cut-off-distance" class="nav-link" data-scroll-target="#determine-the-cut-off-distance"><span class="header-section-number">1.6.1</span> Determine the cut-off distance</a></li>
+  <li><a href="#computing-fixed-distance-weight-matrix" id="toc-computing-fixed-distance-weight-matrix" class="nav-link" data-scroll-target="#computing-fixed-distance-weight-matrix"><span class="header-section-number">1.6.2</span> Computing fixed distance weight matrix</a>
   <ul class="collapse">
-  <li><a href="#plotting-fixed-distance-weight-matrix" id="toc-plotting-fixed-distance-weight-matrix" class="nav-link" data-scroll-target="#plotting-fixed-distance-weight-matrix"><span class="header-section-number">7.6.2.1</span> Plotting fixed distance weight matrix</a></li>
+  <li><a href="#plotting-fixed-distance-weight-matrix" id="toc-plotting-fixed-distance-weight-matrix" class="nav-link" data-scroll-target="#plotting-fixed-distance-weight-matrix"><span class="header-section-number">1.6.2.1</span> Plotting fixed distance weight matrix</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -300,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 23, 2024</p>
+      <p class="date-modified">October 17, 2024</p>
     </div>
   </div>
     
@@ -311,10 +331,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="spatial-weights-and-applications" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Spatial Weights and Applications</h1>
-<section id="overview" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">7.1</span> Overview</h2>
+<section id="spatial-weights-and-applications" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Spatial Weights and Applications</h1>
+<section id="overview" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1.1</span> Overview</h2>
 <p>In this hands-on exercise, it will run through the process of computing spatial weights using R. By the end to this hands-on exercise, one should be able to:</p>
 <ul>
 <li>import geospatial data using appropriate function(s) of <strong>sf</strong> package,</li>
@@ -324,26 +344,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>calculate <em>spatially lagged variables</em> using appropriate functions of <strong>spdep</strong> package.</li>
 </ul>
 </section>
-<section id="the-study-area-and-data" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="the-study-area-and-data"><span class="header-section-number">7.2</span> The Study Area and Data</h2>
+<section id="the-study-area-and-data" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="the-study-area-and-data"><span class="header-section-number">1.2</span> The Study Area and Data</h2>
 <p>Two data sets will be used in this hands-on exercise, they are:</p>
 <ul>
 <li><code>Hunan county boundary layer</code>. This is a geospatial data set in ESRI shapefile format.</li>
 <li><code>Hunan_2012.csv</code>; This csv file contains selected <a href="https://en.wikipedia.org/wiki/Hunan">Hunan’s</a> local development indicators in 2012.</li>
 </ul>
-<section id="getting-started" class="level3" data-number="7.2.1">
-<h3 data-number="7.2.1" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">7.2.1</span> Getting Started</h3>
+<section id="getting-started" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">1.2.1</span> Getting Started</h3>
 <p>Before getting started, ensure that <strong>spdep</strong>, <strong>sf</strong>, <strong>tmap</strong>, <strong>tidyverse</strong> and <strong>knitr</strong>packages of R are currently installed in R.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(spdep, sf, tmap, tidyverse, knitr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
-<section id="getting-the-data-into-the-r-environment" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="getting-the-data-into-the-r-environment"><span class="header-section-number">7.3</span> Getting the Data into the R environment</h2>
+<section id="getting-the-data-into-the-r-environment" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="getting-the-data-into-the-r-environment"><span class="header-section-number">1.3</span> Getting the Data into the R environment</h2>
 <p>In this section, the geospatial data and its associated attribute table will be brought in R environment. The geospatial data is in ESRI shapefile format and the attribute table is in csv format.</p>
-<section id="importing-shapefile-in-r-environment" class="level3" data-number="7.3.1">
-<h3 data-number="7.3.1" class="anchored" data-anchor-id="importing-shapefile-in-r-environment"><span class="header-section-number">7.3.1</span> Importing shapefile in R environment</h3>
+<section id="importing-shapefile-in-r-environment" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="importing-shapefile-in-r-environment"><span class="header-section-number">1.3.1</span> Importing shapefile in R environment</h3>
 <p>The code chunk below uses <a href="https://r-spatial.github.io/sf/reference/st_read.html"><em>st_read()</em></a> of <strong>sf</strong> package to import Hunan shapefile into R. The imported shapefile will be a <strong>simple feature</strong> Object of <strong>sf</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>hunan <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>,</span>
@@ -360,8 +380,8 @@ Geodetic CRS:  WGS 84</code></pre>
 </div>
 </div>
 </section>
-<section id="importing-csv-file-into-r-environment" class="level3" data-number="7.3.2">
-<h3 data-number="7.3.2" class="anchored" data-anchor-id="importing-csv-file-into-r-environment"><span class="header-section-number">7.3.2</span> Importing csv file into R environment</h3>
+<section id="importing-csv-file-into-r-environment" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="importing-csv-file-into-r-environment"><span class="header-section-number">1.3.2</span> Importing csv file into R environment</h3>
 <p>Next, <em>Hunan_2012.csv</em> will be imported into R by using <em>read_csv()</em> of <strong>readr</strong> package. The output is a R dataframe class.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hunan2012 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/Hunan_2012.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -377,8 +397,8 @@ dbl (27): avg_wage, deposite, FAI, Gov_Rev, Gov_Exp, GDP, GDPPC, GIO, Loan, ...
 </div>
 </div>
 </section>
-<section id="performing-relational-join" class="level3" data-number="7.3.3">
-<h3 data-number="7.3.3" class="anchored" data-anchor-id="performing-relational-join"><span class="header-section-number">7.3.3</span> Performing relational join</h3>
+<section id="performing-relational-join" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="performing-relational-join"><span class="header-section-number">1.3.3</span> Performing relational join</h3>
 <p>The code chunk below will be used to update the attribute table of <em>hunan</em>’s SpatialPolygonsDataFrame with the attribute fields of <em>hunan2012</em> dataframe. This is performed by using <em>left_join()</em> of <strong>dplyr</strong> package.</p>
 <p>The <code>select()</code> function is used to select variables that are objectively used for the spatial analysis.</p>
 <div class="cell">
@@ -390,8 +410,8 @@ dbl (27): avg_wage, deposite, FAI, Gov_Rev, Gov_Exp, GDP, GDPPC, GIO, Loan, ...
 </div>
 </section>
 </section>
-<section id="visualising-regional-development-indicator" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="visualising-regional-development-indicator"><span class="header-section-number">7.4</span> Visualising Regional Development Indicator</h2>
+<section id="visualising-regional-development-indicator" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="visualising-regional-development-indicator"><span class="header-section-number">1.4</span> Visualising Regional Development Indicator</h2>
 <p>Now, a basemap and a choropleth map will be prepared showing the distribution of GDPPC 2012 by using <em>qtm()</em> of <strong>tmap</strong> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>basemap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(hunan) <span class="sc">+</span></span>
@@ -412,12 +432,12 @@ dbl (27): avg_wage, deposite, FAI, Gov_Rev, Gov_Exp, GDP, GDPPC, GIO, Loan, ...
 <p>Note: Gross Domestic Product per Capita (GDPPC)</p>
 </blockquote>
 </section>
-<section id="computing-contiguity-spatial-weights" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="computing-contiguity-spatial-weights"><span class="header-section-number">7.5</span> Computing Contiguity Spatial Weights</h2>
+<section id="computing-contiguity-spatial-weights" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="computing-contiguity-spatial-weights"><span class="header-section-number">1.5</span> Computing Contiguity Spatial Weights</h2>
 <p>In this section, we will learn how to use <a href="https://r-spatial.github.io/spdep/reference/poly2nb.html"><em>poly2nb()</em></a> of <strong>spdep</strong> package to compute contiguity weight matrices for the study area.</p>
 <p>This function builds a neighbours list based on regions with contiguous boundaries. From the documentation, we learn that we can pass a “queen” argument that takes TRUE or FALSE as options. If this argument is not specified the argument’s default is set to TRUE, that is, if we don’t specify queen = FALSE this function will return a list of first order neighbours using the Queen criteria.</p>
-<section id="computing-queen-contiguity-based-neighbours" class="level3" data-number="7.5.1">
-<h3 data-number="7.5.1" class="anchored" data-anchor-id="computing-queen-contiguity-based-neighbours"><span class="header-section-number">7.5.1</span> Computing (QUEEN) contiguity based neighbours</h3>
+<section id="computing-queen-contiguity-based-neighbours" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="computing-queen-contiguity-based-neighbours"><span class="header-section-number">1.5.1</span> Computing (QUEEN) contiguity based neighbours</h3>
 <p>The code chunk below is used to compute Queen contiguity <strong>weight matrix</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>wm_q <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(hunan, <span class="at">queen =</span> <span class="cn">TRUE</span>)</span>
@@ -585,8 +605,8 @@ Warning
 <p>Be warned: The output might cut across several pages. Do consider saving the trees if you are going to print out the report.</p>
 </div>
 </div>
-<section id="diy" class="level4" data-number="7.5.1.1">
-<h4 data-number="7.5.1.1" class="anchored" data-anchor-id="diy"><span class="header-section-number">7.5.1.1</span> DIY</h4>
+<section id="diy" class="level4" data-number="1.5.1.1">
+<h4 data-number="1.5.1.1" class="anchored" data-anchor-id="diy"><span class="header-section-number">1.5.1.1</span> DIY</h4>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">least connected</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">most connected</a></li></ul>
 <div class="tab-content">
@@ -637,8 +657,8 @@ Warning
 </div>
 </section>
 </section>
-<section id="creating-rook-contiguity-based-neighbours" class="level3" data-number="7.5.2">
-<h3 data-number="7.5.2" class="anchored" data-anchor-id="creating-rook-contiguity-based-neighbours"><span class="header-section-number">7.5.2</span> Creating (ROOK) contiguity based neighbours</h3>
+<section id="creating-rook-contiguity-based-neighbours" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="creating-rook-contiguity-based-neighbours"><span class="header-section-number">1.5.2</span> Creating (ROOK) contiguity based neighbours</h3>
 <p>The code chunk below is used to compute Rook contiguity weight matrix.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>wm_r <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(hunan, <span class="at">queen =</span> <span class="cn">FALSE</span>)</span>
@@ -661,8 +681,8 @@ Link number distribution:
 </div>
 <p>The summary report above shows that there are 88 area units in Hunan. The most connected area unit has 10 neighbours. There are two area units with only one neighbours.</p>
 </section>
-<section id="visualising-contiguity-weights" class="level3" data-number="7.5.3">
-<h3 data-number="7.5.3" class="anchored" data-anchor-id="visualising-contiguity-weights"><span class="header-section-number">7.5.3</span> Visualising contiguity weights</h3>
+<section id="visualising-contiguity-weights" class="level3" data-number="1.5.3">
+<h3 data-number="1.5.3" class="anchored" data-anchor-id="visualising-contiguity-weights"><span class="header-section-number">1.5.3</span> Visualising contiguity weights</h3>
 <p>A connectivity graph takes a point and displays a line to each neighbouring point. We are working with polygons at the moment, so we will need to get points in order to make our connectivity graphs. The most typically used method for this will be polygon centroids. We will calculate these in the sf package before moving onto the graphs. Getting Latitude and Longitude of Polygon Centroids</p>
 <p>We will need points to associate with each polygon before we can make our connectivity graph. It will be a little more complicated than just running st_centroid on the sf object: us.bound. We need the coordinates in a separate data frame for this to work. To do this we will use a mapping function. The mapping function applies a given function to each element of a vector and returns a vector of the same length. Our input vector will be the geometry column of us.bound. Our function will be st_centroid. We will be using <strong>map_dbl</strong> variation of map from the purrr package. For more documentation, check out map documentation</p>
 <p>To get our longitude values we map the st_centroid function over the geometry column of us.bound and access the longitude value through double bracket notation [[]] and 1. This allows us to get only the longitude, which is the first value in each centroid.</p>
@@ -690,8 +710,8 @@ Link number distribution:
 [6,]  111.0341 29.79863</code></pre>
 </div>
 </div>
-<section id="plotting-queen-contiguity-based-neighbours-map" class="level4" data-number="7.5.3.1">
-<h4 data-number="7.5.3.1" class="anchored" data-anchor-id="plotting-queen-contiguity-based-neighbours-map"><span class="header-section-number">7.5.3.1</span> Plotting Queen contiguity based neighbours map</h4>
+<section id="plotting-queen-contiguity-based-neighbours-map" class="level4" data-number="1.5.3.1">
+<h4 data-number="1.5.3.1" class="anchored" data-anchor-id="plotting-queen-contiguity-based-neighbours-map"><span class="header-section-number">1.5.3.1</span> Plotting Queen contiguity based neighbours map</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hunan<span class="sc">$</span>geometry, <span class="at">border =</span> <span class="st">"lightgrey"</span>)</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wm_q, coords, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -704,8 +724,8 @@ Link number distribution:
 </div>
 </div>
 </section>
-<section id="plotting-rook-contiguity-based-neighbours-map" class="level4" data-number="7.5.3.2">
-<h4 data-number="7.5.3.2" class="anchored" data-anchor-id="plotting-rook-contiguity-based-neighbours-map"><span class="header-section-number">7.5.3.2</span> Plotting Rook contiguity based neighbours map</h4>
+<section id="plotting-rook-contiguity-based-neighbours-map" class="level4" data-number="1.5.3.2">
+<h4 data-number="1.5.3.2" class="anchored" data-anchor-id="plotting-rook-contiguity-based-neighbours-map"><span class="header-section-number">1.5.3.2</span> Plotting Rook contiguity based neighbours map</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hunan<span class="sc">$</span>geometry, <span class="at">border =</span> <span class="st">"lightgrey"</span>)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wm_r, coords, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -718,8 +738,8 @@ Link number distribution:
 </div>
 </div>
 </section>
-<section id="plotting-both-queen-and-rook-contiguity-based-neighbours-maps" class="level4" data-number="7.5.3.3">
-<h4 data-number="7.5.3.3" class="anchored" data-anchor-id="plotting-both-queen-and-rook-contiguity-based-neighbours-maps"><span class="header-section-number">7.5.3.3</span> Plotting both Queen and Rook contiguity based neighbours maps</h4>
+<section id="plotting-both-queen-and-rook-contiguity-based-neighbours-maps" class="level4" data-number="1.5.3.3">
+<h4 data-number="1.5.3.3" class="anchored" data-anchor-id="plotting-both-queen-and-rook-contiguity-based-neighbours-maps"><span class="header-section-number">1.5.3.3</span> Plotting both Queen and Rook contiguity based neighbours maps</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hunan<span class="sc">$</span>geometry, <span class="at">border =</span> <span class="st">"lightgrey"</span>, <span class="at">main =</span> <span class="st">"Queen Contiguity"</span>)</span>
@@ -737,12 +757,12 @@ Link number distribution:
 </section>
 </section>
 </section>
-<section id="computing-distance-based-neighbours" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="computing-distance-based-neighbours"><span class="header-section-number">7.6</span> Computing distance based neighbours</h2>
+<section id="computing-distance-based-neighbours" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="computing-distance-based-neighbours"><span class="header-section-number">1.6</span> Computing distance based neighbours</h2>
 <p>In this section, we will learn how to derive distance-based weight matrices by using <a href="https://r-spatial.github.io/spdep/reference/dnearneigh.html"><em>dnearneigh()</em></a> of <strong>spdep</strong> package.</p>
 <p>The function identifies neighbours of region points by Euclidean distance with a distance band with lower d1= and upper d2= bounds controlled by the bounds = argument. If un-projected coordinates are used and either specified in the coordinates object x or with x as a two column matrix and = TRUE, great circle distances in <strong>km</strong> will be calculated assuming the WGS84 reference ellipsoid.</p>
-<section id="determine-the-cut-off-distance" class="level3" data-number="7.6.1">
-<h3 data-number="7.6.1" class="anchored" data-anchor-id="determine-the-cut-off-distance"><span class="header-section-number">7.6.1</span> Determine the cut-off distance</h3>
+<section id="determine-the-cut-off-distance" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="determine-the-cut-off-distance"><span class="header-section-number">1.6.1</span> Determine the cut-off distance</h3>
 <p>Firstly, we need to determine the upper limit for distance band by using the steps below:</p>
 <ul>
 <li>Return a matrix with the indices of points belonging to the set of the k nearest neighbours of each other by using <a href="https://r-spatial.github.io/spdep/reference/knearneigh.html"><em>knearneigh()</em></a> of <strong>spdep</strong>.</li>
@@ -762,8 +782,8 @@ Link number distribution:
 </div>
 <p>The summary report shows that the largest first nearest neighbour distance is 61.79 km, so using this as the upper threshold gives certainty that all units will have at least one neighbour.</p>
 </section>
-<section id="computing-fixed-distance-weight-matrix" class="level3" data-number="7.6.2">
-<h3 data-number="7.6.2" class="anchored" data-anchor-id="computing-fixed-distance-weight-matrix"><span class="header-section-number">7.6.2</span> Computing fixed distance weight matrix</h3>
+<section id="computing-fixed-distance-weight-matrix" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="computing-fixed-distance-weight-matrix"><span class="header-section-number">1.6.2</span> Computing fixed distance weight matrix</h3>
 <p>Now, we will compute the distance weight matrix by using <em>dnearneigh()</em> as shown in the code chunk below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>wm_d62 <span class="ot">&lt;-</span> <span class="fu">dnearneigh</span>(coords, <span class="dv">0</span>, <span class="dv">62</span>, <span class="at">longlat =</span> <span class="cn">TRUE</span>)</span>
@@ -993,8 +1013,8 @@ Average number of links: 3.681818 </code></pre>
 88 </code></pre>
 </div>
 </div>
-<section id="plotting-fixed-distance-weight-matrix" class="level4" data-number="7.6.2.1">
-<h4 data-number="7.6.2.1" class="anchored" data-anchor-id="plotting-fixed-distance-weight-matrix"><span class="header-section-number">7.6.2.1</span> Plotting fixed distance weight matrix</h4>
+<section id="plotting-fixed-distance-weight-matrix" class="level4" data-number="1.6.2.1">
+<h4 data-number="1.6.2.1" class="anchored" data-anchor-id="plotting-fixed-distance-weight-matrix"><span class="header-section-number">1.6.2.1</span> Plotting fixed distance weight matrix</h4>
 <p>Next, we will plot the distance weight matrix by using the code chunk below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hunan<span class="sc">$</span>geometry, <span class="at">border =</span> <span class="st">"lightgrey"</span>)</span>
@@ -1067,18 +1087,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1110,7 +1119,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1118,7 +1149,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
