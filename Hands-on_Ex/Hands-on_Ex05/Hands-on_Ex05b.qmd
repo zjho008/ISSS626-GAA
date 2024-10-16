@@ -4,7 +4,6 @@ author: "Ho Zi Jun"
 date: "Sep 20, 2024"
 date-modified: "last-modified"
 number-sections: true
-number-offset: 6
 execute:
   eval: true
   echo: true

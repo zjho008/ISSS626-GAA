@@ -4,7 +4,6 @@ author: "Ho Zi Jun"
 date: "Aug 28, 2024"
 date-modified: "last-modified"
 number-sections: true
-number-offset: 2
 execute:
   eval: true
   echo: true
@@ -13,7 +12,7 @@ execute:
 editor: source
 ---
 
-# Spatial Point Pattern Analysis
+# 1st Order Spatial Point Pattern Analysis
 
 ## Overview
 
