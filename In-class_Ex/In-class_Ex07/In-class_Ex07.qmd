@@ -56,6 +56,11 @@ pacman::p_load(olsrr, GWmodel, corrplot, ggpubr, sf, spdep, tidyverse, tmap,
                gtsummary, broom.helpers, ggstatsplot, performance, sfdep, see)
 ```
 
+```{r}
+tmap_options(check.and.fix = TRUE)
+```
+
+
 ## Short note about GWmodel
 
 [**GWmodel**](https://www.jstatsoft.org/article/view/v063i17) package provides a collection of localised spatial statistical methods, namely: GW summary statistics, GW principal components analysis, GW discriminant analysis and various forms of GW regression; some of which are provided in basic and robust (outlier resistant) forms. More commonly, outputs or parameters of the GWmodel are mapped to provide a useful exploratory tool, which can often precede (and direct) a more traditional or sophisticated statistical analysis.
@@ -94,7 +99,15 @@ Next, the extent of *mpsz* is revealed by using `st_bbox()` of **sf** package.
 st_bbox(mpsz)
 ```
 
-The extent of *mpsz_svy21* is illustrated from the results above.
+The extent of *mpsz* is illustrated from the results above.
+
+```{r}
+# Check validity of geometries
+sf::st_is_valid(mpsz)
+
+# Attempt to fix invalid geometries
+mpsz <- sf::st_make_valid(mpsz)
+```
 
 ### URA Master Plan 2014 planning subzone boundary
 
@@ -358,7 +371,8 @@ tm_shape(mpsz) +
 tm_shape(condo_resale_sf) +
   tm_dots(col = "MLR_RES",
           alpha = 0.6,
-          style = "quantile")
+          style = "quantile",
+          midpoint = NA)
 tmap_mode("plot") # used to switch the mode back to plot
 ```
 

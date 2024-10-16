@@ -300,18 +300,17 @@ tm_shape(condo_resale.sf) +
           alpha = 0.6,
           style = "quantile") +
   tm_view(set.zoom.limits = c(11,14))
+tmap_mode("plot")
 ```
+
+Before moving on to the next section, the code above will be used to turn R display into `plot` mode.
+
 ::: callout-note
 -   Notice that [`tm_dots()`](https://www.rdocumentation.org/packages/tmap/versions/2.2/topics/tm_symbols) is used instead of `tm_bubbles()`.
 
 -   `set.zoom.limits` argument of `tm_view()` sets the minimum and maximum zoom levels to 11 and 14 respectively.
 :::
 
-Before moving on to the next section, the code below will be used to turn R display into `plot` mode.
-
-```{r}
-tmap_mode("plot")
-```
 
 ## Hedonic Pricing Modelling in R
 
@@ -431,7 +430,7 @@ With gtsummary package, model statistics can be included in the report by either
 tbl_regression(condo.mlr1, 
                intercept = TRUE) %>% 
   add_glance_source_note(
-    label = list(sigma ~ "\U03C3"),
+    label = list(sigma ~ "U03C3"),
     include = c(r.squared, adj.r.squared, 
                 AIC, statistic,
                 p.value, sigma))
@@ -538,15 +537,12 @@ tm_shape(condo_resale.res.sf) +
           alpha = 0.6,
           style ="quantile") +
   tm_view(set.zoom.limits = c(11,14))
-```
-
-> Note to switch back to "plot" mode before continuing.
-
-```{r}
 tmap_mode("plot")
 ```
 
-The figure above revealed that there sre signs  of spatial autocorrelation.
+> Note to switch back to "plot" mode before continuing as shown in the code chunk above.
+
+The figure above revealed that there are signs  of spatial autocorrelation.
 
 To proof that this observation is indeed true, the Moran's I test will be performed
 
@@ -730,7 +726,6 @@ summary(gwr.adaptive$SDF$yhat)
 The code chunk below is used to create an interactive point symbol map.
 
 ```{r}
-tmap_mode("view")
 tm_shape(mpsz_svy21) +
   tmap_options(check.and.fix = TRUE) +
   tm_polygons(alpha = 0.1) +
@@ -739,9 +734,6 @@ tm_shape(condo_resale.sf.adaptive) +
           border.col = "gray50",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14))
-```
-
-```{r echo=TRUE, eval=TRUE}
 tmap_mode("plot")
 ```
 
@@ -773,7 +765,7 @@ tmap_arrange(AREA_SQM_SE, AREA_SQM_TV,
              sync = TRUE)
 ```
 
-```{r echo=TRUE, eval=TRUE}
+```{r}
 tmap_mode("plot")
 ```
 
