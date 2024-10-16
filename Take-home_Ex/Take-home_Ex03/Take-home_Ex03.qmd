@@ -1,0 +1,20 @@
+---
+title: "Take-home Exercise 3: Geospatial Analytics"
+author: "Ho Zi Jun"
+date: "Oct 16, 2024"
+date-modified: "last-modified"
+number-sections: true
+number-offset: 2
+execute:
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+editor: source
+---
+
+## Overview
+
+### Task and Outcomes
+
+## The Data

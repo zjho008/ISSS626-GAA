@@ -55,6 +55,11 @@ pacman::p_load(olsrr, GWmodel, corrplot, ggpubr, sf, spdep, tidyverse, tmap, gts
 
 [**GWmodel**](https://www.jstatsoft.org/article/view/v063i17) package provides a collection of localised spatial statistical methods, namely: GW summary statistics, GW principal components analysis, GW discriminant analysis and various forms of GW regression; some of which are provided in basic and robust (outlier resistant) forms. More commonly, outputs or parameters of the GWmodel are mapped to provide a useful exploratory tool, which can often precede (and direct) a more traditional or sophisticated statistical analysis.
 
+In regression models - there is an intercept component where the line cuts through from an intercept.
+E.g. when a floor unit area is zero - obviously no unit exists.
+
+Beta(1) value can be +ve/-ve eg sq area vs age of property. 
+
 ## Geospatial Data Wrangling
 
 ### Importing geospatial data
@@ -79,6 +84,14 @@ The code chunk below updates the newly imported *mpsz* sf object with the correc
 mpsz_svy21 <- st_transform(mpsz, 3414)
 ```
 
+```{r}
+# Check validity of geometries
+sf::st_is_valid(mpsz_svy21)
+
+# Attempt to fix invalid geometries
+mpsz_svy21 <- sf::st_make_valid(mpsz_svy21)
+```
+
 After transforming the object, verification of the projection on the newly transformed *mpsz_svy21* is done by using `st_crs()` of **sf** package.
 
 The code chunk below is used to verify the newly transformed *mpsz_svy21*.
@@ -88,8 +101,6 @@ st_crs(mpsz_svy21)
 ```
 
 Notice that the EPSG: is indicated as *3414* now. 
-
-> ID["EPSG",3414]]
 
 Next, the extent of *mpsz_svy21* is revealed by using `st_bbox()` of **sf** package.
 
@@ -284,7 +295,7 @@ Next, the code chunk below is used to create an interactive point symbol map.
 tmap_options(check.and.fix = TRUE)
 
 tm_shape(mpsz_svy21) +
-  tm_polygons() +
+  tm_polygons(alpha = 0.4) +
 tm_shape(condo_resale.sf) +
   tm_dots(col = "SELLING_PRICE",
           alpha = 0.6,
@@ -721,7 +732,8 @@ The code chunk below is used to create an interactive point symbol map.
 
 ```{r}
 tmap_mode("view")
-tm_shape(mpsz_svy21)+
+tm_shape(mpsz_svy21) +
+  tmap_options(check.and.fix = TRUE) +
   tm_polygons(alpha = 0.1) +
 tm_shape(condo_resale.sf.adaptive) +  
   tm_dots(col = "Local_R2",
@@ -740,7 +752,8 @@ The code chunks below are used to create an interactive point symbol map.
 
 ```{r}
 tmap_mode("view")
-AREA_SQM_SE <- tm_shape(mpsz_svy21)+
+AREA_SQM_SE <- tm_shape(mpsz_svy21) +
+  tmap_options(check.and.fix = TRUE) +
   tm_polygons(alpha = 0.1) +
 tm_shape(condo_resale.sf.adaptive) +  
   tm_dots(col = "AREA_SQM_SE",
@@ -772,7 +785,9 @@ tmap_mode("plot")
 #| fig-width: 6
 #| fig-align: center
 
-tm_shape(mpsz_svy21[mpsz_svy21$REGION_N=="CENTRAL REGION", ])+
+tmap_options(check.and.fix = TRUE) +
+
+tm_shape(mpsz_svy21[mpsz_svy21$REGION_N=="CENTRAL REGION", ]) +
   tm_polygons()+
 tm_shape(condo_resale.sf.adaptive) + 
   tm_bubbles(col = "Local_R2",
