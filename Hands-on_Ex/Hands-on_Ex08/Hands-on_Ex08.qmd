@@ -57,12 +57,41 @@ In this hands-on exercise, the goal is to learn how to build predictive models u
 
 The code chunk below performs 3 tasks:
 
--   A list of called packages will be created and will consists of all the R packages required to accomplish this exercise.
+-   A list of all the R packages required to accomplish this exercise will be called.
 -   Check if R packages or package have been installed in R, otherwise they will be installed.
 -   After all the R packages have been installed, they will be loaded into the R environment.
 
 ```{r}
 pacman::p_load(sf, spdep, GWmodel, SpatialML,
                tmap, rsample, Metrics, tidyverse)
+```
+
+## Preparing Data
+
+### Reading data file to rds
+
+The code chunk below is used to read the input data sets. It is in simple feature data frame.
+
+```{r}
+mdata <- read_rds("data/mdata.rds")
+```
+
+### Data Sampling
+
+The entire dataset is split into training and test data sets with a 65% and 35% component respectively by using *initial_split()* of **rsample** package. rsample is one of the packages of [tidymodels](https://www.tidymodels.org/).
+
+```{r}
+set.seed(1234)
+resale_split <- initial_split(mdata,
+                              prop = 6.5/10,)
+train_data <- training(resale_split)
+test_data <- testing(resale_split)
+```
+
+The code chunk below is used to save the training and test data into rds format for ease of retrival.
+
+```{r}
+write_rds(train_data, "data/model/train_data.rds")
+write_rds(test_data, "data/model/test_data.rds")
 ```
 

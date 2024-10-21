@@ -1,5 +1,5 @@
 ---
-title: "Take-home Exercise 3: Geospatial Analytics"
+title: "Take-home Exercise 3b: Geospatial Analytics"
 author: "Ho Zi Jun"
 date: "Oct 16, 2024"
 date-modified: "last-modified"
@@ -15,6 +15,55 @@ editor: source
 
 ## Overview
 
+For take-home exercise 3, it consists of 2 options: T[ake-home Exercise 3a: Modelling Geography of Financial Inclusion with Geographically Weighted Methods]{.underline} & [Take-home Exercise 3b: Predicting HDB Resale Prices with Geographically Weighted Machine Learning Methods]{.underline}. The selected option for this take-home exercise will be **3b**.
+
+Housing plays a crucial role in household wealth across the globe, with purchasing a home representing a significant investment for most individuals. Housing prices are influenced by a variety of factors. Some of these factors are global, such as the overall economic conditions of a country or the inflation rate, while others are specific to individual properties. These factors can be categorised into structural and locational components.
+
+**Structural factors** relate directly to the characteristics of the property, such as its size, amenities, and tenure. 
+
+**Locational factors** pertain to the surrounding environment, including proximity to childcare centres, public transportation, and shopping facilities.
+
+Traditionally, predictive models for housing resale prices have been developed using the Ordinary Least Squares (OLS) method. However, this approach does not account for spatial autocorrelation and spatial heterogeneity present in geographic datasets, such as those related to housing transactions. When spatial autocorrelation is present, OLS estimates can produce biased, inconsistent, or inefficient results (Anselin 1998). To address this limitation, **Geographically Weighted Models** (GWMs) have been introduced, offering a more accurate approach to modelling and predicting housing resale prices.
+
 ### Task and Outcomes
 
+For this take-home exercise, the primary dataset should be the **HDB Resale Flat Prices** available on [data.gov.sg](https://data.gov.sg/) The analysis should concentrate on one specific flat type: three-room, four-room, or five-room flats.
+
+The following is a list of suggested predictors to consider, though students are encouraged to include any other relevant independent variables that may enhance the analysis.
+
+-   Structural factors
+    -   Area of the unit
+    -   Floor level
+    -   Remaining lease
+    -   Age of the unit
+    -   Main Upgrading Program (MUP) completed (optional)
+-   Locational factors
+    -   Proxomity to CBD
+    -   Proximity to eldercare
+    -   Proximity to foodcourt/hawker centres
+    -   Proximity to MRT
+    -   Proximity to park
+    -   Proximity to good primary school
+    -   Proximity to shopping mall
+    -   Proximity to supermarket
+    -   Numbers of kindergartens within 350m
+    -   Numbers of childcare centres within 350m
+    -   Numbers of bus stop within 350m
+    -   Numbers of primary school within 1km
+
+The **four-room flats** will be the chosen flat type for analysis as it is one of the [most common HDB BTO flat types, which offers a comfortable living space for young couples and families](https://www.mynicehome.gov.sg/hdb-how-to/buy-your-flat/a-guide-to-hdb-bto-flat-types/).
+
 ## The Data
+
+For data is HDB Resale data: a list of HDB resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format which can be downloaded from **data.gov.sg**. 
+
+![](images/data.png)
+
+## Installing and Loading R Packages
+
+The code chunk below will ensure for a list of required R packages to be created, checked for installation, and installed if missing. Once installed, all packages will be loaded for use in the exercise.
+
+```{r}
+pacman::p_load(tidyverse, sf, spdep, GWmodel, SpatialML,
+               tmap, rsample, Metrics, httr, jsonlite, rvest)
+```

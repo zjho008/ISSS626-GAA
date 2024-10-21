@@ -1,0 +1,449 @@
+---
+title: "Preparing HDB data"
+author: "Ho Zi Jun"
+date: "Oct 21, 2024"
+date-modified: "last-modified"
+number-sections: true
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: source
+---
+
+## Introduction
+
+In this hands-on exercise, it is a supplement to what was done in hands-on exercise 8 as well as a kickstarter for take-home exercise 3b.
+
+
+
+::: {style="font-size: 1.50em"}
+
+```{r}
+pacman::p_load(tidyverse, sf, httr, jsonlite, rvest) # rvest package used to crawl websites, web portals - in Python
+```
+
+```{r}
+resale <- read_csv("data/resale.csv") %>%
+  filter(month >= "2023-01" & month <= "2024-09")
+```
+
+The code chunk below combines the block and street name to form a complete address.
+
+```{r}
+resale_tidy <- resale %>%
+  mutate(address = paste(block,street_name)) %>%
+  mutate(remaining_lease_yr = as.integer(
+    str_sub(remaining_lease, 0, 2)))%>%
+  mutate(remaining_lease_mth = as.integer(
+    str_sub(remaining_lease, 9, 11)))
+```
+
+To keep the file size small - the month of Sep'24 is chosen.
+
+```{r}
+resale_selected <- resale_tidy %>%
+  filter(month == "2024-09")
+```
+
+Due to the same street names, a list is created with unique addresses to reduce the number of records and for the list to be passed through for API ingestion. The sort function is used to reorder the records so that records will be in order.
+
+```{r}
+add_list <- sort(unique(resale_selected$address))
+```
+
+The entries will be passed through the onemap API. 
+
+```{r}
+get_coords <- function(add_list){
+  
+  # Create a data frame to store all retrieved coordinates
+  postal_coords <- data.frame()
+    
+  for (i in add_list){
+    #print(i)
+
+    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
+           query=list(searchVal=i,
+                     returnGeom='Y',
+                     getAddrDetails='Y'))
+    data <- fromJSON(rawToChar(r$content))
+    found <- data$found
+    res <- data$results
+    
+    # Create a new data frame for each address
+    new_row <- data.frame()
+    
+    # If single result, append 
+    if (found == 1){
+      postal <- res$POSTAL 
+      lat <- res$LATITUDE
+      lng <- res$LONGITUDE
+      new_row <- data.frame(address= i, 
+                            postal = postal, 
+                            latitude = lat, # X to avoid additional steps of re-projection
+                            longitude = lng) # Y
+    }
+    
+    # If multiple results, drop NIL and append top 1
+    else if (found > 1){
+      # Remove those with NIL as postal
+      res_sub <- res[res$POSTAL != "NIL", ]
+      
+      # Set as NA first if no Postal
+      if (nrow(res_sub) == 0) {
+          new_row <- data.frame(address= i, 
+                                postal = NA, 
+                                latitude = NA, 
+                                longitude = NA)
+      }
+      
+      else{
+        top1 <- head(res_sub, n = 1)
+        postal <- top1$POSTAL 
+        lat <- top1$LATITUDE
+        lng <- top1$LONGITUDE
+        new_row <- data.frame(address= i, 
+                              postal = postal, 
+                              latitude = lat, 
+                              longitude = lng)
+      }
+    }
+
+    else {
+      new_row <- data.frame(address= i, # to account for an failed GEO coding
+                            postal = NA, 
+                            latitude = NA, 
+                            longitude = NA)
+    }
+    
+    # Add the row
+    postal_coords <- rbind(postal_coords, new_row)
+  }
+  return(postal_coords)
+}
+```
+
+the `get_coords()` function is used to crawl the coordinates from the list
+
+```{r}
+coords <- get_coords(add_list)
+```
+
+```{r}
+write_rds(coords, "data/rds/coords.rds")
+```
+
+:::
+
+Based on the `coords` data table one of the postal code has a NIL value.
+
+Structural factors - Building Related
+
+-   Main Upgrading Program (MUP) completed (optional)
+
+
+Hands on Ex 1 - straight line distance - direct flying distance
+
+Childcare centres ( events count)
+
+New distance has to be calculated for take one ex 3b
+
+
+
+
+```{r}
+pacman::p_load(sf, spdep, GWmodel, SpatialML, 
+               tmap, rsample, Metrics, tidyverse)
+```
+
+## In-class exercise 08 (ii)
+
+## Installing and Loading R packages
+
+```{r}
+pacman::p_load(sf, spdep, GWmodel, SpatialML, kableExtra,
+               tmap, rsample, Metrics, tidyverse, olsrr)
+```
+
+
+`rsample` is from the [tidymodels package](https://www.tidymodels.org/)
+
+## Data Sampling
+
+```{r}
+mdata <- read_rds("data/model/mdata.rds")
+```
+
+Note some data such as in elderly care is inconsistent.
+
+The entire data is split into training and test data sets with 65% and 35% respectively by using initial_split() of rsample package. rsample is one of the package of tidymodels.
+
+```{r}
+set.seed(1234)
+resale_split <- initial_split(mdata, 
+                              prop = 6.5/10,) # pure random sampling method no stratification method used
+train_data <- training(resale_split)
+test_data <- testing(resale_split)
+```
+
+::: callout-note
+`set.seed()` to ensure the sampling result is the same
+:::
+
+The training and test data is then saved to reduce the need to split the data again.
+
+```{r}
+write_rds(train_data, "data/model/train_data.rds")
+write_rds(test_data, "data/model/test_data.rds")
+```
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 12
+mdata_nogeo <- mdata %>%
+  st_drop_geometry() # dropping geometry column
+ggstatsplot:: ggcorrmat(mdata_nogeo[, 2:17]) #columns 2 to 17 to plot Correlation Matrix
+```
+
+## Building a non-spatial multiple linear regression
+
+```{r}
+price_mlr <- lm(resale_price ~ floor_area_sqm +
+                  storey_order + remaining_lease_mths +
+                  PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+                  PROX_MRT + PROX_PARK + PROX_MALL + 
+                  PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                data = train_data)
+olsrr::ols_regress(price_mlr)
+```
+
+
+## Multicollinearity check with VIF
+
+::: panel-tabset
+
+```{r}
+vif <- performance::check_collinearity(price_mlr)
+kable(vif,
+      caption = "Variance Inflation Factor (VIF) Results") %>%
+  kable_styling(font_size = 18)
+```
+
+## Plotting VIF
+
+```{r}
+plot(vig) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+:::
+
+## Predictive Modellign with MLR
+
+::: panel-tabset
+
+## Computing adaptative bandiwdth
+
+```{r}
+bw_adaptive <- bw.gwr(resale_price ~ floor_area_sqm +
+                  storey_order + remaining_lease_mths +
+                  PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+                  PROX_MRT + PROX_PARK + PROX_MALL + 
+                  PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                  data=train_data,
+                  approach="CV",
+                  kernel="gaussian",
+                  adaptive=TRUE,
+                  longlat=FALSE)
+```
+## Model Calibration
+
+```{r}
+gwr_adaptive <- gwr.basic(formula = resale_price ~
+                            floor_area_sqm + storey_order +
+                            remaining_lease_mths + PROX_CBD + 
+                            PROX_ELDERLYCARE + PROX_HAWKER +
+                            PROX_MRT + PROX_PARK + PROX_MALL + 
+                            PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                            WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                            WITHIN_1KM_PRISCH,
+                          data=train_data,
+                          bw=bw_adaptive, 
+                          kernel = 'gaussian', 
+                          adaptive=TRUE,
+                          longlat = FALSE)
+```
+
+The latest model of gwr does not requuire sp format and can be used in sf format.
+
+## Modelling Results
+
+```{r}
+gwr_adaptive <- read_rds("data/model/gwr_adaptive.rds")
+```
+
+```{r}
+gwr_adaptive
+```
+
+
+:::
+
+### Predicting Test Data 
+
+::: panel-tabset
+
+## Test data bw
+
+```{r}
+gwr_bw_test_adaptive <- bw.gwr(resale_price ~ floor_area_sqm +
+                  storey_order + remaining_lease_mths +
+                  PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+                  PROX_MRT + PROX_PARK + PROX_MALL + 
+                  PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                  data=test_data,
+                  approach="CV",
+                  kernel="gaussian",
+                  adaptive=TRUE,
+                  longlat=FALSE)
+```
+
+
+## Predicting results
+
+:::
+
+## Predictive Modelling: SpatialML methods
+
+::: panel-tabset
+
+## Preparing coordiante data
+
+```{r}
+coords <- st_coordinates(mdata)
+coords_train <- st_coordinates(train_data)
+coords_test <- st_coordinates(test_data)
+```
+
+## Dropping geometry field
+
+First, we will drop geometry column of the sf data.frame by using `st_drop_geometry()` of sf package. Otherwise it will not work with the ranger package.
+
+```{r}
+train_data_nogeom <- train_data %>%  # no geometric columns
+  st_drop_geometry()
+```
+
+
+## Calibrating Random Forest (RF) Model
+
+In this section, we will learn how to calibrate a model to predict HDB resale price by using random forest function of ranger package.
+
+For the arguments to work it has to be in a data frame format
+
+```{r}
+set.seed(1234)
+rf <- ranger(resale_price ~ floor_area_sqm + storey_order + 
+               remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE + 
+               PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL + 
+               PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+               WITHIN_350M_CHILDCARE + WITHIN_350M_BUS + 
+               WITHIN_1KM_PRISCH,
+             data=train_data_nogeom)
+rf
+```
+
+```{r}
+write_rds(rf, "chap14/data/model/rf.rds")
+```
+
+```{r}
+rf <- read_rds("chap14/data/model/rf.rds")
+rf
+```
+
+## Calibrating with grf()
+
+```{r}
+set.seed(1234)
+gwRF_adaptive <- grf(formula = resale_price ~ floor_area_sqm + storey_order +
+                       remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE +
+                       PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL +
+                       PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                       WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                       WITHIN_1KM_PRISCH,
+                     dframe=train_data_nogeom,# geometric dropped in earlier steps
+                     bw=55, # bandwidth provided since it is spatial
+                     kernel="adaptive",
+                     coords=coords_train) # for training data
+```
+
+> (S3:ranger) the global model is ran using the ranger package.
+
+> LGofFir: Local Goodness of fit test. Each data point based on its neighbours will have a calculation done.
+
+> Forests a total of 500 forests
+
+## The model
+
+```{r}
+
+```
+
+:::
+
+## Predictign by using the test data
+
+::: panel-tabset
+## Preparing the test data
+
+```{r}
+test_data_nogeom <- cbind(
+  test_data, coords_test) %>%
+  st_drop_geometry()
+```
+
+
+## Predicting with the test data
+
+```{r}
+gwRF_pred <- predict.grf(gwRF_adaptive, 
+                           test_data_nogeom, 
+                           x.var.name="X",
+                           y.var.name="Y", 
+                           local.w=1,
+                           global.w=0)
+```
+
+## Creating DF
+
+```{r}
+GRF_pred <- read_rds("data/model/GRF_pred.rds")
+GRF_pred_df <- as.data.frame(GRF_pred) # to convert output into a data frame for subsequent usage
+```
+
+```{r}
+test_data_pred <- cbind(test_data,
+                        GRF_pred_df)
+```
+
+
+:::
+
+To read the arguments for the packages since the arguments required to calibrate the model might be different from the arguments used to feed the data.
+
+It can be plotted as a map form later on to deduce how the predictor errors are distributed throughout the space. Plotting the test data version (under predict vs over predict)
+
+Bottom of plot under estimate
+
+## References
+
+Kam , T. S 
