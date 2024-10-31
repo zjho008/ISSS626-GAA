@@ -1,0 +1,301 @@
+---
+title: "Modelling Geographic of Accessibility"
+author: "Ho Zi Jun"
+date: "Oct 28, 2024"
+date-modified: "last-modified"
+number-sections: true
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+editor: source
+---
+
+## Introduction
+
+Issue on accessibility of MRT transportation and utilisation (over/under). 
+Education sector - combining of JCs
+Fast food chains - KFC,Pizza hut etc - delivery based on the service level and location of order.
+
+The notion of distance - not just km/m etc, but in terms of continuous and network distance. 
+
+Balancing between time and cost.
+
+Concept of distance friction or impedance. 
+
+power value - 2, 2.5, 3 - short impedance, value already close to zero.
+for power function the demand can drop very quickly
+
+exponential - for activities that are less sharp in drop. 
+
+drop is relatively slower 
+
+both options can be utilised in real world scenario, certain activities have a slower drop. 
+
+**Modified Area Unit**
+
+An abstract area not affected by the administrative boundary for calibration of model.
+
+Hexagon preferred to square as square has dimension issues - bias from adjacent distances. Hexagons are the most circular-shaped polygon that can tessellate to form an evenly spaced grid.
+
+"Good" distance/radius for a hexagon. 250m Within a study area to avoid picking an individual house etc. To find appropriate area to use trial and error before finding an appropriate radius.
+
+To find accessibility - finding shortest distance. 
+
+**The Potential Model**
+The classic model
+
+- Mass included in calculation (attractiveness of location)
+
+
+**The Modified Potential Formula**
+
+## Getting Started
+
+```{r}
+pacman::p_load(tmap, SpatialAcc, sf, 
+               ggstatsplot, reshape2,
+               tidyverse)
+```
+
+## Importing Data
+
+## Geospatial Data
+
+```{r}
+mpsz <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_NO_SEA_PL") %>% st_transform(crs = 3414)
+
+
+hexagons <- st_read(dsn = "data/geospatial", layer = "hexagons") %>% st_transform(crs = 3414)
+
+eldercare <- st_read(dsn = "data/geospatial", layer = "ELDERCARE") %>% st_transform(crs = 3414)
+
+
+CHAS <- st_read("data/rawdata/CHASClinics.kml") %>% st_transform(crs = 3414)
+```
+
+### Buffering for eldercare
+
+```{r}
+buffer_1km <- st_buffer(eldercare, 
+                        dist = 1000)
+```
+
+
+### Visualising
+
+The code chunk below is used to plot the newly created buffers and the CHAS clinics.
+
+```{r}
+tmap_mode("view")
+tm_shape(buffer_1km) +
+  tm_polygons() +
+tm_shape(CHAS) +
+  tm_dots()
+```
+
+### Count Number of Points within a Distance
+
+Lastly, the code chunk below is used to count the number of CHAS clinics with 1km of each eldercare centre.
+
+```{r}
+buffer_1km$pts_count <- lengths(
+  st_intersects(buffer_1km, CHAS))
+```
+
+### OD Matrix
+
+```{r}
+ODMatrix <- read_csv("data/aspatial/OD_Matrix.csv",
+                     skip = 0)
+```
+r5r package - uses open street map data. - Using java library. 
+
+## Data Cleaning and Updating Attributes
+
+### Supply (Eldercare)
+
+```{r}
+eldercare <- eldercare %>%
+  select(fid, ADDRESSPOS) %>%
+  mutate(capacity = 100) # artificially include a capacity/ or do survey via web crawling (services + capacity of centre) Note some variables which are not useful for analysis hence the select() function used to select he "fid" variable
+```
+
+### Demand (CHAS)
+
+```{r}
+hexagons <- hexagons %>%
+  select(fid) %>%
+  mutate(demand = 100) # artificially input each hexagon will give a demand of 100 - crawl HDB site for HDB and no. of floors
+```
+
+
+### OD Matrix
+
+```{r}
+distmat <- ODMatrix %>%
+  select(origin_id, destination_id, total_cost) %>%
+  spread(destination_id, total_cost) %>% # destinations become columns
+  select(c(-c('origin_id')))
+```
+
+3125 rows of 120 variables. each variable is representing the elder care now. No more spread function - but called pivot longer.
+
+```{r}
+distmat_km <- as.matrix(distmat/1000)
+```
+
+
+## Computing Handsen's Accessibility
+
+### The base code
+
+```{r}
+acc_Hansen <- data.frame(ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km,
+                            #d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+```
+
+### Tidying the output
+
+```{r}
+colnames(acc_Hansen) <- "accHansen"
+
+acc_Hansen <- as_tibble(acc_Hansen)
+
+hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
+```
+
+### Combining the Code Chunk
+
+```{r}
+acc_Hansen <- data.frame(ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            #d0 = 50,
+                            power = 0.5, 
+                            family = "Hansen"))
+
+colnames(acc_Hansen) <- "accHansen"
+acc_Hansen <- as_tibble(acc_Hansen)
+hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
+```
+
+
+## Visualising Accessibility
+
+::: panel-tabset
+
+### The Code
+
+```{r}
+#| eval: false
+mapex <- st_bbox(hexagons)
+
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### The Plot
+
+```{r}
+#| echo: false
+mapex <- st_bbox(hexagons)
+
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+
+:::
+
+## Statistical Graphic
+ 
+```{r}
+hexagon_Hansen <- st_join(hexagon_Hansen, mpsz, 
+                          join = st_intersects)
+```
+
+::: panel-tabset
+
+## The Code
+
+```{r}
+#| eval: false
+ggbetweenstats(
+  data = hexagon_Hansen,
+  x = REGION_N,
+  y = accHansen,
+  type = "p")
+```
+
+## The Plot
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 12
+ggbetweenstats(
+  data = hexagon_Hansen,
+  x = REGION_N,
+  y = accHansen,
+  type = "p")
+```
+
+:::
+
+::: callout-note
+## Personal Notes
+Using random forest
+
+Change the default don't need to use 500 trees, maybe 50 trees is okay.
+Reduce no. of trees - 
+
+Just use the 3 room flat OR 4 room flats.
+
+SpatialML, use gwmodel, gwr
+:::

@@ -404,7 +404,6 @@ test_data <- cbind(test_data, coords_test) %>%
 Next, `predict.grf()` of spatialML package will be used to predict the resale value of HDB flats by using the `test data` and `gwRF_adaptive` model calibrated earlier.
 
 ```{r}
-#| eval: false
 gwRF_pred <- predict.grf(gwRF_adaptive, 
                            test_data, 
                            x.var.name = "X",

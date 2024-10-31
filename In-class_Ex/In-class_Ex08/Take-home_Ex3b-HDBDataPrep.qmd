@@ -1,0 +1,171 @@
+---
+title: "Preparing HDB data"
+author: "Dr. Kam Tin Seong"
+---
+
+::: {style="font-size: 1.50em"}
+
+```{r}
+pacman::p_load(tidyverse, sf, httr, jsonlite, rvest, tmap)
+```
+
+```{r}
+resale <- read_csv("data/HDB/rawdata/resale.csv") %>%
+  filter(month >= "2023-01" & month <= "2024-09")
+```
+
+```{r}
+resale_tidy <- resale %>%
+  mutate(address = paste(block,street_name)) %>%
+  mutate(remaining_lease_yr = as.integer(
+    str_sub(remaining_lease, 0, 2)))%>%
+  mutate(remaining_lease_mth = as.integer(
+    str_sub(remaining_lease, 9, 11)))
+```
+
+```{r}
+resale_selected <- resale_tidy %>%
+  filter(month == "2024-09")
+```
+
+```{r}
+add_list <- sort(unique(resale_selected$address))
+```
+
+```{r}
+get_coords <- function(add_list){
+  
+  # Create a data frame to store all retrieved coordinates
+  postal_coords <- data.frame()
+    
+  for (i in add_list){
+    #print(i)
+
+    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
+           query=list(searchVal=i,
+                     returnGeom='Y',
+                     getAddrDetails='Y'))
+    data <- fromJSON(rawToChar(r$content))
+    found <- data$found
+    res <- data$results
+    
+    # Create a new data frame for each address
+    new_row <- data.frame()
+    
+    # If single result, append 
+    if (found == 1){
+      postal <- res$POSTAL 
+      lat <- res$LATITUDE
+      lng <- res$LONGITUDE
+      new_row <- data.frame(address= i, 
+                            postal = postal, 
+                            latitude = lat, 
+                            longitude = lng)
+    }
+    
+    # If multiple results, drop NIL and append top 1
+    else if (found > 1){
+      # Remove those with NIL as postal
+      res_sub <- res[res$POSTAL != "NIL", ]
+      
+      # Set as NA first if no Postal
+      if (nrow(res_sub) == 0) {
+          new_row <- data.frame(address= i, 
+                                postal = NA, 
+                                latitude = NA, 
+                                longitude = NA)
+      }
+      
+      else{
+        top1 <- head(res_sub, n = 1)
+        postal <- top1$POSTAL 
+        lat <- top1$LATITUDE
+        lng <- top1$LONGITUDE
+        new_row <- data.frame(address= i, 
+                              postal = postal, 
+                              latitude = lat, 
+                              longitude = lng)
+      }
+    }
+
+    else {
+      new_row <- data.frame(address= i, 
+                            postal = NA, 
+                            latitude = NA, 
+                            longitude = NA)
+    }
+    
+    # Add the row
+    postal_coords <- rbind(postal_coords, new_row)
+  }
+  return(postal_coords)
+}
+```
+
+```{r}
+coords <- get_coords(add_list)
+```
+
+```{r}
+write_rds(coords, "data/HDB/rds/coords.rds")
+```
+
+:::
+
+
+## 28 Oct u2024
+
+### Eldercare in shaprefile format - in svy21 projection but 2009
+
+```{r}
+eldercare <- st_read(dsn = "data/HDB/rawdata",
+                      layer = "ELDERCARE") %>%
+  st_transform(crs = 3414)
+```
+## Buffering
+
+`st_buffer()` of sf package is used to create a buffer of 1km around each eldercare feature.
+
+```{r}
+buffer_1km <- st_buffer(eldercare,
+                        dist = 1000) # 1000metres = 1km
+```
+
+### import kml file - in wgs84 since retrieved from internet
+
+```{r}
+CHAS <- st_read("data/HDB/rawdata/CHASClinics.kml") %>%
+  st_transform(crs = 3414)
+CHAS #if spatstats then need to drop. but sf is okay.
+```
+
+### Visualising Polygon then point (otherwise point will cover over)
+
+```{r}
+tmap_mode("view")
+tm_shape(buffer_1km) + # 1km circle then counting the dots - CHAS clinics
+  tm_polygons() +
+tm_shape(CHAS) +
+  tm_dots()
+```
+
+
+## Counting Points (point in polygon count - a boundary is required done by creating the buffer)
+
+```{r}
+buffer_1km$pts_count <- lengths( # pts_count is a new field created
+  st_intersects(buffer_1km, CHAS))
+```
+
+Note one dot outside of SG - to fix or remove if possible. 
+
+## Data Preparation
+
+Proximity - data from data.gov.sg. they are in kml file - are in wgs84 and have to do st_transform.
+
+Retail site - shopping mall list - use the httr. 
+
+Overlap is workable if building hedonic model. for geospatial then no even so if using gwr. - same blocks of buildings will have multiple transactions. 
+
+
+There is also the function of spatstat jitter. Look at in class ex 8 for spatial jitter

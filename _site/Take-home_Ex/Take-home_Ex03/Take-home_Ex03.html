@@ -9,7 +9,7 @@
 <meta name="author" content="Ho Zi Jun">
 <meta name="dcterms.date" content="2024-10-16">
 
-<title>Take-home Exercise 3: Geospatial Analytics – ISSS626-GAA (Geospatial Analytics and Applications)</title>
+<title>Take-home Exercise 3b: Geospatial Analytics – ISSS626-GAA (Geospatial Analytics and Applications)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -139,6 +173,18 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08.html">
  <span class="dropdown-text">Hands-on Exercise 8: Geographically Weighted Predictive Modelling</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex09/Hands-on_Ex09.html">
+ <span class="dropdown-text">Hands-on Exercise 9: Modelling Geographical Accessibility</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10a.html">
+ <span class="dropdown-text">Hands-on Exercise 10a: Processing and Visualising Flow Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10b.html">
+ <span class="dropdown-text">Hands-on Exercise 10b: Calibrating Spatial Interaction Models with R</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -173,6 +219,22 @@ ul.task-list li input[type="checkbox"] {
         <li>
     <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex07/In-class_Ex07.html">
  <span class="dropdown-text">In-class Exercise 7</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex08/In-class_Ex08.html">
+ <span class="dropdown-text">In-class Exercise 8</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex08/In-class_Ex08a.html">
+ <span class="dropdown-text">In-class Exercise 8a: Supplement for Hands-on Exercise 8</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex09/In-class_Ex09.html">
+ <span class="dropdown-text">In-class Exercise 9</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex10/In-class_Ex10.html">
+ <span class="dropdown-text">In-class Exercise 10</span></a>
   </li>  
     </ul>
   </li>
@@ -222,6 +284,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#task-and-outcomes" id="toc-task-and-outcomes" class="nav-link" data-scroll-target="#task-and-outcomes"><span class="header-section-number">1.1</span> Task and Outcomes</a></li>
   </ul></li>
   <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">2</span> The Data</a></li>
+  <li><a href="#installing-and-loading-r-packages" id="toc-installing-and-loading-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-r-packages"><span class="header-section-number">3</span> Installing and Loading R Packages</a></li>
   </ul>
 </nav>
     </div>
@@ -230,7 +293,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Take-home Exercise 3: Geospatial Analytics</h1>
+<h1 class="title">Take-home Exercise 3b: Geospatial Analytics</h1>
 </div>
 
 
@@ -254,7 +317,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 17, 2024</p>
+      <p class="date-modified">October 22, 2024</p>
     </div>
   </div>
     
@@ -267,12 +330,55 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="overview" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
+<p>For take-home exercise 3, it consists of 2 options: T<u>ake-home Exercise 3a: Modelling Geography of Financial Inclusion with Geographically Weighted Methods</u> &amp; <u>Take-home Exercise 3b: Predicting HDB Resale Prices with Geographically Weighted Machine Learning Methods</u>. The selected option for this take-home exercise will be <strong>3b</strong>.</p>
+<p>Housing plays a crucial role in household wealth across the globe, with purchasing a home representing a significant investment for most individuals. Housing prices are influenced by a variety of factors. Some of these factors are global, such as the overall economic conditions of a country or the inflation rate, while others are specific to individual properties. These factors can be categorised into structural and locational components.</p>
+<p><strong>Structural factors</strong> relate directly to the characteristics of the property, such as its size, amenities, and tenure.</p>
+<p><strong>Locational factors</strong> pertain to the surrounding environment, including proximity to childcare centres, public transportation, and shopping facilities.</p>
+<p>Traditionally, predictive models for housing resale prices have been developed using the Ordinary Least Squares (OLS) method. However, this approach does not account for spatial autocorrelation and spatial heterogeneity present in geographic datasets, such as those related to housing transactions. When spatial autocorrelation is present, OLS estimates can produce biased, inconsistent, or inefficient results (Anselin 1998). To address this limitation, <strong>Geographically Weighted Models</strong> (GWMs) have been introduced, offering a more accurate approach to modelling and predicting housing resale prices.</p>
 <section id="task-and-outcomes" class="level3" data-number="1.1">
 <h3 data-number="1.1" class="anchored" data-anchor-id="task-and-outcomes"><span class="header-section-number">1.1</span> Task and Outcomes</h3>
+<p>For this take-home exercise, the primary dataset should be the <strong>HDB Resale Flat Prices</strong> available on <a href="https://data.gov.sg/">data.gov.sg</a> The analysis should concentrate on one specific flat type: three-room, four-room, or five-room flats.</p>
+<p>The following is a list of suggested predictors to consider, though students are encouraged to include any other relevant independent variables that may enhance the analysis.</p>
+<ul>
+<li>Structural factors
+<ul>
+<li>Area of the unit</li>
+<li>Floor level</li>
+<li>Remaining lease</li>
+<li>Age of the unit</li>
+<li>Main Upgrading Program (MUP) completed (optional)</li>
+</ul></li>
+<li>Locational factors
+<ul>
+<li>Proxomity to CBD</li>
+<li>Proximity to eldercare</li>
+<li>Proximity to foodcourt/hawker centres</li>
+<li>Proximity to MRT</li>
+<li>Proximity to park</li>
+<li>Proximity to good primary school</li>
+<li>Proximity to shopping mall</li>
+<li>Proximity to supermarket</li>
+<li>Numbers of kindergartens within 350m</li>
+<li>Numbers of childcare centres within 350m</li>
+<li>Numbers of bus stop within 350m</li>
+<li>Numbers of primary school within 1km</li>
+</ul></li>
+</ul>
+<p>The <strong>four-room flats</strong> will be the chosen flat type for analysis as it is one of the <a href="https://www.mynicehome.gov.sg/hdb-how-to/buy-your-flat/a-guide-to-hdb-bto-flat-types/">most common HDB BTO flat types, which offers a comfortable living space for young couples and families</a>.</p>
 </section>
 </section>
 <section id="the-data" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="the-data"><span class="header-section-number">2</span> The Data</h2>
+<p>For data is HDB Resale data: a list of HDB resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format which can be downloaded from <strong>data.gov.sg</strong>.</p>
+<p><img src="images/data.png" class="img-fluid"></p>
+</section>
+<section id="installing-and-loading-r-packages" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="installing-and-loading-r-packages"><span class="header-section-number">3</span> Installing and Loading R Packages</h2>
+<p>The code chunk below will ensure for a list of required R packages to be created, checked for installation, and installed if missing. Once installed, all packages will be loaded for use in the exercise.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, sf, spdep, GWmodel, SpatialML,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               tmap, rsample, Metrics, httr, jsonlite, rvest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>
