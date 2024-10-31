@@ -200,6 +200,15 @@ write_rds(test_data, "data/model/test_data.rds")
 ```
 
 
+### Data Import
+
+```{r}
+mdata <- read_rds("data/model/mdata.rds") %>%
+  st_jitter(amount = 2) # check documentation - when used .05 it rouded down become zero again. avoid using decimal places making it too small
+```
+
+reason for jittering - when geo coding it will be the 6 digit postal code then when geocoding - will have error message as it cannot be the same data point for the transcations. 
+
 ```{r}
 #| fig-width: 10
 #| fig-height: 12
@@ -237,7 +246,7 @@ kable(vif,
 ## Plotting VIF
 
 ```{r}
-plot(vig) +
+plot(vif ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 :::
@@ -280,15 +289,17 @@ gwr_adaptive <- gwr.basic(formula = resale_price ~
                           longlat = FALSE)
 ```
 
-The latest model of gwr does not requuire sp format and can be used in sf format.
+The latest model of gwr does not require sp format and can be used in sf format.
 
 ## Modelling Results
 
 ```{r}
+#| eval: false
 gwr_adaptive <- read_rds("data/model/gwr_adaptive.rds")
 ```
 
 ```{r}
+#| eval: false
 gwr_adaptive
 ```
 
@@ -325,7 +336,9 @@ gwr_bw_test_adaptive <- bw.gwr(resale_price ~ floor_area_sqm +
 
 ::: panel-tabset
 
-## Preparing coordiante data
+## Preparing coordinates data
+
+### Extraction of coordinates data
 
 ```{r}
 coords <- st_coordinates(mdata)
@@ -362,11 +375,11 @@ rf
 ```
 
 ```{r}
-write_rds(rf, "chap14/data/model/rf.rds")
+write_rds(rf, "data/model/rf.rds")
 ```
 
 ```{r}
-rf <- read_rds("chap14/data/model/rf.rds")
+rf <- read_rds("data/model/rf.rds")
 rf
 ```
 
@@ -394,20 +407,15 @@ gwRF_adaptive <- grf(formula = resale_price ~ floor_area_sqm + storey_order +
 
 ## The model
 
-```{r}
-
-```
-
 :::
 
-## Predictign by using the test data
+## Predicting by using the test data
 
 ::: panel-tabset
 ## Preparing the test data
 
 ```{r}
-test_data_nogeom <- cbind(
-  test_data, coords_test) %>%
+test_data_nogeom <- cbind(test_data, coords_test) %>%
   st_drop_geometry()
 ```
 
@@ -423,12 +431,23 @@ gwRF_pred <- predict.grf(gwRF_adaptive,
                            global.w=0)
 ```
 
-## Creating DF
+### Saving into RDS file and converting into a data.frame
+
+### Writing and Reading RDS File
 
 ```{r}
+write_rds(gwRF_pred, "data/GRF_pred.rds")
 GRF_pred <- read_rds("data/model/GRF_pred.rds")
+```
+
+
+### Creating DF
+
+```{r}
 GRF_pred_df <- as.data.frame(GRF_pred) # to convert output into a data frame for subsequent usage
 ```
+
+`cbind()` function is used to append the predicted values
 
 ```{r}
 test_data_pred <- cbind(test_data,
@@ -442,8 +461,4 @@ To read the arguments for the packages since the arguments required to calibrate
 
 It can be plotted as a map form later on to deduce how the predictor errors are distributed throughout the space. Plotting the test data version (under predict vs over predict)
 
-Bottom of plot under estimate
-
-## References
-
-Kam , T. S 
+Bottom of plot shows an under estimate.
