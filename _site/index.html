@@ -341,7 +341,33 @@ Dr.&nbsp;Kam Tin Seong
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-listing-date-sort="1730304000000" data-listing-file-modified-sort="1730386942829" data-listing-date-modified-sort="1730386942000" data-listing-reading-time-sort="7" data-listing-word-count-sort="1372">
+<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1730720795277" data-listing-reading-time-sort="5" data-listing-word-count-sort="850">
+<a href="./Take-home_Ex/Take-home_Ex03/Take-home_Ex3b-HDBDataPrep.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-center">
+<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Preparing HDB data
+</h5>
+<div class="card-text listing-description">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, sf, httr, jsonlite, rvest)</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">resale <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/HDB/rawdata/resale.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2">  <span class="fu">filter</span>(month <span class="sc">&gt;=</span> <span class="st">…</span><span class="sc"></span><span class="sc"></span><span class="st"></span></span></code></pre></div><div class="cell-output cell-output-stderr"><pre><code></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="ot"></span><span class="sc"></span></span><span id="cb4-2"><span class="fu"></span><span class="at"></span><span class="fu"></span><span class="sc"></span></span><span id="cb4-3"><span class="fu"></span><span class="at"></span><span class="fu"></span></span><span id="cb4-4"><span class="fu"></span><span class="dv"></span><span class="dv"></span><span class="sc"></span></span><span id="cb4-5"><span class="fu"></span><span class="at"></span><span class="fu"></span></span><span id="cb4-6"><span class="fu"></span><span class="dv"></span><span class="dv"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="ot"></span><span class="sc"></span></span><span id="cb5-2"><span class="fu"></span><span class="sc"></span><span class="st"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="ot"></span><span class="fu"></span><span class="fu"></span><span class="sc"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="ot"></span><span class="cf"></span></span><span id="cb7-2"></span><span id="cb7-3"><span class="co"></span></span><span id="cb7-4"><span class="ot"></span><span class="fu"></span></span><span id="cb7-5"></span><span id="cb7-6"><span class="cf"></span><span class="cf"></span></span><span id="cb7-7"><span class="co"></span></span><span id="cb7-8"></span><span id="cb7-9"><span class="ot"></span><span class="fu"></span><span class="st"></span></span><span id="cb7-10"><span class="at"></span><span class="fu"></span><span class="at"></span></span><span id="cb7-11"><span class="at"></span><span class="st"></span></span><span id="cb7-12"><span class="at"></span><span class="st"></span></span><span id="cb7-13"><span class="ot"></span><span class="fu"></span><span class="fu"></span><span class="sc"></span></span><span id="cb7-14"><span class="ot"></span><span class="sc"></span></span><span id="cb7-15"><span class="ot"></span><span class="sc"></span></span><span id="cb7-16"></span><span id="cb7-17"><span class="co"></span></span><span id="cb7-18"><span class="ot"></span><span class="fu"></span></span><span id="cb7-19"></span><span id="cb7-20"><span class="co"></span></span><span id="cb7-21"><span class="cf"></span><span class="sc"></span><span class="dv"></span></span><span id="cb7-22"><span class="ot"></span><span class="sc"></span></span><span id="cb7-23"><span class="ot"></span><span class="sc"></span></span><span id="cb7-24"><span class="ot"></span><span class="sc"></span></span><span id="cb7-25"><span class="ot"></span><span class="fu"></span><span class="at"></span></span><span id="cb7-26"><span class="at"></span></span><span id="cb7-27"><span class="at"></span></span><span id="cb7-28"><span class="at"></span></span><span id="cb7-29"></span><span id="cb7-30"></span><span id="cb7-31"><span class="co"></span></span><span id="cb7-32"><span class="cf"></span><span class="cf"></span><span class="sc"></span><span class="dv"></span></span><span id="cb7-33"><span class="co"></span></span><span id="cb7-34"><span class="ot"></span><span class="sc"></span><span class="sc"></span><span class="st"></span></span><span id="cb7-35"></span><span id="cb7-36"><span class="co"></span></span><span id="cb7-37"><span class="cf"></span><span class="fu"></span><span class="sc"></span><span class="dv"></span></span><span id="cb7-38"><span class="ot"></span><span class="fu"></span><span class="at"></span></span><span id="cb7-39"><span class="at"></span><span class="cn"></span></span><span id="cb7-40"><span class="at"></span><span class="cn"></span></span><span id="cb7-41"><span class="at"></span><span class="cn"></span></span><span id="cb7-42"></span><span id="cb7-43"></span><span id="cb7-44"><span class="cf"></span></span><span id="cb7-45"><span class="ot"></span><span class="fu"></span><span class="at"></span><span class="dv"></span></span><span id="cb7-46"><span class="ot"></span><span class="sc"></span></span><span id="cb7-47"><span class="ot"></span><span class="sc"></span></span><span id="cb7-48"><span class="ot"></span><span class="sc"></span></span><span id="cb7-49"><span class="ot"></span><span class="fu"></span><span class="at"></span></span><span id="cb7-50"><span class="at"></span></span><span id="cb7-51"><span class="at"></span></span><span id="cb7-52"><span class="at"></span></span><span id="cb7-53"></span><span id="cb7-54"></span><span id="cb7-55"></span><span id="cb7-56"><span class="cf"></span></span><span id="cb7-57"><span class="ot"></span><span class="fu"></span><span class="at"></span></span><span id="cb7-58"><span class="at"></span><span class="cn"></span></span><span id="cb7-59"><span class="at"></span><span class="cn"></span></span><span id="cb7-60"><span class="at"></span><span class="cn"></span></span><span id="cb7-61"></span><span id="cb7-62"></span><span id="cb7-63"><span class="co"></span></span><span id="cb7-64"><span class="ot"></span><span class="fu"></span></span><span id="cb7-65"></span><span id="cb7-66"><span class="fu"></span></span><span id="cb7-67"></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="ot"></span><span class="fu"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="fu"></span><span class="st"></span></span></code></pre></div></div>
+</div>
+<div class="card-attribution card-text-small start">
+<div class="listing-author">
+Dr.&nbsp;Kam Tin Seong
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="2" data-listing-date-sort="1730304000000" data-listing-file-modified-sort="1730386942829" data-listing-date-modified-sort="1730386942000" data-listing-reading-time-sort="7" data-listing-word-count-sort="1372">
 <a href="./Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10a.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img src="Hands-on_Ex\Hands-on_Ex10\Hands-on_Ex10a_files\figure-html\unnamed-chunk-31-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -364,7 +390,7 @@ Oct 31, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2" data-listing-date-sort="1730304000000" data-listing-file-modified-sort="1730383789062" data-listing-date-modified-sort="1730383789000" data-listing-reading-time-sort="15" data-listing-word-count-sort="2939">
+<div class="g-col-1" data-index="3" data-listing-date-sort="1730304000000" data-listing-file-modified-sort="1730383789062" data-listing-date-modified-sort="1730383789000" data-listing-reading-time-sort="15" data-listing-word-count-sort="2939">
 <a href="./Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10b.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img src="Hands-on_Ex\Hands-on_Ex10\image16a.jpg" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -387,7 +413,7 @@ Oct 31, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="3" data-listing-date-sort="1730044800000" data-listing-file-modified-sort="1730388440608" data-listing-date-modified-sort="1730388440000" data-listing-reading-time-sort="8" data-listing-word-count-sort="1421">
+<div class="g-col-1" data-index="4" data-listing-date-sort="1730044800000" data-listing-file-modified-sort="1730388440608" data-listing-date-modified-sort="1730388440000" data-listing-reading-time-sort="8" data-listing-word-count-sort="1421">
 <a href="./In-class_Ex/In-class_Ex09/In-class_Ex09.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img src="In-class_Ex\In-class_Ex09\In-class_Ex09_files\figure-html\unnamed-chunk-15-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -410,7 +436,7 @@ Oct 28, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="4" data-listing-date-sort="1729699200000" data-listing-file-modified-sort="1730362493471" data-listing-date-modified-sort="1730362493000" data-listing-reading-time-sort="17" data-listing-word-count-sort="3223">
+<div class="g-col-1" data-index="5" data-listing-date-sort="1729699200000" data-listing-file-modified-sort="1730362493471" data-listing-date-modified-sort="1730362493000" data-listing-reading-time-sort="17" data-listing-word-count-sort="3223">
 <a href="./Hands-on_Ex/Hands-on_Ex09/Hands-on_Ex09.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -433,10 +459,10 @@ Oct 24, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="5" data-listing-date-sort="1729094400000" data-listing-file-modified-sort="1730361816675" data-listing-date-modified-sort="1730361816000" data-listing-reading-time-sort="20" data-listing-word-count-sort="3846">
+<div class="g-col-1" data-index="6" data-listing-date-sort="1729094400000" data-listing-file-modified-sort="1730361816675" data-listing-date-modified-sort="1730361816000" data-listing-reading-time-sort="20" data-listing-word-count-sort="3846">
 <a href="./Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
-<p class="card-img-top"><img src="Hands-on_Ex\Hands-on_Ex08\Hands-on_Ex08_files\figure-html\unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex08\Hands-on_Ex08_files\figure-html\unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 8: Geographically Weighted Predictive Modelling
@@ -456,7 +482,7 @@ Oct 17, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="6" data-listing-date-sort="1729008000000" data-listing-file-modified-sort="1729534396561" data-listing-date-modified-sort="1729534396000" data-listing-reading-time-sort="3" data-listing-word-count-sort="587">
+<div class="g-col-1" data-index="7" data-listing-date-sort="1729008000000" data-listing-file-modified-sort="1731518633202" data-listing-date-modified-sort="1731518633000" data-listing-reading-time-sort="18" data-listing-word-count-sort="3450">
 <a href="./Take-home_Ex/Take-home_Ex03/Take-home_Ex03.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Take-home_Ex\Take-home_Ex03\images\data.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -479,7 +505,7 @@ Oct 16, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="7" data-listing-date-sort="1728835200000" data-listing-file-modified-sort="1729107101483" data-listing-date-modified-sort="1729107101000" data-listing-reading-time-sort="25" data-listing-word-count-sort="4827">
+<div class="g-col-1" data-index="8" data-listing-date-sort="1728835200000" data-listing-file-modified-sort="1729107101483" data-listing-date-modified-sort="1729107101000" data-listing-reading-time-sort="25" data-listing-word-count-sort="4827">
 <a href="./In-class_Ex/In-class_Ex07/In-class_Ex07.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="In-class_Ex\In-class_Ex07\In-class_Ex07_files\figure-html\unnamed-chunk-15-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -502,7 +528,7 @@ Oct 14, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="8" data-listing-date-sort="1728230400000" data-listing-file-modified-sort="1729108823746" data-listing-date-modified-sort="1729108823000" data-listing-reading-time-sort="28" data-listing-word-count-sort="5421">
+<div class="g-col-1" data-index="9" data-listing-date-sort="1728230400000" data-listing-file-modified-sort="1729108823746" data-listing-date-modified-sort="1729108823000" data-listing-reading-time-sort="28" data-listing-word-count-sort="5421">
 <a href="./Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex07\Hands-on_Ex07_files\figure-html\unnamed-chunk-13-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -525,7 +551,7 @@ Oct 7, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="9" data-listing-date-sort="1727625600000" data-listing-file-modified-sort="1727702383263" data-listing-date-modified-sort="1727702383000" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
+<div class="g-col-1" data-index="10" data-listing-date-sort="1727625600000" data-listing-file-modified-sort="1727702383263" data-listing-date-modified-sort="1727702383000" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
 <a href="./In-class_Ex/In-class_Ex06/In-class_Ex06.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="In-class_Ex\In-class_Ex06\In-class_Ex06_files\figure-html\unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -548,7 +574,7 @@ Sep 30, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="10" data-listing-date-sort="1727625600000" data-listing-file-modified-sort="1728903655092" data-listing-date-modified-sort="1728903655000" data-listing-reading-time-sort="15" data-listing-word-count-sort="2902">
+<div class="g-col-1" data-index="11" data-listing-date-sort="1727625600000" data-listing-file-modified-sort="1728903655092" data-listing-date-modified-sort="1728903655000" data-listing-reading-time-sort="15" data-listing-word-count-sort="2902">
 <a href="./Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Take-home_Ex\Take-home_Ex02\images\th_ex2_img1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -571,7 +597,7 @@ Sep 30, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="11" data-listing-date-sort="1727452800000" data-listing-file-modified-sort="1729106108717" data-listing-date-modified-sort="1729106108000" data-listing-reading-time-sort="37" data-listing-word-count-sort="7357">
+<div class="g-col-1" data-index="12" data-listing-date-sort="1727452800000" data-listing-file-modified-sort="1729106108717" data-listing-date-modified-sort="1729106108000" data-listing-reading-time-sort="37" data-listing-word-count-sort="7357">
 <a href="./Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex06\Hands-on_Ex06_files\figure-html\unnamed-chunk-9-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -594,7 +620,7 @@ Sep 28, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="12" data-listing-date-sort="1727020800000" data-listing-file-modified-sort="1727702432332" data-listing-date-modified-sort="1727702432000" data-listing-reading-time-sort="12" data-listing-word-count-sort="2310">
+<div class="g-col-1" data-index="13" data-listing-date-sort="1727020800000" data-listing-file-modified-sort="1727702432332" data-listing-date-modified-sort="1727702432000" data-listing-reading-time-sort="12" data-listing-word-count-sort="2310">
 <a href="./In-class_Ex/In-class_Ex05/In-class_Ex05.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="In-class_Ex\In-class_Ex05\In-class_Ex05_files\figure-html\unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -617,7 +643,7 @@ Sep 23, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="13" data-listing-date-sort="1726761600000" data-listing-file-modified-sort="1729106092928" data-listing-date-modified-sort="1729106092000" data-listing-reading-time-sort="1" data-listing-word-count-sort="116">
+<div class="g-col-1" data-index="14" data-listing-date-sort="1726761600000" data-listing-file-modified-sort="1729106092928" data-listing-date-modified-sort="1729106092000" data-listing-reading-time-sort="1" data-listing-word-count-sort="116">
 <a href="./Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
@@ -640,7 +666,7 @@ Sep 20, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="14" data-listing-date-sort="1726761600000" data-listing-file-modified-sort="1729106097808" data-listing-date-modified-sort="1729106097000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1644">
+<div class="g-col-1" data-index="15" data-listing-date-sort="1726761600000" data-listing-file-modified-sort="1729106097808" data-listing-date-modified-sort="1729106097000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1644">
 <a href="./Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex05\Hands-on_Ex05b_files\figure-html\unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -663,7 +689,7 @@ Sep 20, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="15" data-listing-date-sort="1726416000000" data-listing-file-modified-sort="1727702497475" data-listing-date-modified-sort="1727702497000" data-listing-reading-time-sort="13" data-listing-word-count-sort="2545">
+<div class="g-col-1" data-index="16" data-listing-date-sort="1726416000000" data-listing-file-modified-sort="1727702497475" data-listing-date-modified-sort="1727702497000" data-listing-reading-time-sort="13" data-listing-word-count-sort="2545">
 <a href="./In-class_Ex/In-class_Ex04/In-class_Ex04.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="In-class_Ex\In-class_Ex04\In-class_Ex04_files\figure-html\unnamed-chunk-14-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -686,7 +712,7 @@ Sep 16, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="16" data-listing-date-sort="1726329600000" data-listing-file-modified-sort="1729106078511" data-listing-date-modified-sort="1729106078000" data-listing-reading-time-sort="16" data-listing-word-count-sort="3098">
+<div class="g-col-1" data-index="17" data-listing-date-sort="1726329600000" data-listing-file-modified-sort="1729106078511" data-listing-date-modified-sort="1729106078000" data-listing-reading-time-sort="16" data-listing-word-count-sort="3098">
 <a href="./Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex04\Hands-on_Ex04_files\figure-html\unnamed-chunk-5-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -709,7 +735,7 @@ Sep 15, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="17" data-listing-date-sort="1725811200000" data-listing-file-modified-sort="1726484246308" data-listing-date-modified-sort="1726484246000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1656">
+<div class="g-col-1" data-index="18" data-listing-date-sort="1725811200000" data-listing-file-modified-sort="1726484246308" data-listing-date-modified-sort="1726484246000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1656">
 <a href="./In-class_Ex/In-class_Ex03/In-class_Ex03.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="In-class_Ex\In-class_Ex03\In-class_Ex03_files\figure-html\unnamed-chunk-4-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -732,7 +758,7 @@ Sep 9, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="18" data-listing-date-sort="1725724800000" data-listing-file-modified-sort="1727621181710" data-listing-date-modified-sort="1727621181000" data-listing-reading-time-sort="39" data-listing-word-count-sort="7603">
+<div class="g-col-1" data-index="19" data-listing-date-sort="1725724800000" data-listing-file-modified-sort="1727621181710" data-listing-date-modified-sort="1727621181000" data-listing-reading-time-sort="39" data-listing-word-count-sort="7603">
 <a href="./Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Take-home_Ex\Take-home_Ex01\images\notethaadm.png" alt="Thailand - Subnational Administrative Boundaries" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -755,7 +781,7 @@ Sep 8, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="19" data-listing-date-sort="1725465600000" data-listing-file-modified-sort="1729104465625" data-listing-date-modified-sort="1729104465000" data-listing-reading-time-sort="13" data-listing-word-count-sort="2417">
+<div class="g-col-1" data-index="20" data-listing-date-sort="1725465600000" data-listing-file-modified-sort="1729104465625" data-listing-date-modified-sort="1729104465000" data-listing-reading-time-sort="13" data-listing-word-count-sort="2417">
 <a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex03\Hands-on_Ex03_files\figure-html\unnamed-chunk-7-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -778,7 +804,7 @@ Sep 5, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="20" data-listing-date-sort="1725206400000" data-listing-file-modified-sort="1725785214016" data-listing-date-modified-sort="1725785214000" data-listing-reading-time-sort="5" data-listing-word-count-sort="931">
+<div class="g-col-1" data-index="21" data-listing-date-sort="1725206400000" data-listing-file-modified-sort="1725785214016" data-listing-date-modified-sort="1725785214000" data-listing-reading-time-sort="5" data-listing-word-count-sort="931">
 <a href="./In-class_Ex/In-class_Ex02/In-class_Ex02.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="In-class_Ex\In-class_Ex02\ss.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -801,7 +827,7 @@ Sep 2, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="21" data-listing-date-sort="1725120000000" data-listing-file-modified-sort="1729104450201" data-listing-date-modified-sort="1729104450000" data-listing-reading-time-sort="14" data-listing-word-count-sort="2648">
+<div class="g-col-1" data-index="22" data-listing-date-sort="1725120000000" data-listing-file-modified-sort="1729104450201" data-listing-date-modified-sort="1729104450000" data-listing-reading-time-sort="14" data-listing-word-count-sort="2648">
 <a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02b.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex02\Hands-on_Ex02b_files\figure-html\unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -824,7 +850,7 @@ Sep 1, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="22" data-listing-date-sort="1724774400000" data-listing-file-modified-sort="1729104441445" data-listing-date-modified-sort="1729104441000" data-listing-reading-time-sort="22" data-listing-word-count-sort="4267">
+<div class="g-col-1" data-index="23" data-listing-date-sort="1724774400000" data-listing-file-modified-sort="1729104441445" data-listing-date-modified-sort="1729104441000" data-listing-reading-time-sort="22" data-listing-word-count-sort="4267">
 <a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02a.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-center">
 <p class="card-img-top"><img data-src="Hands-on_Ex\Hands-on_Ex02\Hands-on_Ex02a_files\figure-html\unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -841,29 +867,6 @@ Ho Zi Jun
 </div>
 <div class="listing-date">
 Aug 28, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="23" data-listing-date-sort="1724601600000" data-listing-file-modified-sort="1725781600870" data-listing-date-modified-sort="1725781600000" data-listing-reading-time-sort="4" data-listing-word-count-sort="688">
-<a href="./In-class_Ex/In-class_Ex01/In-class_Ex01.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-center">
-<p class="card-img-top"><img data-src="In-class_Ex\In-class_Ex01\data\kml.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-In-class Exercise 1
-</h5>
-<div class="card-text listing-description">
-THe following 4 R packages will be used for this in-class exercise:
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Ho Zi Jun
-</div>
-<div class="listing-date">
-Aug 26, 2024
 </div>
 </div>
 </div>

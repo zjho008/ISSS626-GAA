@@ -38,7 +38,7 @@ The following is a list of suggested predictors to consider, though students are
     -   Age of the unit
     -   Main Upgrading Program (MUP) completed (optional)
 -   Locational factors
-    -   Proxomity to CBD
+    -   Proximity to CBD
     -   Proximity to eldercare
     -   Proximity to foodcourt/hawker centres
     -   Proximity to MRT
@@ -53,17 +53,611 @@ The following is a list of suggested predictors to consider, though students are
 
 The **four-room flats** will be the chosen flat type for analysis as it is one of the [most common HDB BTO flat types, which offers a comfortable living space for young couples and families](https://www.mynicehome.gov.sg/hdb-how-to/buy-your-flat/a-guide-to-hdb-bto-flat-types/).
 
-## The Data
+Additionally, in this take-home exercise, we are tasked with calibrating a predictive model to forecast HDB resale prices for the period of July to September 2024, using resale transaction data from 2023 as the basis for analysis.
 
-For data is HDB Resale data: a list of HDB resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format which can be downloaded from **data.gov.sg**. 
-
-![](images/data.png)
 
 ## Installing and Loading R Packages
 
 The code chunk below will ensure for a list of required R packages to be created, checked for installation, and installed if missing. Once installed, all packages will be loaded for use in the exercise.
 
 ```{r}
-pacman::p_load(tidyverse, sf, spdep, GWmodel, SpatialML,
-               tmap, rsample, Metrics, httr, jsonlite, rvest)
+pacman::p_load(tidyverse, sf, spdep, GWmodel, SpatialML, spatstat, units, gtsummary,
+               tmap, rsample, Metrics, httr, jsonlite, rvest, olsrr, corrplot, ggpubr)
 ```
+
+## The Data
+
+The following sections will consist of steps which import, process and wrangling of data.
+
+### HDB resale Data
+
+Data used for this exercise is HDB Resale data: a list of HDB resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format which can be downloaded from **data.gov.sg**. 
+
+![](images/data.png)
+
+When first downloaded, the data was labelled as `ResaleflatpricesbasedonregistrationdatefromJan2017onwards`. Hence, it was subsequently renamed to `resale` for ease of referencing and to avoid unnecessary mistakes. Similar to what is required in the task of using HDB resale transaction records in 2023 to predict HDB resale prices between July-September 2024 the code chunk below filters for transaction records for the entirety of 2023 and July till September 2024.
+
+```{r}
+resale <- read_csv("data/HDB/rawdata/resale.csv") %>%
+  filter(month >= "2023-01" & month <= "2024-09")
+```
+
+![resale data snipshot](images/resale.png)
+
+Based on the requirements of this exercise, I have decided to focus my study on four-room flats.
+
+![](images/resale2.png)
+
+```{r}
+roomtype = c('4 ROOM') # '3 ROOM', '4 ROOM', '5 ROOM'
+resale = resale%>%
+  filter(flat_type %in% roomtype)
+```
+
+The observations have been reduced to 20663.
+
+The code chunk below serves the functions of combining `block` and `street_name` variables to create a new variable `address` (excluding unit number) alongside  `remaining_lease_yr` and `remaining_lease_mth` extracted from `remaining_lease`. This function will supplement our steps later on in creating the model.
+
+```{r}
+resale_tidy <- resale %>%
+  mutate(address = paste(block,street_name)) %>%
+  mutate(remaining_lease_yr = as.integer(
+    str_sub(remaining_lease, 0, 2)))%>%
+  mutate(remaining_lease_mth = as.integer(
+    str_sub(remaining_lease, 9, 11)))
+```
+
+Code chunk below sorts a list of unique addresses to avoid the issue of repeated geocoding.
+
+```{r}
+add_list <- sort(unique(resale_tidy$address))
+```
+
+The following code chunks are used to obtain the postal code of the addresses using geocoding.
+
+```{r}
+get_coords <- function(add_list){
+  
+  # Create a data frame to store all retrieved coordinates
+  postal_coords <- data.frame()
+    
+  for (i in add_list){
+    #print(i)
+
+    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
+           query=list(searchVal=i,
+                     returnGeom='Y',
+                     getAddrDetails='Y'))
+    data <- fromJSON(rawToChar(r$content))
+    found <- data$found
+    res <- data$results
+    
+    # Create a new data frame for each address
+    new_row <- data.frame()
+    
+    # If single result, append 
+    if (found == 1){
+      postal <- res$POSTAL 
+      lat <- res$LATITUDE
+      lng <- res$LONGITUDE
+      new_row <- data.frame(address= i, 
+                            postal = postal, 
+                            latitude = lat, 
+                            longitude = lng)
+    }
+    
+    # If multiple results, drop NIL and append top 1
+    else if (found > 1){
+      # Remove those with NIL as postal
+      res_sub <- res[res$POSTAL != "NIL", ]
+      
+      # Set as NA first if no Postal
+      if (nrow(res_sub) == 0) {
+          new_row <- data.frame(address= i, 
+                                postal = NA, 
+                                latitude = NA, 
+                                longitude = NA)
+      }
+      
+      else{
+        top1 <- head(res_sub, n = 1)
+        postal <- top1$POSTAL 
+        lat <- top1$LATITUDE
+        lng <- top1$LONGITUDE
+        new_row <- data.frame(address= i, 
+                              postal = postal, 
+                              latitude = lat, 
+                              longitude = lng)
+      }
+    }
+
+    else {
+      new_row <- data.frame(address= i, 
+                            postal = NA, 
+                            latitude = NA, 
+                            longitude = NA)
+    }
+    
+    # Add the row
+    postal_coords <- rbind(postal_coords, new_row)
+  }
+  return(postal_coords)
+}
+```
+
+
+```{r}
+coords <- get_coords(add_list)
+```
+
+::: panel-tabset
+
+## Saving RDS file
+
+The following code chunk will be used to save the results to avoid having to re-run the code chunks above which will take up additional time and resources.
+
+```{r}
+write_rds(coords, "data/HDB/rds/coords.rds")
+```
+
+## Reading RDS File
+
+```{r}
+coords <- read_rds('data/HDB/rds/coords.rds')
+```
+
+:::
+
+### Structural factors
+
+-   Structural factors
+    -   Area of the unit
+    -   Floor level
+    -   Remaining lease
+    -   Age of the unit
+    -   Main Upgrading Program (MUP) completed (optional)
+
+### Setting CRS 
+
+The code chunk below first creates an sf object before the EPSG code is set for Singapore which is 4326
+
+```{r}
+resale_tidy <- resale_tidy %>%
+  left_join(coords, by = c("address" = "address")) %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  st_transform(crs = 3414)
+write_rds(resale_tidy, "data/HDB/rds/resale.rds")
+```
+
+```{r}
+resale_tidy <- read_rds("data/HDB/rds/resale.rds")
+```
+
+#### Floor Level
+
+As one of the structural factors the code chunk below is used to view the floor levels in `resale_tidy`
+
+```{r}
+unique(resale_tidy$storey_range)
+```
+
+As the variable for `storey_range` is in string, we will generate it as numeric. However, the `storey_range` as stated follows a range which will make it hard for analysis. Hence, this numeric attribute will be transformed based on the median value ensuring that we have values to work with instead of a range.
+
+```{r}
+resale_tidy <- resale_tidy %>%
+  mutate(
+    level = (as.numeric(str_extract(storey_range, "^[0-9]+")) +
+                  as.numeric(str_extract(storey_range, "[0-9]+$"))) / 2
+  )
+```
+
+#### Remaining Lease & Age of Unit
+
+We will also do some data wrangling for `remaining_lease_yr` & `remaining_lease_mth`
+
+```{r}
+resale_tidy <- resale_tidy %>%
+  mutate(
+
+# Replace NA in months with 0 as observed in resale_tidy
+
+remaining_lease_mth = if_else(is.na(remaining_lease_mth), 0, remaining_lease_mth),
+    
+# Calculate remaining lease in decimal years
+  remaining_lease = remaining_lease_yr + (remaining_lease_mth / 12),
+    
+# Age of unit calculation based on a HDB 99-year lease
+    unit_age = 99 - remaining_lease
+  ) %>%
+  select(-remaining_lease_yr, -remaining_lease_mth)
+```
+
+
+### Locational factors
+
+The following locational factors will be derived from their respective data sources such as from **data.gov.sg** for this exercise.
+
+-   Locational factors
+    -   **Proximity to CBD**
+    -   **Proximity to elder care**
+    -   **Proximity to hawker centres**
+    -   **Proximity to MRT**
+    -   **Proximity to park**
+    -   **Proximity to CHAS Clinics**
+    -   Proximity to good primary school
+    -   Proximity to shopping mall
+    -   **Proximity to supermarket**
+    -   **Numbers of kindergartens within 350m**
+    -   **Numbers of childcare centres within 350m**
+    -   **Numbers of bus stop within 350m**
+    -   Numbers of primary school within 1km
+
+
+### Geospatial Data
+
+Based on the locational factors above, we will import these geospatial data into the R environment.
+
+```{r}
+mpsz <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL") %>%
+  st_transform(3414)
+```
+
+```{r}
+mpsz
+```
+
+The extent of mpsz is shown by using `st_bbox()` of sf package.
+
+```{r}
+st_bbox(mpsz) #view extent
+```
+
+
+```{r}
+eldercare <- st_read(dsn = "data/geospatial", layer = "ELDERCARE") %>%
+  st_transform(3414)
+```
+
+```{r}
+chas <- st_read("data/geospatial/CHASClinics.kml") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+childcare <- st_read("data/geospatial/ChildCareServices.kml") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+kindergartens <- st_read("data/geospatial/Kindergartens.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+parks <- st_read("data/geospatial/Parks.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+hawker_centre <- st_read("data/geospatial/HawkerCentresGEOJSON.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+supermarkets <- st_read("data/geospatial/SupermarketsGEOJSON.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+bus_stops <- st_read(dsn = "data/geospatial", layer = "BusStop") %>%
+  st_transform(crs = 3414) %>%
+  filter(lengths(st_within(., mpsz)) > 0)
+```
+
+```{r}
+MRT <- st_read(dsn = "data/geospatial", layer = "RapidTransitSystemStation") %>%
+  st_transform(crs = 3414)
+
+Sys.setenv(OGR_GEOMETRY_ACCEPT_UNCLOSED_RING = "NO")
+
+MRT <- MRT[!st_is_empty(MRT), ]
+
+# Convert Polygon to Point
+MRT <- st_centroid(MRT)
+```
+
+#### Pre processing Geospatial Data
+
+In the previous section, we have loaded the geospatial data of interest it was also observed that some of this data consisted of the Z dimension. We will proceed to remove them as well as drop and unnecessary columns to reduce computation time and ensure geometries are valid.
+
+```{r}
+chas <- st_zm(chas)
+childcare <- st_zm(childcare)
+kindergartens <- st_zm(kindergartens)
+parks <- st_zm(parks)
+hawker_centre <- st_zm(hawker_centre)
+supermarkets <- st_zm(supermarkets)
+```
+
+The code chunks below are used to remove columns not exactly needed to do analysis as the needed variables are generally the Name for identification and Geometry variables
+
+```{r}
+eldercare <- eldercare %>%
+  select(c(1))
+
+chas <- chas %>%
+  select(c(1))
+
+childcare <- childcare %>%
+  select(c(1))
+
+kindergartens <- kindergartens %>%
+  select(c(1))
+
+parks <- parks %>%
+  select(c(1))
+
+hawker_centre <- hawker_centre %>%
+  select(c(1))
+
+supermarkets <- supermarkets %>%
+  select(c(1))
+
+bus_stops <- bus_stops %>%
+  select(c(1))
+
+MRT <- MRT %>%
+  select(c(5))
+```
+
+
+```{r}
+length(which(st_is_valid(mpsz) == FALSE))
+length(which(st_is_valid(eldercare) == FALSE))
+length(which(st_is_valid(chas) == FALSE))
+length(which(st_is_valid(childcare) == FALSE))
+length(which(st_is_valid(kindergartens) == FALSE))
+length(which(st_is_valid(parks) == FALSE))
+length(which(st_is_valid(hawker_centre) == FALSE))
+length(which(st_is_valid(supermarkets) == FALSE))
+length(which(st_is_valid(bus_stops) == FALSE))
+length(which(st_is_valid(MRT) == FALSE))
+```
+## Visualising the Data
+
+In this section we will do quick visualisations without much customisations to ensure that the data is appropriate before proceeding.
+
+::: panel-tabset
+
+## mpsz
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey")
+```
+## Eldercare
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(eldercare) +
+  tm_dots(col = "red", size = 0.1)
+```
+## CHAS
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(chas) +
+  tm_dots(col = "red")
+```
+## Childcare Centre
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(childcare) +
+  tm_dots(col = "red")
+```
+## Kindergartens
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(kindergartens) +
+  tm_dots(col = "red", size = 0.08)
+```
+
+## Parks (NEA)
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(parks) +
+  tm_dots(col = "red", size = 0.08)
+```
+## Hawker Centres
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(hawker_centre) +
+  tm_dots(col = "red", size = 0.1)
+```
+## Supermarkets
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(supermarkets) +
+  tm_dots(col = "red", size = 0.08)
+```
+## Bus Stops
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(bus_stops) +
+  tm_dots(col = "red", size = 0.005)
+```
+## MRT Stations
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons(col = "grey") +
+  tm_shape(MRT) +
+  tm_dots(col = "red", size = 0.1)
+```
+:::
+
+Based on the above visualisations the data points look in place without any abnomalities.
+
+## Locational Factors (Proximity Calculation)
+
+Now to calculate the proximity of HDB flats to relevant facilities. The provided proximity function streamlines this process by calculating the minimum distance from each feature in df1 to the nearest feature in df2 and assigning this distance to a new column specified by `varname`.
+
+The following locational factors will be calculated in terms of proximity:
+
+    -   Proximity to CBD (Raffles Place & Tanjong Pagar MRT)
+    -   Proximity to eldercare
+    -   Proximity to CHAS Clinics
+    -   Proximity to hawker centres
+    -   Proximity to MRT
+    -   Proximity to park
+    -   Proximity to supermarket
+    -   Numbers of kindergartens within 350m
+    -   Numbers of childcare centres within 350m
+    -   Numbers of bus stop within 350m
+
+
+```{r}
+proximity <- function(df1, df2, varname) {
+  dist_matrix <- st_distance(df1, df2) %>%
+    drop_units()
+  
+  # Calculate minimum distance for each row
+  df1[[varname]] <- apply(dist_matrix, 1, min)
+  
+  return(df1)
+}
+```
+
+
+```{r}
+cbd <- filter(MRT, STN_NAM_DE %in% c("RAFFLES PLACE MRT STATION", "TANJONG PAGAR MRT STATION"))
+resale_tidy <- proximity(resale_tidy, cbd, "PROX_CBD") %>%
+  proximity(., eldercare, "PROX_ELDERCARE") %>%
+  proximity(., chas, "PROX_CHAS") %>%
+  proximity(., hawker_centre, "PROX_HAWKER") %>%
+  proximity(., MRT, "PROX_MRT") %>%
+  proximity(., parks, "PROX_PARK") %>%
+  proximity(., childcare, "PROX_CHILDCARE") %>%
+  proximity(., kindergartens, "PROX_KINDERGARTEN") %>%
+  proximity(., supermarkets, "PROX_SUPERMARKET") %>%
+  proximity(., bus_stops, "PROX_BUS_STOP")
+```
+
+We also need to calculate the number of facilities within a specific radius from the resale flats. The `count_in_radius` function accomplishes this by calculating the distance matrix between `df1` and `df2` using `st_distance`, identifying features within the specified radius, and summing these counts in a new column in `df1` designated by `varname`.
+
+```{r}
+count_in_radius <- function(df1, df2, varname, radius) {
+  dist_matrix <- st_distance(df1, df2) %>%
+    drop_units() %>%
+    as.data.frame()
+  df1[,varname] <- rowSums(dist_matrix <= radius)
+  return(df1)
+}
+```
+
+
+```{r}
+resale_tidy <- count_in_radius(resale_tidy, kindergartens, "NUM_KINDERGARTEN", 350) %>%
+  count_in_radius(., childcare, "NUM_CHILDCARE", 350) %>%
+  count_in_radius(., bus_stops, "NUM_BUS_STOP", 350) %>%
+  count_in_radius(., chas, "NUM_CHAS", 350)
+```
+
+
+Columns which are not needed for this analysis in this exercise will be dropped and the file is then saved as a RDS file for ease of retrieval without the need to run the above code chunks again.
+
+```{r}
+resale_tidy <- resale_tidy %>%
+  rename(
+    MONTH = month,
+    TOWN = town,
+    FLOOR_AREA_SQM = floor_area_sqm,
+    ADDRESS = address,
+    RESALE_PRICE = resale_price,
+    LEVEL = level,
+    REMAINING_LEASE = remaining_lease,
+    UNIT_AGE = unit_age
+  ) %>%
+  select(MONTH, TOWN, FLOOR_AREA_SQM, ADDRESS, RESALE_PRICE, LEVEL, REMAINING_LEASE,
+         UNIT_AGE, PROX_CBD, PROX_ELDERCARE, PROX_CHAS, PROX_HAWKER, PROX_MRT, PROX_PARK,
+         PROX_CHILDCARE, PROX_KINDERGARTEN, PROX_SUPERMARKET, PROX_BUS_STOP, NUM_KINDERGARTEN,
+         NUM_CHILDCARE, NUM_BUS_STOP, NUM_CHAS)
+
+write_rds(resale_tidy, "data/HDB/rds/final_resale.rds")
+```
+
+## Exploratory Data Analysis (EDA)
+
+In the section, it will make use of statistical graphics functions of **ggplot2** package to perform EDA on `resale_tidy`
+
+### EDA using statistical graphics
+
+#### Resale Price
+
+```{r}
+ggplot(data = resale_tidy, aes(x = `RESALE_PRICE`)) +
+  geom_histogram(bins = 20, color = "black", fill = "salmon")
+```
+
+The figure above reveals a right skewed distribution. This means that more 4-room resale units were transacted at relative lower prices ranging from $400,000 to $600,000 price range.
+
+#### Multiple Histogram Plots for Locational Factors
+
+The code chunk below is used to create 12 histograms. Then, `ggarrange()` is used to organised the histograms into a 3 column by 4 row small multiple plot.
+
+
+```{r}
+AREA_SQM <- ggplot(data = resale_tidy, aes(x= `FLOOR_AREA_SQM`)) + 
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+AGE <- ggplot(data = resale_tidy, aes(x= `UNIT_AGE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_CBD <- ggplot(data = resale_tidy, aes(x= `PROX_CBD`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_CHILDCARE <- ggplot(data = resale_tidy, aes(x= `PROX_CHILDCARE`)) + 
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_ELDERCARE <- ggplot(data = resale_tidy, aes(x= `PROX_ELDERCARE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_HAWKER <- ggplot(data = resale_tidy, aes(x = `PROX_HAWKER`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_KINDERGARTEN <- ggplot(data = resale_tidy, aes(x = `PROX_KINDERGARTEN`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_MRT <- ggplot(data = resale_tidy, aes(x= `PROX_MRT`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_PARK <- ggplot(data = resale_tidy, aes(x= `PROX_PARK`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_BUS_STOP <- ggplot(data = resale_tidy, aes(x= `PROX_BUS_STOP`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_SUPERMARKET <- ggplot(data = resale_tidy, 
+                               aes(x= `PROX_SUPERMARKET`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+ggarrange(AREA_SQM, AGE, PROX_CBD, PROX_CHILDCARE, PROX_ELDERCARE, 
+          PROX_HAWKER, PROX_KINDERGARTEN, PROX_MRT,
+          PROX_PARK, PROX_BUS_STOP, PROX_SUPERMARKET,  
+          ncol = 3, nrow = 4)
+```
+
