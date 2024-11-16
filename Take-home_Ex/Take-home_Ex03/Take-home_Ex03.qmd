@@ -1,5 +1,5 @@
 ---
-title: "Take-home Exercise 3b: Geospatial Analytics"
+title: "Take-home Exercise 3b: Predicting HDB Resale Prices with Geographically Weighted Machine Learning Methods"
 author: "Ho Zi Jun"
 date: "Oct 16, 2024"
 date-modified: "last-modified"
@@ -19,11 +19,11 @@ For take-home exercise 3, it consists of 2 options: T[ake-home Exercise 3a: Mode
 
 Housing plays a crucial role in household wealth across the globe, with purchasing a home representing a significant investment for most individuals. Housing prices are influenced by a variety of factors. Some of these factors are global, such as the overall economic conditions of a country or the inflation rate, while others are specific to individual properties. These factors can be categorised into structural and locational components.
 
-**Structural factors** relate directly to the characteristics of the property, such as its size, amenities, and tenure. 
+**Structural factors** relate directly to the characteristics of the property, such as its size, amenities, and tenure.
 
 **Locational factors** pertain to the surrounding environment, including proximity to childcare centres, public transportation, and shopping facilities.
 
-Traditionally, predictive models for housing resale prices have been developed using the Ordinary Least Squares (OLS) method. However, this approach does not account for spatial autocorrelation and spatial heterogeneity present in geographic datasets, such as those related to housing transactions. When spatial autocorrelation is present, OLS estimates can produce biased, inconsistent, or inefficient results (Anselin 1998). To address this limitation, **Geographically Weighted Models** (GWMs) have been introduced, offering a more accurate approach to modelling and predicting housing resale prices.
+Traditionally, predictive models for housing resale prices have been developed using the Ordinary Least Squares (OLS) method. However, this approach does not account for spatial autocorrelation and spatial heterogeneity present in geographic datasets, such as those related to housing transactions. When spatial autocorrelation is present, OLS estimates can produce biased, inconsistent, or inefficient results (Anselin 1998). To address this limitation, **Geographically Weighted Models** (GWMs) have been introduced, offering a more accurate approach to modelling and predicting housing resale prices. The steps involved will ultimately build a [hedonic pricing](https://www.investopedia.com/terms/h/hedonicpricing.asp) models using this methods.
 
 ### Task and Outcomes
 
@@ -55,48 +55,38 @@ The **four-room flats** will be the chosen flat type for analysis as it is one o
 
 Additionally, in this take-home exercise, we are tasked with calibrating a predictive model to forecast HDB resale prices for the period of July to September 2024, using resale transaction data from 2023 as the basis for analysis.
 
-
 ## Installing and Loading R Packages
 
 The code chunk below will ensure for a list of required R packages to be created, checked for installation, and installed if missing. Once installed, all packages will be loaded for use in the exercise.
 
 ```{r}
-pacman::p_load(tidyverse, sf, spdep, GWmodel, SpatialML, spatstat, units, gtsummary,
-               tmap, rsample, Metrics, httr, jsonlite, rvest, olsrr, corrplot, ggpubr)
+pacman::p_load(tidyverse, sf, spdep, GWmodel, SpatialML, spatstat, units, matrixStats, ggpubr,
+               tmap, rsample, Metrics, httr, jsonlite, rvest, olsrr, corrplot, ggstatsplot)
 ```
 
-## The Data
+## HDB resale Data (Aspatial)
 
 The following sections will consist of steps which import, process and wrangling of data.
 
-### HDB resale Data
-
-Data used for this exercise is HDB Resale data: a list of HDB resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format which can be downloaded from **data.gov.sg**. 
+Data used for this exercise is HDB Resale data: a list of HDB resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format which can be downloaded from **data.gov.sg**.
 
 ![](images/data.png)
 
-When first downloaded, the data was labelled as `ResaleflatpricesbasedonregistrationdatefromJan2017onwards`. Hence, it was subsequently renamed to `resale` for ease of referencing and to avoid unnecessary mistakes. Similar to what is required in the task of using HDB resale transaction records in 2023 to predict HDB resale prices between July-September 2024 the code chunk below filters for transaction records for the entirety of 2023 and July till September 2024.
-
-```{r}
-resale <- read_csv("data/HDB/rawdata/resale.csv") %>%
-  filter(month >= "2023-01" & month <= "2024-09")
-```
-
-![resale data snipshot](images/resale.png)
-
-Based on the requirements of this exercise, I have decided to focus my study on four-room flats.
+When first downloaded, the data was labelled as `ResaleflatpricesbasedonregistrationdatefromJan2017onwards`. Hence, it was subsequently renamed to `resale` for ease of referencing and to avoid unnecessary mistakes. Similar to what is required in the task of using HDB resale transaction records in 2023 to predict HDB resale prices between July-September 2024 the code chunk below filters for transaction records for the entirety of 2023 and July till September 2024. Based on the requirements of this exercise, I have decided to focus my study on four-room flats.
 
 ![](images/resale2.png)
 
 ```{r}
-roomtype = c('4 ROOM') # '3 ROOM', '4 ROOM', '5 ROOM'
-resale = resale%>%
-  filter(flat_type %in% roomtype)
+resale <- read_csv("data/HDB/rawdata/resale.csv") %>%
+  filter(month >= "2023-01" & month <= "2023-12" | month %in% c("2024-07", "2024-08", "2024-09")) %>%
+  filter(flat_type == "4 ROOM")
 ```
 
-The observations have been reduced to 20663.
+![resale data snipshot](images/resale.png)
 
-The code chunk below serves the functions of combining `block` and `street_name` variables to create a new variable `address` (excluding unit number) alongside  `remaining_lease_yr` and `remaining_lease_mth` extracted from `remaining_lease`. This function will supplement our steps later on in creating the model.
+The observations have been reduced to 14733 after reducing the area of study to soley four-room flats.
+
+The code chunk below serves the functions of combining `block` and `street_name` variables to create a new and more complete variable `address` (excluding unit number) alongside `remaining_lease_yr` and `remaining_lease_mth` extracted from `remaining_lease`. This function will supplement our steps later on in creating the model.
 
 ```{r}
 resale_tidy <- resale %>%
@@ -107,13 +97,13 @@ resale_tidy <- resale %>%
     str_sub(remaining_lease, 9, 11)))
 ```
 
-Code chunk below sorts a list of unique addresses to avoid the issue of repeated geocoding.
+Due to the addresses having same street names, a list is created with unique addresses to reduce the number of records and for the list to be passed through for API ingestion in the following steps. The sort function is used to reorder the records so that records will be in order. In essence, the code chunk below sorts a list of unique addresses to avoid the issue of repeated geocoding.
 
 ```{r}
 add_list <- sort(unique(resale_tidy$address))
 ```
 
-The following code chunks are used to obtain the postal code of the addresses using geocoding.
+The following code chunks are used to obtain the postal code of the addresses using geocoding by passing the entries through the onemap API. This code chunk is credited to Prof. Kam where a HTTP address is sent to the OneMap API.
 
 ```{r}
 get_coords <- function(add_list){
@@ -185,13 +175,13 @@ get_coords <- function(add_list){
 }
 ```
 
+Following which, the `get_coords()` function is used to crawl the coordinates from the generated list
 
 ```{r}
 coords <- get_coords(add_list)
 ```
 
 ::: panel-tabset
-
 ## Saving RDS file
 
 The following code chunk will be used to save the results to avoid having to re-run the code chunks above which will take up additional time and resources.
@@ -205,10 +195,26 @@ write_rds(coords, "data/HDB/rds/coords.rds")
 ```{r}
 coords <- read_rds('data/HDB/rds/coords.rds')
 ```
-
 :::
 
-### Structural factors
+### Setting CRS for HDB Resale Data
+
+The code chunk below first creates an sf object before the EPSG code is set for Singapore which is 3414
+
+```{r}
+resale_tidy <- resale_tidy %>%
+  left_join(coords, by = c("address" = "address")) %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  st_transform(crs = 3414)
+
+write_rds(resale_tidy, "data/HDB/rds/resale.rds")
+```
+
+```{r}
+resale_tidy <- read_rds("data/HDB/rds/resale.rds")
+```
+
+### Structural factors for HDB Resale units
 
 -   Structural factors
     -   Area of the unit
@@ -217,31 +223,15 @@ coords <- read_rds('data/HDB/rds/coords.rds')
     -   Age of the unit
     -   Main Upgrading Program (MUP) completed (optional)
 
-### Setting CRS 
-
-The code chunk below first creates an sf object before the EPSG code is set for Singapore which is 4326
-
-```{r}
-resale_tidy <- resale_tidy %>%
-  left_join(coords, by = c("address" = "address")) %>%
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
-  st_transform(crs = 3414)
-write_rds(resale_tidy, "data/HDB/rds/resale.rds")
-```
-
-```{r}
-resale_tidy <- read_rds("data/HDB/rds/resale.rds")
-```
-
 #### Floor Level
 
-As one of the structural factors the code chunk below is used to view the floor levels in `resale_tidy`
+As one of the structural factors the code chunk below is used to view the floor levels in `resale_tidy` using the `unique()` function
 
 ```{r}
 unique(resale_tidy$storey_range)
 ```
 
-As the variable for `storey_range` is in string, we will generate it as numeric. However, the `storey_range` as stated follows a range which will make it hard for analysis. Hence, this numeric attribute will be transformed based on the median value ensuring that we have values to work with instead of a range.
+As the variable for `storey_range` is in string, transformation is done to mutate it as numeric. However, the `storey_range` as stated follows a range which will make it hard for analysis as the exact floor level is not stated. Hence, this numeric attribute will be transformed based on the median value as the chosen method ensuring that we have values to work with instead of a range. The code transforms the `storey_range` variable from a string representing a range into a numeric variable by calculating the median floor level for each range, enabling easier analysis.
 
 ```{r}
 resale_tidy <- resale_tidy %>%
@@ -251,9 +241,15 @@ resale_tidy <- resale_tidy %>%
   )
 ```
 
+Code chunk below is used to get a summary if the transformation is done correctly
+
+```{r}
+summary(resale_tidy$level)
+```
+
 #### Remaining Lease & Age of Unit
 
-We will also do some data wrangling for `remaining_lease_yr` & `remaining_lease_mth`
+We will also do some data wrangling for `remaining_lease_yr` & `remaining_lease_mth`. The code processes the `remaining_lease_yr` and `remaining_lease_mth` variables to first handle missing values, calculate the remaining lease in decimal years, and derive the unit's age based on a 99-year HDB lease. The original year and month variables are then removed for a cleaner dataset.
 
 ```{r}
 resale_tidy <- resale_tidy %>%
@@ -269,11 +265,10 @@ remaining_lease_mth = if_else(is.na(remaining_lease_mth), 0, remaining_lease_mth
 # Age of unit calculation based on a HDB 99-year lease
     unit_age = 99 - remaining_lease
   ) %>%
-  select(-remaining_lease_yr, -remaining_lease_mth)
+  relocate(remaining_lease_yr, remaining_lease_mth, .after = last_col())
 ```
 
-
-### Locational factors
+## Locational factors (Geospatial)
 
 The following locational factors will be derived from their respective data sources such as from **data.gov.sg** for this exercise.
 
@@ -285,17 +280,12 @@ The following locational factors will be derived from their respective data sour
     -   **Proximity to park**
     -   **Proximity to CHAS Clinics**
     -   Proximity to good primary school
-    -   Proximity to shopping mall
     -   **Proximity to supermarket**
     -   **Numbers of kindergartens within 350m**
     -   **Numbers of childcare centres within 350m**
     -   **Numbers of bus stop within 350m**
-    -   Numbers of primary school within 1km
 
-
-### Geospatial Data
-
-Based on the locational factors above, we will import these geospatial data into the R environment.
+Based on the locational factors above, we will import these geospatial data into the R environment. Firstly the Master Plan Subzone boundary data
 
 ```{r}
 mpsz <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL") %>%
@@ -312,47 +302,64 @@ The extent of mpsz is shown by using `st_bbox()` of sf package.
 st_bbox(mpsz) #view extent
 ```
 
+### Eldercare
 
 ```{r}
 eldercare <- st_read(dsn = "data/geospatial", layer = "ELDERCARE") %>%
   st_transform(3414)
 ```
 
+### CHAS Clinics
+
 ```{r}
 chas <- st_read("data/geospatial/CHASClinics.kml") %>%
   st_transform(crs = 3414)
 ```
+
+### Childcare Centres
 
 ```{r}
 childcare <- st_read("data/geospatial/ChildCareServices.kml") %>%
   st_transform(crs = 3414)
 ```
 
+### Kindergartens
+
 ```{r}
 kindergartens <- st_read("data/geospatial/Kindergartens.geojson") %>%
   st_transform(crs = 3414)
 ```
+
+### Parks
 
 ```{r}
 parks <- st_read("data/geospatial/Parks.geojson") %>%
   st_transform(crs = 3414)
 ```
 
+### Hawker Centres
+
 ```{r}
 hawker_centre <- st_read("data/geospatial/HawkerCentresGEOJSON.geojson") %>%
   st_transform(crs = 3414)
 ```
+
+### Supermarkets
 
 ```{r}
 supermarkets <- st_read("data/geospatial/SupermarketsGEOJSON.geojson") %>%
   st_transform(crs = 3414)
 ```
 
+### Bus Stop Locations
+
 ```{r}
 bus_stops <- st_read(dsn = "data/geospatial", layer = "BusStop") %>%
   st_transform(crs = 3414) %>%
   filter(lengths(st_within(., mpsz)) > 0)
 ```
+
+### MRT Accessibility
 
 ```{r}
 MRT <- st_read(dsn = "data/geospatial", layer = "RapidTransitSystemStation") %>%
@@ -366,7 +373,7 @@ MRT <- MRT[!st_is_empty(MRT), ]
 MRT <- st_centroid(MRT)
 ```
 
-#### Pre processing Geospatial Data
+## Processing Geospatial Data
 
 In the previous section, we have loaded the geospatial data of interest it was also observed that some of this data consisted of the Z dimension. We will proceed to remove them as well as drop and unnecessary columns to reduce computation time and ensure geometries are valid.
 
@@ -379,7 +386,7 @@ hawker_centre <- st_zm(hawker_centre)
 supermarkets <- st_zm(supermarkets)
 ```
 
-The code chunks below are used to remove columns not exactly needed to do analysis as the needed variables are generally the Name for identification and Geometry variables
+The code chunks below are used to remove columns not exactly needed to do analysis as the needed variables are generally the Name for identification and Geometry variables. Note that not all the columns selected are Column 1.
 
 ```{r}
 eldercare <- eldercare %>%
@@ -410,6 +417,7 @@ MRT <- MRT %>%
   select(c(5))
 ```
 
+The code chunk below is used to ensure geometries are valid.
 
 ```{r}
 length(which(st_is_valid(mpsz) == FALSE))
@@ -423,18 +431,49 @@ length(which(st_is_valid(supermarkets) == FALSE))
 length(which(st_is_valid(bus_stops) == FALSE))
 length(which(st_is_valid(MRT) == FALSE))
 ```
-## Visualising the Data
 
-In this section we will do quick visualisations without much customisations to ensure that the data is appropriate before proceeding.
+mpsz has invalid 9 invalid geometries which we will fix using `st_make_valid()`
 
 ::: panel-tabset
+## Fixing Invalid Geometry
 
+```{r}
+mpsz <- st_make_valid(mpsz)
+length(which(st_is_valid(mpsz) == FALSE))
+```
+
+## Checks
+
+The code chunk is ran again to do checks ensuring valid geometries
+
+```{r}
+length(which(st_is_valid(mpsz) == FALSE))
+length(which(st_is_valid(eldercare) == FALSE))
+length(which(st_is_valid(chas) == FALSE))
+length(which(st_is_valid(childcare) == FALSE))
+length(which(st_is_valid(kindergartens) == FALSE))
+length(which(st_is_valid(parks) == FALSE))
+length(which(st_is_valid(hawker_centre) == FALSE))
+length(which(st_is_valid(supermarkets) == FALSE))
+length(which(st_is_valid(bus_stops) == FALSE))
+length(which(st_is_valid(MRT) == FALSE))
+```
+
+We can see that they are all fixed.
+:::
+
+## Visualising the Data
+
+In this section we will do quick visualisations without much customisations done just to ensure that the data is appropriate before proceeding.
+
+::: panel-tabset
 ## mpsz
 
 ```{r}
 tm_shape(mpsz) +
   tm_polygons(col = "grey")
 ```
+
 ## Eldercare
 
 ```{r}
@@ -443,6 +482,7 @@ tm_shape(mpsz) +
   tm_shape(eldercare) +
   tm_dots(col = "red", size = 0.1)
 ```
+
 ## CHAS
 
 ```{r}
@@ -451,6 +491,7 @@ tm_shape(mpsz) +
   tm_shape(chas) +
   tm_dots(col = "red")
 ```
+
 ## Childcare Centre
 
 ```{r}
@@ -459,6 +500,7 @@ tm_shape(mpsz) +
   tm_shape(childcare) +
   tm_dots(col = "red")
 ```
+
 ## Kindergartens
 
 ```{r}
@@ -476,6 +518,7 @@ tm_shape(mpsz) +
   tm_shape(parks) +
   tm_dots(col = "red", size = 0.08)
 ```
+
 ## Hawker Centres
 
 ```{r}
@@ -484,6 +527,7 @@ tm_shape(mpsz) +
   tm_shape(hawker_centre) +
   tm_dots(col = "red", size = 0.1)
 ```
+
 ## Supermarkets
 
 ```{r}
@@ -492,6 +536,7 @@ tm_shape(mpsz) +
   tm_shape(supermarkets) +
   tm_dots(col = "red", size = 0.08)
 ```
+
 ## Bus Stops
 
 ```{r}
@@ -500,6 +545,7 @@ tm_shape(mpsz) +
   tm_shape(bus_stops) +
   tm_dots(col = "red", size = 0.005)
 ```
+
 ## MRT Stations
 
 ```{r}
@@ -510,25 +556,26 @@ tm_shape(mpsz) +
 ```
 :::
 
-Based on the above visualisations the data points look in place without any abnomalities.
+Based on the above visualisations the data points look in place without any abnormalities.
 
 ## Locational Factors (Proximity Calculation)
 
-Now to calculate the proximity of HDB flats to relevant facilities. The provided proximity function streamlines this process by calculating the minimum distance from each feature in df1 to the nearest feature in df2 and assigning this distance to a new column specified by `varname`.
+Now to calculate the proximity of HDB flats to relevant facilities. The [provided proximity function - credits](https://is415-msty.netlify.app/posts/2021-10-25-take-home-exercise-3/) streamlines this process by calculating the minimum distance from each feature in df1 to the nearest feature in df2 and assigning this distance to a new column specified by `varname`.
 
 The following locational factors will be calculated in terms of proximity:
 
-    -   Proximity to CBD (Raffles Place & Tanjong Pagar MRT)
-    -   Proximity to eldercare
-    -   Proximity to CHAS Clinics
-    -   Proximity to hawker centres
-    -   Proximity to MRT
-    -   Proximity to park
-    -   Proximity to supermarket
-    -   Numbers of kindergartens within 350m
-    -   Numbers of childcare centres within 350m
-    -   Numbers of bus stop within 350m
-
+```         
+-   Proximity to CBD (Raffles Place, Tanjong Pagar MRT & City Hall MRT)
+-   Proximity to eldercare
+-   Proximity to CHAS Clinics
+-   Proximity to supermarket
+-   Proximity to hawker centres
+-   Proximity to supermarket
+-   Proximity to MRT
+-   Numbers of kindergartens within 350m
+-   Numbers of childcare centres within 350m
+-   Numbers of bus stop within 350m
+```
 
 ```{r}
 proximity <- function(df1, df2, varname) {
@@ -536,15 +583,14 @@ proximity <- function(df1, df2, varname) {
     drop_units()
   
   # Calculate minimum distance for each row
-  df1[[varname]] <- apply(dist_matrix, 1, min)
+  df1[,varname] <- rowMins(dist_matrix)
   
   return(df1)
 }
 ```
 
-
 ```{r}
-cbd <- filter(MRT, STN_NAM_DE %in% c("RAFFLES PLACE MRT STATION", "TANJONG PAGAR MRT STATION"))
+cbd <- filter(MRT, STN_NAM_DE %in% c("RAFFLES PLACE MRT STATION", "TANJONG PAGAR MRT STATION", "CITY HALL MRT STATION"))
 resale_tidy <- proximity(resale_tidy, cbd, "PROX_CBD") %>%
   proximity(., eldercare, "PROX_ELDERCARE") %>%
   proximity(., chas, "PROX_CHAS") %>%
@@ -569,6 +615,7 @@ count_in_radius <- function(df1, df2, varname, radius) {
 }
 ```
 
+The code chunk below is used to calculate the locational factors within a 350m radius
 
 ```{r}
 resale_tidy <- count_in_radius(resale_tidy, kindergartens, "NUM_KINDERGARTEN", 350) %>%
@@ -577,6 +624,63 @@ resale_tidy <- count_in_radius(resale_tidy, kindergartens, "NUM_KINDERGARTEN", 3
   count_in_radius(., chas, "NUM_CHAS", 350)
 ```
 
+Calibrating predictive models are computationally intensive, especially when the random forest method is used. For quick prototyping, a smaller sample will be selected at random from the data by using the code chunk below.
+
+`resale_tidy` consists of 14733 observations and 23 variables.
+
+A sample of 5000 will be used.
+
+```{r}
+set.seed(1234)
+
+resale_tidy <- resale_tidy %>%
+  sample_n(5000)
+```
+
+### Checking of overlapping points
+
+The code chunk below is used to check if there are overlapping point features.
+
+```{r}
+overlapping_points <- resale_tidy %>%
+  mutate(overlap = lengths(st_equals(., .)) > 1)
+```
+
+![](images/resale3.png)
+
+Based on the results, it is observed that there are already multiple overlaps hence, in the code code chunk below, `st_jitter()` of sf package is used to move the point features by 3 metres to avoid overlapping point features.
+
+::: panel-tabset
+## Moving point features
+
+```{r}
+resale_tidy <- resale_tidy %>%
+  st_jitter(amount = 3)
+```
+
+## 2nd layer checks
+
+The code chunk is run again to check for overlapping points.
+
+```{r}
+overlapping_points <- resale_tidy %>%
+  mutate(overlap = lengths(st_equals(., .)) > 1)
+```
+
+The results now show that there are no overlapping point features with no results shown when `TRUE` is selected for the overlap variable.
+:::
+
+::: callout-note
+When using GWmodel to calibrate explanatory or predictive models, it is very important to ensure that there are no overlapping point features
+:::
+
+```{r}
+write_rds(resale_tidy, "data/HDB/rds/int_resale.rds")
+```
+
+```{r}
+resale_tidy <- read_rds("data/HDB/rds/int_resale.rds")
+```
 
 Columns which are not needed for this analysis in this exercise will be dropped and the file is then saved as a RDS file for ease of retrieval without the need to run the above code chunks again.
 
@@ -592,12 +696,17 @@ resale_tidy <- resale_tidy %>%
     REMAINING_LEASE = remaining_lease,
     UNIT_AGE = unit_age
   ) %>%
-  select(MONTH, TOWN, FLOOR_AREA_SQM, ADDRESS, RESALE_PRICE, LEVEL, REMAINING_LEASE,
-         UNIT_AGE, PROX_CBD, PROX_ELDERCARE, PROX_CHAS, PROX_HAWKER, PROX_MRT, PROX_PARK,
-         PROX_CHILDCARE, PROX_KINDERGARTEN, PROX_SUPERMARKET, PROX_BUS_STOP, NUM_KINDERGARTEN,
-         NUM_CHILDCARE, NUM_BUS_STOP, NUM_CHAS)
+  select(MONTH, TOWN, ADDRESS, REMAINING_LEASE, FLOOR_AREA_SQM, UNIT_AGE, RESALE_PRICE, LEVEL,
+         PROX_CBD, PROX_ELDERCARE, PROX_CHAS, PROX_HAWKER, PROX_MRT, PROX_PARK, PROX_CHILDCARE,
+         PROX_KINDERGARTEN, PROX_SUPERMARKET, PROX_BUS_STOP, NUM_KINDERGARTEN, NUM_CHILDCARE, NUM_BUS_STOP, NUM_CHAS)
 
 write_rds(resale_tidy, "data/HDB/rds/final_resale.rds")
+```
+
+Code chunk below is used for ease of retrieving the finalised `resale_tidy` data table
+
+```{r}
+resale_tidy <- read_rds("data/HDB/rds/final_resale.rds")
 ```
 
 ## Exploratory Data Analysis (EDA)
@@ -613,18 +722,29 @@ ggplot(data = resale_tidy, aes(x = `RESALE_PRICE`)) +
   geom_histogram(bins = 20, color = "black", fill = "salmon")
 ```
 
-The figure above reveals a right skewed distribution. This means that more 4-room resale units were transacted at relative lower prices ranging from $400,000 to $600,000 price range.
+The figure above reveals a right skewed distribution. This means that more 4-room resale units were transacted at relative lower prices ranging from \$400,000 to \$600,000 price range.
+
+#### Floor Area (SQM)
+
+```{r}
+ggplot(data = resale_tidy, aes(x = `FLOOR_AREA_SQM`)) +
+  geom_histogram(bins = 20, color = "black", fill = "salmon")
+```
+
+In terms of floor area, the figure above reveals a right skewed distribution. This means that 4-room resale units were within the 90 to 100 sqm floor area.
 
 #### Multiple Histogram Plots for Locational Factors
 
 The code chunk below is used to create 12 histograms. Then, `ggarrange()` is used to organised the histograms into a 3 column by 4 row small multiple plot.
-
 
 ```{r}
 AREA_SQM <- ggplot(data = resale_tidy, aes(x= `FLOOR_AREA_SQM`)) + 
   geom_histogram(bins=20, color="black", fill="light blue")
 
 AGE <- ggplot(data = resale_tidy, aes(x= `UNIT_AGE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+REMAINING_LEASE <- ggplot(data = resale_tidy, aes(x= `REMAINING_LEASE`)) +
   geom_histogram(bins=20, color="black", fill="light blue")
 
 PROX_CBD <- ggplot(data = resale_tidy, aes(x= `PROX_CBD`)) +
@@ -654,10 +774,660 @@ PROX_BUS_STOP <- ggplot(data = resale_tidy, aes(x= `PROX_BUS_STOP`)) +
 PROX_SUPERMARKET <- ggplot(data = resale_tidy, 
                                aes(x= `PROX_SUPERMARKET`)) +
   geom_histogram(bins=20, color="black", fill="light blue")
+```
 
-ggarrange(AREA_SQM, AGE, PROX_CBD, PROX_CHILDCARE, PROX_ELDERCARE, 
-          PROX_HAWKER, PROX_KINDERGARTEN, PROX_MRT,
+```{r}
+#| fig-width: 10
+#| fig-height: 10
+ggarrange(AREA_SQM, AGE, REMAINING_LEASE, PROX_CBD, PROX_CHILDCARE,
+          PROX_ELDERCARE, PROX_HAWKER, PROX_KINDERGARTEN, PROX_MRT,
           PROX_PARK, PROX_BUS_STOP, PROX_SUPERMARKET,  
           ncol = 3, nrow = 4)
 ```
 
+### Statistical Point Map
+
+We can also reveal the geospatial pattern distribution of four-room HDB resale prices and unit age sold in Singapore. The map will be prepared by using tmap package.
+
+First, we will turn on the interactive mode of tmap by using the code chunk below.
+
+```{r}
+tmap_mode("view")
+```
+
+::: panel-tabset
+## Resale Price
+
+```{r}
+tm_shape(mpsz)+
+  tm_polygons() +
+tm_shape(resale_tidy) +  
+  tm_dots(col = "RESALE_PRICE",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+```
+
+`set.zoom.limits` argument of `tm_view()` sets the minimum and maximum zoom level to 11 and 14 respectively.
+
+## Unit Age
+
+```{r}
+tm_shape(mpsz)+
+  tm_polygons() +
+tm_shape(resale_tidy) +  
+  tm_dots(col = "UNIT_AGE",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+```
+:::
+
+Before moving on to the next section, the code below will be used to turn R display into `plot` mode. This also helps to reduce rendering time.
+
+```{r}
+tmap_mode("plot")
+```
+
+## Computing Correlation Matrix
+
+Before loading the predictors into a predictive model, it is always a good practice to use correlation matrix to examine if there is sign of multicollinearity.
+
+```{r}
+#| fig-width: 8
+#| fig-height: 10
+resale_tidy_nogeo <- resale_tidy %>%
+  st_drop_geometry()
+corrplot::corrplot(cor(resale_tidy_nogeo[, 4:18]), 
+                   diag = FALSE, 
+                   order = "AOE",
+                   tl.pos = "td", 
+                   tl.cex = 0.5, 
+                   method = "number", 
+                   type = "upper")
+```
+
+The correlation matrix above shows that all the correlation values are below 0.8 except `UNIT_AGE` and `REMAINING_LEASE` which is at -1.0 given that they are highly related since `UNIT_AGE` was derived with the 99 year lease deducted by `REMAINING_LEASE`. Hence, one of this variables will be dropped to ensure there is no high multicollinearity in the model.
+
+The code chunk below uses `ggcorrmat()` function to compute the correlation matrix.
+
+> Note that `UNIT_AGE` is not selected as it will be excluded in the subsequent model building section.
+
+```{r}
+#| fig-width: 10
+#| fig-height: 10
+resale_tidy_nogeo <- resale_tidy %>%
+  st_drop_geometry()
+ggstatsplot::ggcorrmat(resale_tidy_nogeo[, c(4:5, 7:18)])
+```
+
+## Model Building
+
+### Data Sampling
+
+The entire data is split into training and test data sets with resale transaction records in 2023 as the training data and July-September (Q3) 2024 resale transaction records respectively.
+
+If the data is in a one year period and training and test data has to be split the it can be done by using `initial_split()` of **rsample** package. **rsample** is one of the package of tidymodels.
+
+```{r}
+set.seed(1234)
+
+resale_train <- resale_tidy %>%
+  filter(str_sub(MONTH, 1, 4) == "2023")
+
+resale_test <- resale_tidy %>%
+  filter(str_sub(MONTH, 1, 4) == "2024")
+```
+
+### Building a Multiple Linear Regression
+
+The code chunk below uses `lm()` to calibrate the multiple linear regression model.
+
+```{r}
+resale.mlr <- lm(formula = RESALE_PRICE ~ FLOOR_AREA_SQM + LEVEL + REMAINING_LEASE +
+                     PROX_CBD + PROX_ELDERCARE + PROX_CHAS + PROX_HAWKER + PROX_MRT + PROX_PARK +
+                     PROX_CHILDCARE + PROX_KINDERGARTEN + PROX_SUPERMARKET + PROX_BUS_STOP + NUM_KINDERGARTEN +
+                     NUM_CHILDCARE + NUM_BUS_STOP + NUM_CHAS, 
+                data = resale_train)
+ols_regress(resale.mlr)
+```
+
+::: callout-note
+## Result Explanation
+
+**Significant Predictors of Resale Price:**
+
+1.  Floor Area (`FLOOR_AREA_SQM`):
+
+With a positive and highly significant coefficient (p \< 0.001), floor area strongly predicts resale prices. This aligns with common knowledge that larger HDB flats typically command higher resale values due to the increased living space.
+
+2.  Level:
+
+The level (`floor`) of the unit also shows a strong positive effect on resale prices (p \< 0.001). Higher floors are often associated with better views, increased privacy, and less noise, which generally adds value.
+
+3.  `Remaining Lease`:
+
+A positive coefficient for remaining lease (p \< 0.001) suggests that resale prices tend to be higher for units with more years left on their lease, as these units offer longer occupancy potential before reaching the lease expiration.
+
+4.  Proximity to MRT (`PROX_MRT`):
+
+While proximity to the MRT has a significant negative coefficient, indicating that being closer to MRT stations tends to increase prices, the distance is inversely coded (i.e., closer proximity lowers distance values). This is consistent with the desirability of accessible public transport, especially in Singapore.
+
+5.  Proximity to Childcare (`PROX_CHILDCARE`) and Kindergartens (`PROX_KINDERGARTEN`):
+
+Both proximity to childcare and kindergartens are significant (p \< 0.01), with negative coefficients, suggesting that families especially those with children value these amenities nearby.
+
+6.  Other Amenities:
+
+Several other amenities like Proximity to Parks (PROX_PARK) and Supermarkets (PROX_SUPERMARKET) are also significant, though their impact on resale prices is smaller compared to factors like floor area and level.
+
+**Insignificant Predictors:**
+
+-   Proximity to Eldercare (`PROX_ELDERCARE`) and Proximity to CHAS Clinics (`PROX_CHAS`):
+
+These variables have relatively high p-values (p \> 0.05), indicating that they may not be significant predictors of resale price in this model. Their lack of significance could suggest that proximity to eldercare and CHAS clinics does not strongly impact the value of HDB resale flats, possibly due to varying demand based on demographics.
+
+-   Proximity to Hawker Centres (`PROX_HAWKER`):
+
+Although hawker centres are important to residents for affordable food, this variable does not appear to be highly significant in affecting resale prices (p \> 0.05), perhaps because it is less exclusive or ubiquitous.
+
+**Model Accuracy and Fit:**
+
+-   R-Squared: The model explains about 77.9% of the variability in resale prices, which is a strong indication of model fit and suggests that the included predictors capture the majority of factors influencing resale prices.
+
+-   RMSE (Root Mean Square Error): The RMSE value of 63051.285 suggests the typical deviation between observed and predicted resale prices. While a lower RMSE would indicate better prediction, this value suggests a reasonable model fit given the complexities of housing prices.
+
+-   F-statistic: The model's F-statistic is highly significant (p \< 0.001), supporting the overall model validity.
+
+**Observations:**
+
+-   Model Coefficients: The coefficients align with common real estate trends, with larger and higher-floor units being more valuable. Proximity to transport and family-oriented amenities also enhances resale value, reflecting a preference for accessible and family-friendly environments in Singapore.
+
+-   Possible Multicollinearity: Given the number of variables, there may be multicollinearity among location-based predictors (e.g., proximity to MRT, parks, childcare). This can sometimes inflate standard errors and affect the interpretability of each predictor. Further diagnostics, such as Variance Inflation Factor (VIF), could help in evaluating multicollinearity which is done in the next step.
+:::
+
+#### Checking for multicolinearity
+
+In this section, it will introduce you an R package specially programmed for performing OLS regression. It is called [olsrr](https://olsrr.rsquaredacademy.com/). It provides a collection of very useful methods for building better multiple linear regression models:
+
+-   Comprehensive Regression Output
+-   Variable Selection Procedures
+-   Heteroskedasticity Tests
+-   Collinearity Diagnostics
+-   Model Fit Assessment
+-   Measures of Influence
+-   Residual Diagnostics
+-   Variable Contribution Assessment
+
+In the code chunk below, the `ols_vif_tol()` of olsrr package is used to test if there are signs of multicollinearity.
+
+```{r}
+ols_vif_tol(resale.mlr)
+```
+
+::: callout-tip
+-   0 to 5: variables are not correlated
+-   5 to 10: variables are correlated
+-   Greater than 10: variables are highly correlated
+:::
+
+Based on the results of the Variance Inflation Factors (VIF) none of the variables are greater than 5. Each of the independent variables are calculated with another independent variable to attain the values above.
+
+The analysis shows that multicollinearity is not a concern in this model, as all variables have VIF values significantly below the commonly accepted threshold. This suggests that each predictor contributes independently to the model, without redundancy that would impair interpretation or predictive power.
+
+This shows no need to eliminate the variables.
+
+> note that there could be binary variables in datasets like Y/N options (dummy variables) which have some signs of correlation which are from the variable of lease properties: LEASEHOLD_99YR vs FREEHOLD etc.
+
+#### Test for Non-Linearity
+
+In multiple linear regression, it is important for us to test the assumption that linearity and additivity of the relationship between dependent and independent
+
+In the code chunk below, the `ols_plot_resid_fit()` of olsrr package is used to perform linearity assumption test.
+
+```{r}
+ols_plot_resid_fit(resale.mlr)
+```
+
+::: callout-note
+## Result Explanation
+
+While most of the data points are scattered around the 0 line; the plot also indicates slight issues with both linearity and homoscedasticity. The widening funnel shape at higher fitted values suggests that the model may not fully capture the complexity of higher-priced units, potentially indicating a need for transformation (e.g., log-transformation) or a different modelling approach to improve fit.
+:::
+
+#### Test for Normality Assumption
+
+Lastly, the code chunk below uses `ols_plot_resid_hist()` of olsrr package to perform normality assumption test.
+
+```{r}
+ols_plot_resid_hist(resale.mlr)
+```
+
+::: callout-note
+## Result Explanation
+
+The residuals do not follow a perfectly normal distribution, as evidenced by the slightly skewed shape while it has a normal curve. This could impact the reliability of significance tests and confidence intervals, especially for large residual values. This suggests that the model might tend to underpredict for certain observations, leading to larger residuals on the positive side.
+:::
+
+### Test for Spatial Autocorrelation
+
+The hedonic model we are constructing incorporates geographically referenced attributes, making it essential to visualize the residuals of this pricing model.
+
+To test for spatial autocorrelation, we need to convert condo_resale.sf from an sf dataframe into a **SpatialPointsDataFrame**.
+
+First, we will extract the residuals from the hedonic pricing model and save them as a new dataframe.
+
+```{r}
+mlr_res <- as.data.frame(resale.mlr$residuals)
+
+# joining the newly created data frame with resale_train
+
+resale_res <- cbind(resale_train,
+                    mlr_res) %>%
+  rename(MLR_RES = resale.mlr.residuals)
+```
+
+In this step it will convert `resale.res` from simple feature object into a SpatialPointsDataFrame because spdep package can only process sp conformed spatial data objects.
+
+The code chunk below will be used to perform the data conversion process.
+
+```{r}
+resale_sp <- as_Spatial(resale_res)
+resale_sp
+```
+
+```{r}
+write_rds(resale_sp, "data/HDB/rds/resale_sp.rds")
+```
+
+```{r}
+resale_sp <- read_rds("data/HDB/rds/resale_sp.rds")
+```
+
+Following which, tmap package will be used to display the distribution of the residuals on an interactive map.
+
+The code churn below will turn on the interactive mode of tmap.
+
+```{r}
+tmap_mode("view")
+```
+
+```{r}
+tm_shape(mpsz) +
+  tmap_options(check.and.fix = TRUE) +
+  tm_polygons(col = "grey",
+              alpha = 0.4) +
+tm_shape(resale_res) +  
+  tm_dots(col = "MLR_RES",
+          alpha = 0.6,
+          style = "quantile") +
+  tm_layout(main.title = "Residuals Distribution",     
+            main.title.position = "center",
+            main.title.size = 0.8) +
+  tm_view(set.zoom.limits = c(11,14))
+```
+
+Switching back to “plot” mode before continuing.
+
+```{r}
+tmap_mode("plot")
+```
+
+Based on the figure above it reveals that there are signs of spatial autocorrelation.
+
+To proof that our observation is indeed true, the Moran’s I test will be performed. First, to compute the distance-based weight matrix by using [dnearneigh()](https://r-spatial.github.io/spdep/reference/dnearneigh.html) function of **spdep**.
+
+```{r}
+nb <- dnearneigh(coordinates(resale_sp), 0, 2000, longlat = FALSE)
+summary(nb)
+```
+
+Following which, [nb2listw()](https://r-spatial.github.io/spdep/reference/nb2listw.html) of **spdep** package will be used to convert the output neighbours lists (i.e. nb) into spatial weights.
+
+```{r}
+nb_lw <- nb2listw(nb, style = 'W')
+summary(nb_lw)
+```
+
+Lastly, `lm.morantest()` of spdep package will be used to perform Moran’s I test for residual spatial autocorrelation to validate if our inital observation if there are signs of spatial autocorrelation
+
+```{r}
+moran_test <-lm.morantest(resale.mlr, nb_lw)
+```
+
+::: callout-note
+## Interpretation of Moran’s I Test Results
+
+The Moran’s I test for residual spatial autocorrelation was conducted using the `lm.morantest()` function. Here’s a breakdown of the results:
+
+**Moran I Statistic:**
+
+The observed Moran’s I value is 0.299, which indicates a positive spatial autocorrelation in the residuals. This suggests that similar values tend to be spatially clustered, which is a sign of spatial dependence that hasn’t been fully captured by the regression model.
+
+**Significance (p-value):** The p-value is extremely low (p-value \< 2.2e-16) which strongly rejects the null hypothesis of no spatial autocorrelation. This statistically confirms that there is significant spatial autocorrelation in the residuals of the model.
+:::
+
+```{r}
+write_rds(moran_test, "data/HDB/rds/moran_resale_sp.rds")
+```
+
+```{r}
+moran_test <- read_rds("data/HDB/rds/moran_resale_sp.rds")
+```
+
+## Building Geographical Random Forest Model
+
+To prepare for calibrating the random forest model, we first need to generate coordinate data required by the **SpatialML** package. This can be accomplished by using `st_coordinates()` from the **sf** package. After extracting the coordinates, we will remove the geometry from `resale_train` using `st_drop_geometry()`, creating a non-spatial dataset ready for analysis.
+
+```{r}
+coords_train <- st_coordinates(resale_train)
+coords_train <- write_rds(coords_train, "data/HDB/rds/coords_train.rds") # writing output into rds for future use
+coords_train <- read_rds("data/HDB/rds/coords_train.rds")
+```
+
+Using `st_drop_geometry()`
+
+```{r}
+resale_train_nogeo <- resale_train %>% 
+  st_drop_geometry()
+```
+
+### Computing adaptive bandwidth
+
+`bw.gwr()` of GWmodel package will be used to determine the optimal bandwidth to be used for the Random Forest Model. An adaptive bandwidth will be applied to allow the bandwidth to adjust based on the density of data points, offering greater flexibility in regions with sparse data. Also, to determine the optimal bandwidth, we will use a cross-validation (CV) approach with the `bw.gwr()` function as well.
+
+```{r}
+bw_adaptive <- bw.gwr(formula = RESALE_PRICE ~ FLOOR_AREA_SQM + LEVEL + REMAINING_LEASE +
+                     PROX_CBD + PROX_ELDERCARE + PROX_CHAS + PROX_HAWKER + PROX_MRT + PROX_PARK +
+                     PROX_CHILDCARE + PROX_KINDERGARTEN + PROX_SUPERMARKET + PROX_BUS_STOP + NUM_KINDERGARTEN +
+                     NUM_CHILDCARE + NUM_BUS_STOP + NUM_CHAS,
+                      data = resale_sp, 
+                      approach = "CV", 
+                      kernel = "gaussian", 
+                      adaptive = TRUE, 
+                      longlat = FALSE)
+```
+
+The result shows that 64 neighbour points will be the optimal bandwidth to be used if adaptive bandwidth is used for this data set.
+
+```{r}
+write_rds(bw_adaptive, "data/HDB/model/bw_adaptive.rds")
+```
+
+```{r}
+bw_adaptive <- read_rds("data/HDB/model/bw_adaptive.rds")
+bw_adaptive
+```
+
+### Calibrating Random Forest Model
+
+With the results from the adaptive bandwidth computed earlier on, this section will illustrate the calibration of a Geographically Weighted Random Forest Model using `grf()` of **SpatialML** package.
+
+Code chunk below is used to verify the variable names before proceeding.
+
+```{r}
+names(resale_train_nogeo)
+names(resale_train)
+```
+
+```{r}
+str(resale_train_nogeo)
+```
+
+The code chunk below is used to calibrate a model to predict HDB four-room resale price by using random forest function of [ranger](https://cran.r-project.org/web/packages/ranger/index.html) package.
+
+```{r}
+set.seed(1234)
+
+rf <- ranger(RESALE_PRICE ~ FLOOR_AREA_SQM + LEVEL + REMAINING_LEASE +
+             PROX_CBD + PROX_ELDERCARE + PROX_CHAS + PROX_HAWKER + PROX_MRT + PROX_PARK +
+             PROX_CHILDCARE + PROX_KINDERGARTEN + PROX_SUPERMARKET + PROX_BUS_STOP + NUM_KINDERGARTEN +
+             NUM_CHILDCARE + NUM_BUS_STOP + NUM_CHAS,
+             data = resale_train_nogeo)
+rf
+```
+
+```{r}
+write_rds(rf, "data/HDB/model/rf.rds")
+```
+
+```{r}
+rf <- read_rds("data/HDB/model/rf.rds")
+rf
+```
+
+The model output is also saved in the following code chunk below.
+
+-   Number or trees (e.g., `ntree = 50`)
+
+-   200 is selected because from earlier experiments with 500 trees, the gain in accuracy was minimal (a slight improvement in R-squared and OOB MSE). Lower number of trees can be a good compromise for faster computation and reducing complexity.Ideally we should let the model run and determine the number of trees which might be up to 500.
+
+-   `kernel = "adaptive"`
+
+-   ensures that the model adjusts spatial influence based on local data density
+
+-   `verbose = TRUE` is helpful for debugging and monitoring the model's progress.
+
+```{r}
+pacman::p_load(parallel, profvis)
+```
+
+```{r}
+set.seed(1234)
+
+gwRF_adaptive <- grf(formula = RESALE_PRICE ~ FLOOR_AREA_SQM + LEVEL + REMAINING_LEASE +
+                     PROX_CBD + PROX_ELDERCARE + PROX_CHAS + PROX_HAWKER + PROX_MRT + PROX_PARK +
+                     PROX_CHILDCARE + PROX_KINDERGARTEN + PROX_SUPERMARKET + PROX_BUS_STOP + NUM_KINDERGARTEN +
+                     NUM_CHILDCARE + NUM_BUS_STOP + NUM_CHAS,
+                     dframe = resale_train_nogeo, 
+                     bw = bw_adaptive, # based on earlier computed adaptive bandwidth
+                     ntree = 200, 
+                     kernel = "adaptive",
+                     verbose = TRUE,
+                     coords = coords_train)
+```
+
+::: callout-note
+## Result Breakdown
+
+Based on the results and parameters, it can be observed that
+
+**Top 5 Predictors by Importance** The top six predictors, based on their importance scores, are as follows: 1. `FLOOR_AREA_SQM`: Interpretation: Floor area is the most important predictor in the model, which aligns with the general understanding that larger flats tend to have higher resale values. Geographical Implication: This factor is likely uniformly significant across areas, as floor area directly impacts the valuation irrespective of location.
+
+2.  `LEVEL`: Interpretation: The floor level of the unit is also highly significant, likely due to the premium placed on higher floors for better views, privacy, and less noise.
+
+3.  `REMAINING_LEASE`:
+
+Interpretation: The remaining lease length strongly influences resale value, as longer leases provide more value to buyers, especially in Singapore where HDB leases are finite.
+
+4.  `PROX_CBD`:
+
+Interpretation: Proximity to the Central Business District (CBD) is a major driver of value, as it suggests better access to job opportunities, amenities, and transport options.
+
+**Secondary**
+
+5.  `PROX_HAWKER` : Interpretation: Proximity to hawker centres, an important amenity in Singapore, significantly impacts HDB resale prices, as they offer affordable dining options.
+
+6.  `PROX_MRT`:
+
+Interpretation: Proximity to MRT stations is another key factor, as convenient public transportation access is highly valued in Singapore's urban environment.
+
+7.  `PROX_PARK` and `PROX_ELDERCARE` also contribute, albeit to a lesser degree, highlighting the value of recreational spaces and proximity to eldercare facilities.
+
+The top predictors identified by this geographically weighted random forest model, particularly are floor area, level, and remaining lease, aligning with general expectations in HDB pricing. Location-specific amenities (e.g., proximity to CBD, MRT, and hawker centres) further emphasize the premium placed on convenience and accessibility in Singapore’s real estate market. The high R-squared value and reasonable OOB MSE suggest a robust model that captures both structural and spatial elements effectively.
+
+-   **Less influential variables:**
+
+Variables like `NUM_KINDERGARTEN`, `PROX_CHILDCARE`, and `NUM_BUS_STOP` have lower importance values, suggesting they contribute less to resale price variation.
+:::
+
+::: callout-note
+## Model Performance
+
+-   R-squared (Not OOB): 98.559% This indicates that the model explains 98.56% of the variance in the resale prices. This seems to be a good fit for the data, suggesting the model is effective at capturing key predictors.
+:::
+
+#### Saving the model output
+
+Code chunk below is used to save the results as an rds file.
+
+```{r}
+write_rds(gwRF_adaptive, "data/HDB/model/gwRF_adaptive.rds")
+```
+
+```{r}
+gwRF_adaptive <- read_rds("data/HDB/model/gwRF_adaptive.rds")
+```
+
+## Model Evaluation (Predicting using test data)
+
+To begin, we will prepare the test dataset, consisting of transactions from (Q3) July to September 2024. Like the training data, the test data requires coordinate information for use with the **SpatialML** package. These coordinates can be extracted using `st_coordinates()` from the sf package. Afterwards, the geometry data will be removed from *resale_test* using `st_drop_geometry()`, resulting in an aspatial dataset ready for analysis.
+
+```{r}
+coords_test <- st_coordinates(resale_test)
+coords_test <- write_rds(coords_test, "data/HDB/rds/coords_test.rds")
+
+resale_test_nogeo <- cbind(resale_test, coords_test) %>%
+  st_drop_geometry()
+```
+
+### Predicting with the test data
+
+The Multiple Linear Regression (MLR) will first be used to make predictions based on the test data using the function `predict()` with the results stored in the test dataset for model evaluation afterwards.
+
+```{r}
+resale_test$MLR_PREDICT <- predict(object = resale.mlr, newdata = resale_test)
+```
+
+### Predicting with Geographically Weighted Random Forest
+
+Next, `predict.grf()` of spatialML package will be used to predict the resale value by using the `resale_test` data and **gwRF_adaptive** model calibrated earlier.
+
+```{r}
+resale_test$GWRF_PREDICT <- predict.grf(gwRF_adaptive,
+                                          resale_test_nogeo, 
+                                          x.var.name = "X",
+                                          y.var.name = "Y", 
+                                          local.w = 1,
+                                          global.w = 0)
+```
+
+Before moving on the output is saved as an rds file for future usage
+
+```{r}
+GRF_pred <- write_rds(resale_test, "data/HDB/rds/resale_test_pred.rds")
+```
+
+```{r}
+GRF_pred <- read_rds("data/HDB/rds/resale_test_pred.rds")
+```
+
+## Calculation of Root Mean Square Error (RMSE)
+
+The root mean square error (RMSE) allows us to measure how far predicted values are from observed values in a regression analysis. In the code chunk below, `rmse()` of Metrics package is used to compute the RMSE.
+
+The output of the `predict.grf()` is a vector of predicted values. It is converted into a data frame for further visualisation and analysis.
+
+```{r}
+GRF_pred_df <- as.data.frame(GRF_pred)
+```
+
+### RMSE for Geographically Weighted Random Forest
+
+```{r}
+rmse_gwrf <- rmse(resale_test$RESALE_PRICE, 
+                  resale_test$GWRF_PREDICT)
+
+rmse_gwrf
+```
+
+### RMSE for Multiple Linear Regression
+
+```{r}
+rmse_mlr <- rmse(resale_test$RESALE_PRICE,
+                 resale_test$MLR_PREDICT)
+
+rmse_mlr
+```
+
+### RMSE Results (Table)
+
+The RMSE results for each model can then be stored as a table format for reference using the `head()` function.
+
+```{r}
+rmse_mlr <- rmse(resale_test$RESALE_PRICE, resale_test$MLR_PREDICT)
+rmse_gwrf <- rmse(resale_test$RESALE_PRICE, resale_test$GWRF_PREDICT)
+
+rmse <- data.frame(
+  Model = c("Multiple Linear Regression", "Geographically Weighted Random Forest"),
+  RMSE = c(rmse_mlr, rmse_gwrf)
+)
+
+head(rmse)
+```
+
+### Visualising and Analysing the Model Prediction Results
+
+Additionally, a scatter plot can be used to visualise the actual resale price and the predicted resale price of both models by using the code chunk below.
+
+::: callout-note
+A better predictive model should have the scatter point close to the diagonal line. The scatter plot can be also used to detect if any outliers are in the model.
+:::
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+plot_mlr <- ggplot(data = resale_test,
+                   aes(x = MLR_PREDICT,
+                       y = RESALE_PRICE)) +
+  geom_point() +
+  ggtitle("Actual Resale Price vs Predicted Price (MLR)")
+
+plot_gwrf <- ggplot(data = resale_test,
+                    aes(x = GWRF_PREDICT,
+                        y = RESALE_PRICE)) +
+  geom_point() + 
+  ggtitle("Actual Resale Price vs Predicted Price (GWRF)")
+
+ggarrange(plot_mlr, plot_gwrf, ncol = 2)
+```
+
+::: callout-tip
+## Summary and Model Performance
+
+**RMSE Comparison:**
+
+-   The RMSE for *Multiple Linear Regression (MLR)* is 89310.01, while for *Geographically Weighted Random Forest (GWRF)*, it is 84847.19. The lower RMSE for GWRF [indicates better predictive performance]{.underline} compared to MLR, suggesting that incorporating spatial information improves prediction accuracy.
+
+**Scatter Plot Analysis:**
+
+-   Both models show scatter points roughly aligned along the diagonal, indicating reasonable predictive capability. The GWRF model has a tighter clustering of points closer to the diagonal, implying better alignment between actual and predicted resale prices.
+
+**Model Interpretation:**
+
+-   The GWRF model demonstrates superior performance due to its ability to account for spatial heterogeneity and relationships, as seen in the reduced RMSE and improved scatter alignment.
+
+-   This aligns with the observed spatial autocorrelation in the dataset, highlighting the value of using a geographically weighted model.
+
+**Recommendation:**
+
+-   For more reliable results for a model, the GWRF should be preferred for tasks requiring precise predictions of resale prices, especially in spatially non-uniform datasets with evident spatial autocorrelation.
+:::
+
+## Conclusion from results
+
+The objective of this exercise was to predict HDB resale prices effectively while accounting for spatial relationships in the data. By comparing the performance of Multiple Linear Regression (MLR) and Geographically Weighted Random Forest (GWRF) models, it was evident that the GWRF model outperformed the MLR model. This was reflected in the lower Root Mean Square Error (RMSE) achieved by the GWRF model, which stood at 84847.19 compared to 89310.01 for the MLR model. The improved accuracy of the GWRF model underscores the importance of addressing spatial heterogeneity when modelling geographically distributed data.
+
+The dataset used in this exercise exhibited signs of spatial autocorrelation, necessitating the use of spatially-aware models. GWRF effectively leveraged spatial relationships to capture local variations in factors influencing resale prices. The use of an adaptive bandwidth further optimized the model by allowing the kernel to adjust dynamically based on data density, thereby enhancing its performance. Additionally, the analysis of variable importance highlighted that factors such as `REMAINING_LEASE`, `proximity to the central business district (CBD)`, and `FLOOR_AREA_SQM` were the most influential drivers of resale prices. These insights underscore the importance of focusing on these attributes in future analyses or pricing strategies.
+
+Visual validation through scatter plots of predicted versus actual resale prices demonstrated that the GWRF model produced predictions that aligned more closely with observed values compared to the MLR model. The points in the GWRF scatter plot clustered nearer to the diagonal, further reinforcing its superior predictive capabilities. From a practical perspective, for scenarios involving non-uniform spatial data with evident spatial autocorrelation, the GWRF model proves to be a more robust and reliable choice compared to traditional regression techniques. Its ability to incorporate local variability and spatial relationships makes it particularly well-suited for predictive modelling of geographically distributed data.
+
+In conclusion, this exercise demonstrates the importance of integrating spatial methodologies in real estate pricing. The findings highlight the value of geographically weighted modelling approaches in addressing spatial heterogeneity and improving prediction accuracy. Future analyses should continue to leverage spatially-aware models such as GWRF while refining bandwidth parameters and incorporating additional spatial covariates to further enhance performance. The generalizability of this approach should also be evaluated on other property types to assess its broader applicability.
+
+## References
+
+Kam, T.S. (2024). [Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method](https://r4gdsa.netlify.app/chap13)
+
+Kam, T.S. (2024). [Geographically Weighted Predictive Models](https://r4gdsa.netlify.app/chap14)
+
+IS415 Megan Sim Take-Home Exercise 3(2021). [Retrieved from](https://is415-msty.netlify.app/posts/2021-10-25-take-home-exercise-3/) https://is415-msty.netlify.app/posts/2021-10-25-take-home-exercise-3/
