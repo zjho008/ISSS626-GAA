@@ -15,7 +15,7 @@ editor: source
 
 ## Overview
 
-For take-home exercise 3, it consists of 2 options: T[ake-home Exercise 3a: Modelling Geography of Financial Inclusion with Geographically Weighted Methods]{.underline} & [Take-home Exercise 3b: Predicting HDB Resale Prices with Geographically Weighted Machine Learning Methods]{.underline}. The selected option for this take-home exercise will be **3b**.
+For take-home exercise 3, it consists of 2 options: Take-home Exercise 3a: Modelling Geography of Financial Inclusion with Geographically Weighted Methods]{.underline} & [Take-home Exercise 3b: Predicting HDB Resale Prices with Geographically Weighted Machine Learning Methods]{.underline}. The selected option for this take-home exercise will be **3b**.
 
 Housing plays a crucial role in household wealth across the globe, with purchasing a home representing a significant investment for most individuals. Housing prices are influenced by a variety of factors. Some of these factors are global, such as the overall economic conditions of a country or the inflation rate, while others are specific to individual properties. These factors can be categorised into structural and locational components.
 
@@ -84,7 +84,7 @@ resale <- read_csv("data/HDB/rawdata/resale.csv") %>%
 
 ![resale data snipshot](images/resale.png)
 
-The observations have been reduced to 14733 after reducing the area of study to soley four-room flats.
+The observations have been reduced to 14733 after reducing the area of study to only four-room flats.
 
 The code chunk below serves the functions of combining `block` and `street_name` variables to create a new and more complete variable `address` (excluding unit number) alongside `remaining_lease_yr` and `remaining_lease_mth` extracted from `remaining_lease`. This function will supplement our steps later on in creating the model.
 
@@ -624,6 +624,8 @@ resale_tidy <- count_in_radius(resale_tidy, kindergartens, "NUM_KINDERGARTEN", 3
   count_in_radius(., chas, "NUM_CHAS", 350)
 ```
 
+### Sampling Size and `st_jitter()` for overlapping points
+
 Calibrating predictive models are computationally intensive, especially when the random forest method is used. For quick prototyping, a smaller sample will be selected at random from the data by using the code chunk below.
 
 `resale_tidy` consists of 14733 observations and 23 variables.
@@ -636,8 +638,6 @@ set.seed(1234)
 resale_tidy <- resale_tidy %>%
   sample_n(5000)
 ```
-
-### Checking of overlapping points
 
 The code chunk below is used to check if there are overlapping point features.
 
